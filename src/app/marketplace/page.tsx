@@ -12,14 +12,27 @@ import Link from "next/link";
 type CraftFilterType = "ALL" | "Kasuti" | "Beedu" | "Pottery" | "Bidriware";
 
 export default function MarketplacePage() {
+  const [productsList, setProductsList] = useState<ArtisanProduct[]>(ARTISAN_PRODUCTS);
   const [selectedCategory, setSelectedCategory] = useState<CraftFilterType>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeStoryProduct, setActiveStoryProduct] = useState<ArtisanProduct | null>(null);
   const [activeCheckoutProduct, setActiveCheckoutProduct] = useState<ArtisanProduct | null>(null);
 
+  // Fetch updated catalog from backend API
+  React.useEffect(() => {
+    fetch("/api/products")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.products) && data.products.length > 0) {
+          setProductsList(data.products);
+        }
+      })
+      .catch((err) => console.error("Failed to load products from API", err));
+  }, []);
+
   // Filter products by category and search
   const filteredProducts = useMemo(() => {
-    return ARTISAN_PRODUCTS.filter((product) => {
+    return productsList.filter((product) => {
       const matchesCategory =
         selectedCategory === "ALL" || product.craftType === selectedCategory;
       const matchesSearch =
@@ -31,7 +44,7 @@ export default function MarketplacePage() {
 
       return matchesCategory && matchesSearch;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [productsList, selectedCategory, searchQuery]);
 
   return (
     <div className="min-h-screen bg-[#FAF6F0] text-[#2A1810]">

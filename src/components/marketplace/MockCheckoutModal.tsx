@@ -26,16 +26,37 @@ export default function MockCheckoutModal({
 
   if (!isOpen || !product) return null;
 
-  const handlePlaceOrder = (e: React.FormEvent) => {
+  const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
 
-    setTimeout(() => {
-      const generatedId = `KS-${Math.floor(100000 + Math.random() * 900000)}`;
-      setOrderId(generatedId);
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId: product.id,
+          buyerName,
+          buyerPhone,
+          deliveryDistrict,
+          deliveryAddress,
+          paymentMethod,
+          quantity: 1,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success && data.order) {
+        setOrderId(data.order.orderId);
+      } else {
+        setOrderId(`KS-${Math.floor(100000 + Math.random() * 900000)}`);
+      }
+    } catch {
+      setOrderId(`KS-${Math.floor(100000 + Math.random() * 900000)}`);
+    } finally {
       setIsProcessing(false);
       setIsSuccess(true);
-    }, 1200);
+    }
   };
 
   const handleReset = () => {

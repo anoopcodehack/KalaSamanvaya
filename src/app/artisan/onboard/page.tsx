@@ -41,6 +41,7 @@ export default function ArtisanOnboardPage() {
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   // Touch adjustment handlers (Zero typing needed!)
   const updateQuantity = (delta: number) => {
@@ -65,9 +66,33 @@ export default function ArtisanOnboardPage() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitted(true);
+    setIsPublishing(true);
+
+    try {
+      await fetch("/api/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: `${clusterRegion} Handcrafted ${listing.craft}`,
+          kannadaTitle: `${clusterRegion} ಕೈಯಿಂದ ಮಾಡಿದ ${listing.craftKannada}`,
+          craftType: listing.craft,
+          priceINR: listing.pricePerUnitINR,
+          quantity: listing.quantity,
+          artisanName,
+          artisanKannadaName: language === "kn" ? "ಶಾಂತವ್ವ ಹೊಸಮನಿ" : artisanName,
+          artisanCluster: clusterRegion,
+          artisanDistrict: "Dharwad",
+          leadTimeDays: listing.leadTimeDays,
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to persist product to backend", err);
+    } finally {
+      setIsPublishing(false);
+      setIsSubmitted(true);
+    }
   };
 
   return (
@@ -357,14 +382,24 @@ export default function ArtisanOnboardPage() {
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#E67E22] to-[#C85A32] hover:from-[#cf6d17] hover:to-[#A34828] text-white font-extrabold text-sm sm:text-base shadow-2xl transition-all hover:scale-[1.01] flex items-center justify-center gap-2"
+                    disabled={isPublishing}
+                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#E67E22] to-[#C85A32] hover:from-[#cf6d17] hover:to-[#A34828] disabled:opacity-50 text-white font-extrabold text-sm sm:text-base shadow-2xl transition-all hover:scale-[1.01] flex items-center justify-center gap-2"
                   >
-                    <span>
-                      {language === "kn"
-                        ? `ಸರಕನ್ನು ನೊಂದಾಯಿಸಿ (${listing.quantity} ಯೂನಿಟ್‌ಗಳು • ₹${listing.totalValueINR.toLocaleString("en-IN")})`
-                        : `Commit Batch to Cluster Inventory (${listing.quantity} Units • ₹${listing.totalValueINR.toLocaleString("en-IN")})`}
-                    </span>
-                    <ArrowRight className="w-5 h-5" />
+                    {isPublishing ? (
+                      <span className="flex items-center gap-2">
+                        <RefreshCw className="w-5 h-5 animate-spin" />
+                        <span>{language === "kn" ? "ಸರ್ವರ್‌ಗೆ ನೊಂದಾಯಿಸಲಾಗುತ್ತಿದೆ..." : "Publishing to Marketplace Database..."}</span>
+                      </span>
+                    ) : (
+                      <>
+                        <span>
+                          {language === "kn"
+                            ? `ಸರಕನ್ನು ನೊಂದಾಯಿಸಿ (${listing.quantity} ಯೂನಿಟ್‌ಗಳು • ₹${listing.totalValueINR.toLocaleString("en-IN")})`
+                            : `Commit Batch to Cluster Inventory (${listing.quantity} Units • ₹${listing.totalValueINR.toLocaleString("en-IN")})`}
+                        </span>
+                        <ArrowRight className="w-5 h-5" />
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
