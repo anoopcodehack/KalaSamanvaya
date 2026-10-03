@@ -38,9 +38,9 @@ Individual artisans operate with constrained production bandwidth, while **enter
 > **Core Principle:**  
 > *"Speech recognition simplifies artisan onboarding; transparent craft stories justify pricing; deterministic algorithms coordinate bulk fulfilment."*
 
-Existing marketplaces solve discovery (1-to-1 retail). Our platform solves coordinated multi-artisan fulfillment (N-to-1 bulk demand). **Buyers face coordination friction and may turn to standardized alternatives when handmade supply cannot reliably meet volume or deadlines.**
+Existing marketplaces solve discovery (1-to-1 retail). Our platform solves coordinated multi-artisan fulfilment (N-to-1 bulk demand). **Buyers face coordination friction and may turn to standardized alternatives when handmade supply cannot reliably meet volume or deadlines.**
 
-**KalaSamanvaya (ಕಲಾ ಸಮನ್ವಯ)** introduces a **coordinated fulfillment layer**. Instead of treating every maker as an isolated seller, our deterministic allocation engine aggregates compatible cluster capacity into a single, verifiable B2B delivery plan—backed by **capacity-update recovery** and accessible Kannada voice-assisted onboarding.
+**KalaSamanvaya (ಕಲಾ ಸಮನ್ವಯ)** introduces a **coordinated fulfilment layer**. Instead of treating every maker as an isolated seller, our deterministic allocation engine aggregates compatible cluster capacity into a single, verifiable B2B delivery plan—backed by **capacity-update recovery** and accessible Kannada voice-assisted onboarding.
 
 ---
 
@@ -48,12 +48,12 @@ Existing marketplaces solve discovery (1-to-1 retail). Our platform solves coord
 
 This prototype addresses four PS 4.2 capability areas:
 
-| Official PS 4.2 Capability Area | Implementation in KalaSamanvaya | Status |
+| PS 4.2 Capability Area | Implementation in KalaSamanvaya | Status |
 | :--- | :--- | :---: |
-| **1. Working Storefront / Catalogue Interface**<br>*(Artisans can plausibly use with minimal training)* | Clean, visual catalogue specifically customized for **Kasuti embroidery**, **Beedu basketry & craft**, and **Coastal pottery**. Low cognitive load interface displaying maker profiles and pricing. | `Implemented` |
+| **1. Working Storefront / Catalogue Interface**<br>*(Artisans can plausibly use with minimal training)* | Clean, visual catalogue specifically customized for **Kasuti embroidery**, **Beedu basketry & craft**, and **Coastal pottery**. Low cognitive load interface displaying maker profiles and pricing. | `Implemented prototype` |
 | **2. Simple Listing & Order Flow**<br>*(Payment integration can be mocked)* | **Kannada voice-assisted listing (`kn-IN`)** + **Kannada Order Inbox** allowing rural artisans to list verbally without typing and review/accept production allocations. Streamlined retail mock checkout. | `Implemented prototype` |
 | **3. Craft-Storytelling & Pricing Support**<br>*(To communicate handmade value)* | **"Why This Price?" Craft Card:** Transparent breakdown of hand labor hours, authentic materials, and regional heritage to communicate handmade value. QR-linked digital provenance passports (`Planned roadmap`). | `Implemented prototype` / `Planned roadmap` |
-| **4. Capacity-Aware Multi-Artisan Fulfillment**<br>*(Coordinated cluster supply)* | Solves the **scale mismatch** by aggregating fragmented artisan capacity into bulk fulfillment plans for enterprise buyers with dynamic capacity-update recovery. | `Implemented` |
+| **4. Capacity-Aware Multi-Artisan Fulfilment**<br>*(Coordinated cluster supply)* | Solves the **scale mismatch** by aggregating fragmented artisan capacity into bulk fulfilment plans for enterprise buyers with capacity-update recovery. | `Implemented prototype` |
 
 ---
 
@@ -69,8 +69,8 @@ This prototype addresses four PS 4.2 capability areas:
    [ B2B Institutional ]                 [ B2C Retail Discovery ]
    • Bulk orders (200–500 units)         • One-of-a-kind craft items
    • Multi-artisan aggregation           • Direct maker interaction
-   • Deterministic allocation and        • Digital provenance certificates
-     delivery planning                   • Authentic craft stories
+   • Deterministic allocation and        • Craft stories and pricing context
+     delivery planning                   • Transparent craft showcase
             │                                     │
             └──────────────────┬──────────────────┘
                                ▼
@@ -124,7 +124,7 @@ Artisans are sorted descending by $S_i$ (ties broken by higher remaining capacit
 
 $$a_i = \min(c_i, \text{Remaining Demand})$$
 
-### 4. Dynamic Rebalance & Standby Buffers
+### 4. Capacity-Update Rebalancing & Standby Buffers
 Unallocated capacity of partially utilized artisans and zero-allocated qualifying artisans are preserved as active standby reserves. When an artisan reports a capacity drop, the engine rebalances the deficit across available cluster buffers.
 
 ### 5. Shortfall Detection Alert
@@ -155,14 +155,14 @@ $$\text{Shortfall} = \max\left(0, D - \sum_{i=1}^{n} a_i\right)$$
 ```
 Initial Execution:   80 + 70 + 50            = 200 / 200 (100% Fulfilled)
 Capacity Disruption: Artisan A capacity reduces from 80 to 40 (-40 deficit)
-Dynamic Rebalance:   A(40) + B(70) + C(60) + D(30) = 200 / 200 (Deficit fully recovered)
+Capacity Recovery:   A(40) + B(70) + C(60) + D(30) = 200 / 200 (Deficit fully recovered)
 ```
 
 ---
 
 ## Voice-Assisted Onboarding (kn-IN)
 
-To eliminate digital literacy barriers, artisans register their inventory using browser-based voice input:
+To reduce digital-literacy and typing barriers, artisans register their inventory using browser-based voice input:
 
 ```
 [ Spoken Kannada Audio ]
@@ -193,17 +193,17 @@ All technical claims within this repository are categorized into verified tiers 
 
 | Feature | Correct Status | Operational Reality |
 | :--- | :---: | :--- |
-| **Storefront & Catalogue** | `Implemented` | Responsive product catalogue showcasing authentic maker profiles, craft items, and retail pricing. |
-| **Multi-artisan allocation** | `Implemented` | Deterministic score calculation ($S_i$) and sequential allocation execute in pure TypeScript within the repository. |
-| **Capacity-update rebalancing** | `Implemented` | Recalculates allocation after a capacity update and routes available standby capacity in the prototype. |
+| **Storefront & Catalogue** | `Implemented prototype` | Responsive product catalogue showcasing authentic maker profiles, craft items, and retail pricing. |
+| **Multi-artisan allocation** | `Implemented prototype` | Deterministic score calculation ($S_i$) and sequential allocation execute in pure TypeScript within the repository. |
+| **Capacity-update rebalancing** | `Implemented prototype` | Recalculates allocation after a capacity update and routes available standby capacity in the prototype. |
 | **Kannada voice UI** | `Implemented prototype` | Browser-based Web Speech API with language tag `kn-IN` and heuristic extraction. |
 | **"Why This Price?" Craft Card** | `Implemented prototype` | Transparent breakdown of labor hours, materials, and regional heritage to communicate handmade value. |
 | **Artisan Order Inbox** | `Implemented prototype` | Visual Kannada interface for rural artisans to review and accept cluster production commitments. |
-| **200-unit scenario** | `Demonstrated benchmark scenario` | Benchmark test data used to prove algorithmic correctness for a 200-unit Kasuti fulfillment order. |
+| **200-unit scenario** | `Demonstrated benchmark scenario` | Benchmark test data used to prove algorithmic correctness for a 200-unit Kasuti fulfilment order. |
 | **Provenance/QR** | `Planned roadmap` | Digital Provenance Passports linking each product to maker bio and cluster heritage to support artisan pricing. |
 | **Artisan verification** | `Pilot target` | Identity and craft verification planned during onboarding for field pilot. |
 | **50+ maker expansion** | `Pilot target` | Planned 90-day onboarding milestone across Karnataka artisan clusters (Kasuti & Beedu crafts). |
-| **Transparent artisan payout model** | `Pilot target` | Maximize transparent artisan earnings through clearly itemized platform and fulfillment costs. |
+| **Transparent artisan payout model** | `Pilot target` | Maximize transparent artisan earnings through clearly itemized platform and fulfilment costs. |
 
 ---
 
@@ -224,24 +224,24 @@ d:/KalaSamanvaya/
 │   ├── app/                       # Next.js App Router (pages and API handlers)
 │   │   ├── layout.tsx             # Root layout with shared navigation & brand footer
 │   │   ├── page.tsx               # Landing page highlighting problem, solution & entry points
-│   │   ├── b2b/page.tsx           # B2B Bulk Order Allocation & Dynamic Recovery Console
+│   │   ├── b2b/page.tsx           # B2B Bulk Order Allocation & Capacity Recovery Console
 │   │   ├── artisan/onboard/page.tsx # Kannada voice listing interface (kn-IN)
 │   │   ├── marketplace/page.tsx   # B2C Retail Discovery catalog
-│   │   ├── provenance/[id]/page.tsx # QR-verifiable authenticity passport
+│   │   ├── provenance/[id]/page.tsx # Authenticity & craft story page (Roadmap prototype)
 │   │   └── api/
 │   │       ├── allocate/route.ts  # Deterministic matching & greedy allocation endpoint
-│   │       ├── reallocate/route.ts# Dynamic dropout rebalance simulator endpoint
+│   │       ├── reallocate/route.ts# Capacity-update rebalance simulator endpoint
 │   │       └── voice-parse/route.ts# Kannada transcript parsing endpoint
 │   │
 │   ├── components/                # Modular UI Components
 │   │   ├── b2b/                   # Allocation graph, shortfall alert, recovery simulator
 │   │   ├── voice/                 # Web Speech API recorder & structured review modal
-│   │   ├── marketplace/           # Product cards, craft filters, provenance badges
+│   │   ├── marketplace/           # Product cards, craft filters, craft story cards
 │   │   ├── shared/                # Navbar, Footer, Language toggle
 │   │   └── ui/                    # Reusable button, card, badge primitives
 │   │
 │   ├── lib/                       # Algorithmic Core & Utility Layer
-│   │   ├── engine/                # Core Fulfillment Engine
+│   │   ├── engine/                # Core Fulfilment Engine
 │   │   │   ├── types.ts           # Type definitions (Artisan, Order, AllocationResult)
 │   │   │   ├── scoring.ts         # Match score calculation: Sᵢ = 0.45·Aᵢ + 0.35·Tᵢ + 0.20·Lᵢ
 │   │   │   ├── allocator.ts       # Greedy sequential allocator & shortfall detector
@@ -249,7 +249,7 @@ d:/KalaSamanvaya/
 │   │   ├── voice/                 # Regional Kannada Language Helpers
 │   │   │   └── kannadaKeywords.ts # Vernacular dictionary & heuristic parser for Kasuti, Pottery, Beedu
 │   │   ├── db/                    # Data Layer
-│   │   │   └── mockData.ts        # Golden dataset (Artisans A, B, C, D with verified scores)
+│   │   │   └── mockData.ts        # Benchmark dataset with seeded scores (Artisans A, B, C, D)
 │   │   └── utils.ts               # Currency formatting (INR) & classname merger
 │   │
 │   └── styles/
@@ -309,7 +309,7 @@ Computes deterministic order allocation across registered cluster makers.
 ### 2. Recalculate on Dropout
 **`POST /api/reallocate`**
 
-Triggers dynamic recovery when an active maker encounters a capacity constraint.
+Triggers capacity recovery when an active maker encounters a capacity constraint.
 
 ```json
 // Request Body
@@ -343,8 +343,8 @@ Voice Onboarding ──▶ Direct Catalogue Sales ──▶ Coordinated Bulk Cap
 ```
 
 * **From Discovery to Coordination:** Ordinary storefronts connect 1 buyer to 1 seller. KalaSamanvaya gives artisans a direct storefront AND coordinates 1 enterprise order across $N$ participating makers.
-* **Craft-Agnostic Core Engine:** The fulfillment algorithm operates on 4 standardized inputs: `[Craft Type] + [Capacity] + [Turnaround] + [Location]`. Extensible to Channapatna toys, Kinnal crafts, and Ilkal weaving post-pilot.
-* **Operational Data Advantage:** Aggregating structured cluster capacity data through active platform operations creates a dependable fulfillment asset that standard marketplaces lack.
+* **Craft-Agnostic Core Engine:** The fulfilment algorithm operates on 4 standardized inputs: `[Craft Type] + [Capacity] + [Turnaround] + [Location]`. Extensible to Channapatna toys, Kinnal crafts, and Ilkal weaving post-pilot.
+* **Operational Data Advantage:** Aggregating structured cluster capacity data through active platform operations creates a dependable fulfilment asset that standard marketplaces lack.
 
 ---
 
