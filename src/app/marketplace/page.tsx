@@ -7,6 +7,7 @@ import WhyThisPriceModal from "@/components/marketplace/WhyThisPriceModal";
 import MockCheckoutModal from "@/components/marketplace/MockCheckoutModal";
 import FolkArtBorder from "@/components/shared/FolkArtBorder";
 import FolkArtBanner from "@/components/shared/FolkArtBanner";
+import ScrollReveal from "@/components/shared/ScrollReveal";
 import {
   ShieldCheck,
   HeartHandshake,
@@ -66,7 +67,7 @@ export default function MarketplacePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             
             {/* Left Hero Column */}
-            <div className="lg:col-span-7 space-y-6">
+            <ScrollReveal direction="up" className="lg:col-span-7 space-y-6">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-amber-800/20 text-[#C85A32] text-xs font-semibold tracking-wider uppercase shadow-sm">
                 <Award className="w-3.5 h-3.5 text-[#C85A32]" />
                 <span>Authentic Karnataka Heritage Handlooms & Crafts</span>
@@ -84,7 +85,7 @@ export default function MarketplacePage() {
               <div className="flex flex-wrap items-center gap-4 pt-2">
                 <a
                   href="#catalog"
-                  className="px-6 py-3 rounded-full bg-[#C85A32] hover:bg-[#a84420] text-white font-bold text-sm shadow-md transition-all hover:scale-105 flex items-center gap-2"
+                  className="px-6 py-3 rounded-full bg-[#C85A32] hover:bg-[#a84420] text-white font-bold text-sm shadow-md transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2"
                 >
                   <span>Explore Collection</span>
                   <ArrowRight className="w-4 h-4" />
@@ -92,7 +93,7 @@ export default function MarketplacePage() {
 
                 <button
                   onClick={() => setActiveStoryProduct(ARTISAN_PRODUCTS[0])}
-                  className="px-6 py-3 rounded-full border border-stone-300 bg-white hover:bg-amber-50 text-[#2A1810] font-semibold text-sm transition-colors flex items-center gap-2 shadow-sm"
+                  className="px-6 py-3 rounded-full border border-stone-300 bg-white hover:bg-amber-50 text-[#2A1810] font-semibold text-sm transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2 shadow-sm"
                 >
                   <Info className="w-4 h-4 text-[#C85A32]" />
                   <span>Why This Price? (ಬೆಲೆ ವಿವರ)</span>
@@ -114,10 +115,10 @@ export default function MarketplacePage() {
                   <span>Counted-Thread Authenticity</span>
                 </div>
               </div>
-            </div>
+            </ScrollReveal>
 
             {/* Right Hero Column: Featured Showcase Card */}
-            <div className="lg:col-span-5">
+            <ScrollReveal direction="left" delayMs={150} className="lg:col-span-5">
               <div className="relative rounded-2xl overflow-hidden border border-amber-900/15 shadow-xl bg-white p-3.5">
                 <div className="relative aspect-[4/3] rounded-xl overflow-hidden">
                   <img
@@ -147,14 +148,14 @@ export default function MarketplacePage() {
                   </div>
                   <button
                     onClick={() => setActiveStoryProduct(ARTISAN_PRODUCTS[0])}
-                    className="px-3.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-[#2A1810] text-xs font-semibold border border-amber-300 flex items-center gap-1.5 transition-colors"
+                    className="px-3.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-[#2A1810] text-xs font-semibold border border-amber-300 flex items-center gap-1.5 transition-all duration-200 hover:-translate-y-0.5"
                   >
                     <Receipt className="w-3.5 h-3.5 text-[#C85A32]" />
                     <span>Cost Breakdown</span>
                   </button>
                 </div>
               </div>
-            </div>
+            </ScrollReveal>
 
           </div>
         </div>
@@ -166,19 +167,19 @@ export default function MarketplacePage() {
       {/* ── 2. OUR OFFERINGS & STORY SECTION ── */}
       <section className="bg-white py-16 px-4 sm:px-6 lg:px-8 border-b border-stone-200">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center max-w-3xl mx-auto mb-12">
+          <ScrollReveal direction="up" className="text-center max-w-3xl mx-auto mb-12">
             <span className="text-xs font-bold uppercase tracking-widest text-[#C85A32]">
               ಪಾರಂಪರಿಕ ಕರಕುಶಲ ಕಲೆಗಳು
             </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#2A1810] mt-1">
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-[#2A1810] mt-1">
               Our Offerings & Living Traditions
             </h2>
             <div className="w-16 h-1 bg-[#C85A32] mx-auto mt-3 rounded-full" />
-          </div>
+          </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
             {/* Story Text */}
-            <div className="md:col-span-7 space-y-4 text-stone-600 text-sm sm:text-base leading-relaxed">
+            <ScrollReveal direction="right" delayMs={100} className="md:col-span-7 space-y-4 text-stone-600 text-sm sm:text-base leading-relaxed">
               <p>
                 Step into the living heritage of Karnataka, where our unwavering dedication revolves around the revival and fair valuation of traditional artisan art forms.
               </p>
@@ -192,18 +193,18 @@ export default function MarketplacePage() {
               <div className="pt-3 flex flex-wrap gap-3">
                 <Link
                   href="/b2b"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#FAF7F2] hover:bg-amber-50 text-[#2A1810] border border-stone-300 text-xs font-semibold transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#FAF7F2] hover:bg-amber-50 text-[#2A1810] border border-stone-300 text-xs font-semibold transition-all duration-200 hover:-translate-y-0.5"
                 >
                   <span>Need Bulk Quantities? Open B2B Fulfilment Console</span>
                   <ArrowRight className="w-3.5 h-3.5 text-[#C85A32]" />
                 </Link>
               </div>
-            </div>
+            </ScrollReveal>
 
             {/* Offerings Feature Grid */}
-            <div className="md:col-span-5 bg-[#FAF7F2] p-5 rounded-2xl border border-stone-200 shadow-sm">
+            <ScrollReveal direction="left" delayMs={150} className="md:col-span-5 bg-[#FAF7F2] p-5 rounded-2xl border border-stone-200 shadow-sm">
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-3.5 bg-white rounded-xl border border-stone-200">
+                <div className="p-3.5 bg-white rounded-xl border border-stone-200 hover:border-amber-400 transition-colors">
                   <div className="w-7 h-7 rounded-lg bg-amber-100 text-[#C85A32] flex items-center justify-center font-bold text-xs mb-2">
                     01
                   </div>
@@ -211,7 +212,7 @@ export default function MarketplacePage() {
                   <p className="text-[11px] text-stone-500 mt-1">Dharwad & Navalgund GI clusters</p>
                 </div>
 
-                <div className="p-3.5 bg-white rounded-xl border border-stone-200">
+                <div className="p-3.5 bg-white rounded-xl border border-stone-200 hover:border-amber-400 transition-colors">
                   <div className="w-7 h-7 rounded-lg bg-amber-100 text-[#C85A32] flex items-center justify-center font-bold text-xs mb-2">
                     02
                   </div>
@@ -219,7 +220,7 @@ export default function MarketplacePage() {
                   <p className="text-[11px] text-stone-500 mt-1">Wildgrass coastal plaiting</p>
                 </div>
 
-                <div className="p-3.5 bg-white rounded-xl border border-stone-200">
+                <div className="p-3.5 bg-white rounded-xl border border-stone-200 hover:border-amber-400 transition-colors">
                   <div className="w-7 h-7 rounded-lg bg-amber-100 text-[#C85A32] flex items-center justify-center font-bold text-xs mb-2">
                     03
                   </div>
@@ -227,7 +228,7 @@ export default function MarketplacePage() {
                   <p className="text-[11px] text-stone-500 mt-1">Netravati riverbed silt & agate burnish</p>
                 </div>
 
-                <div className="p-3.5 bg-white rounded-xl border border-stone-200">
+                <div className="p-3.5 bg-white rounded-xl border border-stone-200 hover:border-amber-400 transition-colors">
                   <div className="w-7 h-7 rounded-lg bg-amber-100 text-[#C85A32] flex items-center justify-center font-bold text-xs mb-2">
                     04
                   </div>
@@ -235,7 +236,7 @@ export default function MarketplacePage() {
                   <p className="text-[11px] text-stone-500 mt-1">99.9% fine silver wire on blackened alloy</p>
                 </div>
               </div>
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
@@ -248,7 +249,7 @@ export default function MarketplacePage() {
 
       {/* ── 3. STOREFRONT PRODUCT CATALOG (Truly Tribal "Our Shop") ── */}
       <section id="catalog" className="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <ScrollReveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-[#C85A32]">
               ಕರ್ನಾಟಕ ಕರಕುಶಲ ಭಂಡಾರ
@@ -272,48 +273,51 @@ export default function MarketplacePage() {
               className="w-full pl-9 pr-4 py-2 bg-white rounded-full border border-stone-300 text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-[#C85A32]"
             />
           </div>
-        </div>
+        </ScrollReveal>
 
         {/* Category Filter Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 scrollbar-none">
-          <div className="flex items-center gap-1.5 text-xs font-bold text-stone-500 mr-2 flex-shrink-0">
-            <Filter className="w-3.5 h-3.5 text-[#C85A32]" />
-            <span>Filter Craft:</span>
+        <ScrollReveal direction="up" delayMs={50}>
+          <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 scrollbar-none">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-stone-500 mr-2 flex-shrink-0">
+              <Filter className="w-3.5 h-3.5 text-[#C85A32]" />
+              <span>Filter Craft:</span>
+            </div>
+
+            {(
+              [
+                { id: "ALL", label: "All Crafts (ಎಲ್ಲಾ)" },
+                { id: "Kasuti", label: "Kasuti Embroidery (ಕಸೂತಿ)" },
+                { id: "Beedu", label: "Beedu Basketry (ಬೀಡು ಬುಟ್ಟಿ)" },
+                { id: "Pottery", label: "Coastal Pottery (ಕರಾವಳಿ ಮಡಿಕೆ)" },
+                { id: "Bidriware", label: "Bidri Metalcraft (ಬಿದ್ರಿ ಕಲೆ)" }
+              ] as const
+            ).map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 ${
+                  selectedCategory === cat.id
+                    ? "bg-[#C85A32] text-white shadow-sm"
+                    : "bg-white text-stone-700 border border-stone-300 hover:bg-amber-50"
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
           </div>
+        </ScrollReveal>
 
-          {(
-            [
-              { id: "ALL", label: "All Crafts (ಎಲ್ಲಾ)" },
-              { id: "Kasuti", label: "Kasuti Embroidery (ಕಸೂತಿ)" },
-              { id: "Beedu", label: "Beedu Basketry (ಬೀಡು ಬುಟ್ಟಿ)" },
-              { id: "Pottery", label: "Coastal Pottery (ಕರಾವಳಿ ಮಡಿಕೆ)" },
-              { id: "Bidriware", label: "Bidri Metalcraft (ಬಿದ್ರಿ ಕಲೆ)" }
-            ] as const
-          ).map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-                selectedCategory === cat.id
-                  ? "bg-[#C85A32] text-white shadow-sm"
-                  : "bg-white text-stone-700 border border-stone-300 hover:bg-amber-50"
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Product Grid */}
+        {/* Product Grid with Staggered Scroll Reveal */}
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {filteredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onOpenWhyThisPrice={(p) => setActiveStoryProduct(p)}
-                onOpenCheckout={(p) => setActiveCheckoutProduct(p)}
-              />
+            {filteredProducts.map((product, idx) => (
+              <ScrollReveal key={product.id} direction="up" delayMs={(idx % 6) * 80}>
+                <ProductCard
+                  product={product}
+                  onOpenWhyThisPrice={(p) => setActiveStoryProduct(p)}
+                  onOpenCheckout={(p) => setActiveCheckoutProduct(p)}
+                />
+              </ScrollReveal>
             ))}
           </div>
         ) : (

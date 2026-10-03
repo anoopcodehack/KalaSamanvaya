@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import FolkArtBanner from "@/components/shared/FolkArtBanner";
 import FolkArtBorder from "@/components/shared/FolkArtBorder";
+import ScrollReveal from "@/components/shared/ScrollReveal";
 import { ARTISAN_PRODUCTS, ArtisanProduct } from "@/lib/db/products";
 import WhyThisPriceModal from "@/components/marketplace/WhyThisPriceModal";
 import MockCheckoutModal from "@/components/marketplace/MockCheckoutModal";
@@ -48,7 +49,7 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-t from-[#1F130B] via-transparent to-black/30" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 z-10 w-full">
-          <div className="max-w-2xl space-y-6">
+          <ScrollReveal direction="up" durationMs={800} className="max-w-2xl space-y-6">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-950/80 border border-amber-600/50 text-amber-300 text-xs font-bold tracking-wider uppercase shadow-lg">
               <Award className="w-3.5 h-3.5 text-[#E67E22]" />
               <span>ಕಲಾ ಸಮನ್ವಯ • Handcrafted in Karnataka</span>
@@ -66,15 +67,15 @@ export default function HomePage() {
             <div className="pt-2 flex flex-wrap items-center gap-4">
               <Link
                 href="/marketplace"
-                className="px-8 py-3.5 rounded-full bg-[#E67E22] hover:bg-[#cf6d17] text-white font-bold text-sm shadow-xl shadow-amber-950/50 transition-all hover:scale-105 inline-flex items-center gap-2"
+                className="group px-8 py-3.5 rounded-full bg-[#E67E22] hover:bg-[#cf6d17] text-white font-bold text-sm shadow-xl shadow-amber-950/50 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center gap-2"
               >
                 <span>Explore Curated Shop</span>
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
               </Link>
 
               <button
                 onClick={() => setActiveStoryProduct(ARTISAN_PRODUCTS[0])}
-                className="px-6 py-3.5 rounded-full border border-amber-500/60 bg-black/40 hover:bg-black/60 text-amber-200 font-semibold text-sm transition-all inline-flex items-center gap-2 backdrop-blur-sm"
+                className="px-6 py-3.5 rounded-full border border-amber-500/60 bg-black/40 hover:bg-black/60 text-amber-200 font-semibold text-sm transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center gap-2 backdrop-blur-sm"
               >
                 <Info className="w-4 h-4 text-[#E67E22]" />
                 <span>Fair Price Promise (ಬೆಲೆ ವಿವರ)</span>
@@ -100,56 +101,58 @@ export default function HomePage() {
                 <span>Zero Intermediaries</span>
               </div>
             </div>
-          </div>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* ── 2. VIBRANT KALAMKARI KRISHNA & PEACOCKS FOLK ART BANNER ── */}
       <FolkArtBanner variant="krishna" />
 
-      {/* ── 3. HERITAGE IMPACT & ARTISAN HONOR BAR ── */}
+      {/* ── 3. HERITAGE IMPACT & ARTISAN HONOR BAR (Scroll Reveal Animation) ── */}
       <section className="bg-[#180E07] border-b border-amber-950/80 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center divide-y lg:divide-y-0 lg:divide-x divide-amber-900/40">
-            <div className="pt-2 lg:pt-0">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-[#E67E22] block mb-1">
-                Living Traditions
-              </span>
-              <div className="text-2xl sm:text-3xl font-extrabold text-white">4 Craft Clusters</div>
-              <div className="text-xs text-stone-400 mt-1">Dharwad, Bidar, Belagavi & Udupi</div>
-            </div>
+          <ScrollReveal direction="up" delayMs={50}>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center divide-y lg:divide-y-0 lg:divide-x divide-amber-900/40">
+              <div className="pt-2 lg:pt-0">
+                <span className="text-[11px] font-bold uppercase tracking-widest text-[#E67E22] block mb-1">
+                  Living Traditions
+                </span>
+                <div className="text-2xl sm:text-3xl font-extrabold text-white">4 Craft Clusters</div>
+                <div className="text-xs text-stone-400 mt-1">Dharwad, Bidar, Belagavi & Udupi</div>
+              </div>
 
-            <div className="pt-2 lg:pt-0">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-emerald-400 block mb-1">
-                Direct Maker Earnings
-              </span>
-              <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400">₹1,24,500+</div>
-              <div className="text-xs text-stone-400 mt-1">Directly disbursed to artisan families</div>
-            </div>
+              <div className="pt-2 lg:pt-0">
+                <span className="text-[11px] font-bold uppercase tracking-widest text-emerald-400 block mb-1">
+                  Direct Maker Earnings
+                </span>
+                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400">₹1,24,500+</div>
+                <div className="text-xs text-stone-400 mt-1">Directly disbursed to artisan families</div>
+              </div>
 
-            <div className="pt-2 lg:pt-0">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-amber-300 block mb-1">
-                Fair Living Wage
-              </span>
-              <div className="text-2xl sm:text-3xl font-extrabold text-amber-300">75% Direct Pay</div>
-              <div className="text-xs text-stone-400 mt-1">Transparent breakdown on every piece</div>
-            </div>
+              <div className="pt-2 lg:pt-0">
+                <span className="text-[11px] font-bold uppercase tracking-widest text-amber-300 block mb-1">
+                  Fair Living Wage
+                </span>
+                <div className="text-2xl sm:text-3xl font-extrabold text-amber-300">75% Direct Pay</div>
+                <div className="text-xs text-stone-400 mt-1">Transparent breakdown on every piece</div>
+              </div>
 
-            <div className="pt-2 lg:pt-0">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-amber-400 block mb-1">
-                Fair-Trade Guarantee
-              </span>
-              <div className="text-2xl sm:text-3xl font-extrabold text-white">Zero Middlemen</div>
-              <div className="text-xs text-stone-400 mt-1">From artisan hands to your home</div>
+              <div className="pt-2 lg:pt-0">
+                <span className="text-[11px] font-bold uppercase tracking-widest text-amber-400 block mb-1">
+                  Fair-Trade Guarantee
+                </span>
+                <div className="text-2xl sm:text-3xl font-extrabold text-white">Zero Middlemen</div>
+                <div className="text-xs text-stone-400 mt-1">From artisan hands to your home</div>
+              </div>
             </div>
-          </div>
+          </ScrollReveal>
         </div>
       </section>
 
-      {/* ── 4. EXPLORE BY CRAFT TRADITION (Karnataka's Living Heritage Clusters) ── */}
+      {/* ── 4. EXPLORE BY CRAFT TRADITION (Staggered Scroll Animation) ── */}
       <section className="wood-texture py-16 px-4 sm:px-6 lg:px-8 border-b border-amber-950/60">
         <div className="max-w-6xl mx-auto space-y-10">
-          <div className="text-center max-w-2xl mx-auto">
+          <ScrollReveal direction="up" className="text-center max-w-2xl mx-auto">
             <span className="text-xs font-bold uppercase tracking-widest text-[#E67E22]">
               ಕರ್ನಾಟಕದ ಪರಂಪರೆ • Living Traditions
             </span>
@@ -160,190 +163,201 @@ export default function HomePage() {
             <p className="text-xs sm:text-sm text-stone-300 mt-3">
               Generations of indigenous artistry preserved across regional women&apos;s collectives and family guilds.
             </p>
-          </div>
+          </ScrollReveal>
 
+          {/* 4 Category Cards with Staggered Scroll Animation */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Cluster 1: Dharwad Kasuti */}
-            <Link
-              href="/marketplace?category=Kasuti"
-              className="group bg-[#24130A] rounded-2xl overflow-hidden border border-amber-900/50 shadow-lg hover:border-[#E67E22]/80 transition-all duration-300 flex flex-col"
-            >
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-900">
-                <img
-                  src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80"
-                  alt="Dharwad Kasuti Embroidery"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute top-2 left-2">
-                  <span className="px-2.5 py-1 bg-[#E67E22] text-white text-[10px] font-bold rounded-md uppercase tracking-wider shadow">
-                    GI Tagged
-                  </span>
-                </div>
-              </div>
-              <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
-                <div>
-                  <div className="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center gap-1">
-                    <MapPin className="w-3 h-3 text-[#E67E22]" />
-                    <span>Dharwad District</span>
+            <ScrollReveal direction="up" delayMs={0}>
+              <Link
+                href="/marketplace?category=Kasuti"
+                className="group bg-[#24130A] rounded-2xl overflow-hidden border border-amber-900/50 shadow-lg hover:border-[#E67E22]/80 transition-all duration-300 hover:-translate-y-1.5 flex flex-col h-full"
+              >
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-900">
+                  <img
+                    src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80"
+                    alt="Dharwad Kasuti Embroidery"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-2 left-2">
+                    <span className="px-2.5 py-1 bg-[#E67E22] text-white text-[10px] font-bold rounded-md uppercase tracking-wider shadow">
+                      GI Tagged
+                    </span>
                   </div>
-                  <h3 className="text-base font-bold text-white mt-1 group-hover:text-[#E67E22] transition-colors">
-                    Kasuti Handloom Silk
-                  </h3>
-                  <p className="text-xs text-stone-300 mt-1 leading-relaxed">
-                    38 hours of counted-thread needlework with zero visible knots, inspired by Chalukyan temple art.
-                  </p>
                 </div>
-                <div className="pt-2 border-t border-amber-900/40 text-xs font-semibold text-[#E67E22] flex items-center justify-between">
-                  <span>Explore Kasuti</span>
-                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                  <div>
+                    <div className="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                      <MapPin className="w-3 h-3 text-[#E67E22]" />
+                      <span>Dharwad District</span>
+                    </div>
+                    <h3 className="text-base font-bold text-white mt-1 group-hover:text-[#E67E22] transition-colors">
+                      Kasuti Handloom Silk
+                    </h3>
+                    <p className="text-xs text-stone-300 mt-1 leading-relaxed">
+                      38 hours of counted-thread needlework with zero visible knots, inspired by Chalukyan temple art.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-amber-900/40 text-xs font-semibold text-[#E67E22] flex items-center justify-between">
+                    <span>Explore Kasuti</span>
+                    <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </ScrollReveal>
 
             {/* Cluster 2: Bidar Bidriware */}
-            <Link
-              href="/marketplace?category=Bidriware"
-              className="group bg-[#24130A] rounded-2xl overflow-hidden border border-amber-900/50 shadow-lg hover:border-[#E67E22]/80 transition-all duration-300 flex flex-col"
-            >
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-900">
-                <img
-                  src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&w=600&q=80"
-                  alt="Bidar Bidriware Metalwork"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute top-2 left-2">
-                  <span className="px-2.5 py-1 bg-[#E67E22] text-white text-[10px] font-bold rounded-md uppercase tracking-wider shadow">
-                    GI Tagged
-                  </span>
-                </div>
-              </div>
-              <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
-                <div>
-                  <div className="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center gap-1">
-                    <MapPin className="w-3 h-3 text-[#E67E22]" />
-                    <span>Bidar District</span>
+            <ScrollReveal direction="up" delayMs={100}>
+              <Link
+                href="/marketplace?category=Bidriware"
+                className="group bg-[#24130A] rounded-2xl overflow-hidden border border-amber-900/50 shadow-lg hover:border-[#E67E22]/80 transition-all duration-300 hover:-translate-y-1.5 flex flex-col h-full"
+              >
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-900">
+                  <img
+                    src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&w=600&q=80"
+                    alt="Bidar Bidriware Metalwork"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-2 left-2">
+                    <span className="px-2.5 py-1 bg-[#E67E22] text-white text-[10px] font-bold rounded-md uppercase tracking-wider shadow">
+                      GI Tagged
+                    </span>
                   </div>
-                  <h3 className="text-base font-bold text-white mt-1 group-hover:text-[#E67E22] transition-colors">
-                    Bidri Silver Metalcraft
-                  </h3>
-                  <p className="text-xs text-stone-300 mt-1 leading-relaxed">
-                    Centuries-old blackened zinc alloy intricately inlaid with pure silver floral motifs.
-                  </p>
                 </div>
-                <div className="pt-2 border-t border-amber-900/40 text-xs font-semibold text-[#E67E22] flex items-center justify-between">
-                  <span>Explore Bidriware</span>
-                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                  <div>
+                    <div className="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                      <MapPin className="w-3 h-3 text-[#E67E22]" />
+                      <span>Bidar District</span>
+                    </div>
+                    <h3 className="text-base font-bold text-white mt-1 group-hover:text-[#E67E22] transition-colors">
+                      Bidri Silver Metalcraft
+                    </h3>
+                    <p className="text-xs text-stone-300 mt-1 leading-relaxed">
+                      Centuries-old blackened zinc alloy intricately inlaid with pure silver floral motifs.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-amber-900/40 text-xs font-semibold text-[#E67E22] flex items-center justify-between">
+                    <span>Explore Bidriware</span>
+                    <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </ScrollReveal>
 
             {/* Cluster 3: Khanapur Terracotta */}
-            <Link
-              href="/marketplace?category=Pottery"
-              className="group bg-[#24130A] rounded-2xl overflow-hidden border border-amber-900/50 shadow-lg hover:border-[#E67E22]/80 transition-all duration-300 flex flex-col"
-            >
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-900">
-                <img
-                  src="https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80"
-                  alt="Khanapur Terracotta Pottery"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute top-2 left-2">
-                  <span className="px-2.5 py-1 bg-amber-700 text-white text-[10px] font-bold rounded-md uppercase tracking-wider shadow">
-                    River Clay
-                  </span>
-                </div>
-              </div>
-              <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
-                <div>
-                  <div className="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center gap-1">
-                    <MapPin className="w-3 h-3 text-[#E67E22]" />
-                    <span>Belagavi District</span>
+            <ScrollReveal direction="up" delayMs={200}>
+              <Link
+                href="/marketplace?category=Pottery"
+                className="group bg-[#24130A] rounded-2xl overflow-hidden border border-amber-900/50 shadow-lg hover:border-[#E67E22]/80 transition-all duration-300 hover:-translate-y-1.5 flex flex-col h-full"
+              >
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-900">
+                  <img
+                    src="https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80"
+                    alt="Khanapur Terracotta Pottery"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-2 left-2">
+                    <span className="px-2.5 py-1 bg-amber-700 text-white text-[10px] font-bold rounded-md uppercase tracking-wider shadow">
+                      River Clay
+                    </span>
                   </div>
-                  <h3 className="text-base font-bold text-white mt-1 group-hover:text-[#E67E22] transition-colors">
-                    Khanapur Terracotta
-                  </h3>
-                  <p className="text-xs text-stone-300 mt-1 leading-relaxed">
-                    Wheel-thrown natural earthenware crafted from Malaprabha riverbed clay and wood fired.
-                  </p>
                 </div>
-                <div className="pt-2 border-t border-amber-900/40 text-xs font-semibold text-[#E67E22] flex items-center justify-between">
-                  <span>Explore Pottery</span>
-                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                  <div>
+                    <div className="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                      <MapPin className="w-3 h-3 text-[#E67E22]" />
+                      <span>Belagavi District</span>
+                    </div>
+                    <h3 className="text-base font-bold text-white mt-1 group-hover:text-[#E67E22] transition-colors">
+                      Khanapur Terracotta
+                    </h3>
+                    <p className="text-xs text-stone-300 mt-1 leading-relaxed">
+                      Wheel-thrown natural earthenware crafted from Malaprabha riverbed clay and wood fired.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-amber-900/40 text-xs font-semibold text-[#E67E22] flex items-center justify-between">
+                    <span>Explore Pottery</span>
+                    <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </ScrollReveal>
 
             {/* Cluster 4: Udupi Beedu Basketry */}
-            <Link
-              href="/marketplace?category=Beedu"
-              className="group bg-[#24130A] rounded-2xl overflow-hidden border border-amber-900/50 shadow-lg hover:border-[#E67E22]/80 transition-all duration-300 flex flex-col"
-            >
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-900">
-                <img
-                  src="https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=600&q=80"
-                  alt="Udupi Beedu Wildgrass Baskets"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute top-2 left-2">
-                  <span className="px-2.5 py-1 bg-emerald-700 text-white text-[10px] font-bold rounded-md uppercase tracking-wider shadow">
-                    Eco-Friendly
-                  </span>
-                </div>
-              </div>
-              <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
-                <div>
-                  <div className="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center gap-1">
-                    <MapPin className="w-3 h-3 text-[#E67E22]" />
-                    <span>Udupi Coastal Belt</span>
+            <ScrollReveal direction="up" delayMs={300}>
+              <Link
+                href="/marketplace?category=Beedu"
+                className="group bg-[#24130A] rounded-2xl overflow-hidden border border-amber-900/50 shadow-lg hover:border-[#E67E22]/80 transition-all duration-300 hover:-translate-y-1.5 flex flex-col h-full"
+              >
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-900">
+                  <img
+                    src="https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=600&q=80"
+                    alt="Udupi Beedu Wildgrass Baskets"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-2 left-2">
+                    <span className="px-2.5 py-1 bg-emerald-700 text-white text-[10px] font-bold rounded-md uppercase tracking-wider shadow">
+                      Eco-Friendly
+                    </span>
                   </div>
-                  <h3 className="text-base font-bold text-white mt-1 group-hover:text-[#E67E22] transition-colors">
-                    Beedu Grass Basketry
-                  </h3>
-                  <p className="text-xs text-stone-300 mt-1 leading-relaxed">
-                    Sun-cured riverside wildgrass plaited by coastal women&apos;s self-help groups without chemicals.
-                  </p>
                 </div>
-                <div className="pt-2 border-t border-amber-900/40 text-xs font-semibold text-[#E67E22] flex items-center justify-between">
-                  <span>Explore Basketry</span>
-                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                  <div>
+                    <div className="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                      <MapPin className="w-3 h-3 text-[#E67E22]" />
+                      <span>Udupi Coastal Belt</span>
+                    </div>
+                    <h3 className="text-base font-bold text-white mt-1 group-hover:text-[#E67E22] transition-colors">
+                      Beedu Grass Basketry
+                    </h3>
+                    <p className="text-xs text-stone-300 mt-1 leading-relaxed">
+                      Sun-cured riverside wildgrass plaited by coastal women&apos;s self-help groups without chemicals.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-amber-900/40 text-xs font-semibold text-[#E67E22] flex items-center justify-between">
+                    <span>Explore Basketry</span>
+                    <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </ScrollReveal>
           </div>
 
-          {/* Warm Artisan Voice Portal Invitation */}
-          <div className="bg-[#2A170F] rounded-2xl p-6 sm:p-8 border border-amber-900/60 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6">
-            <div className="space-y-2 text-center sm:text-left">
-              <div className="inline-flex items-center gap-2 text-[#E67E22] text-xs font-bold uppercase tracking-wider">
-                <Mic className="w-4 h-4" />
-                <span>ಕುಶಲಕರ್ಮಿಗಳಿಗೆ • For Karnataka Artisans</span>
+          {/* Warm Artisan Voice Portal Invitation (Scroll Reveal Animation) */}
+          <ScrollReveal direction="up" delayMs={150}>
+            <div className="bg-[#2A170F] rounded-2xl p-6 sm:p-8 border border-amber-900/60 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6 hover:border-amber-700/60 transition-colors">
+              <div className="space-y-2 text-center sm:text-left">
+                <div className="inline-flex items-center gap-2 text-[#E67E22] text-xs font-bold uppercase tracking-wider">
+                  <Mic className="w-4 h-4" />
+                  <span>ಕುಶಲಕರ್ಮಿಗಳಿಗೆ • For Karnataka Artisans</span>
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-white">
+                  Speak in Kannada to List Your Craft
+                </h3>
+                <p className="text-xs sm:text-sm text-stone-300 max-w-xl">
+                  Rural artisans don&apos;t need to type English forms. Simply describe your handicraft by voice in your mother tongue, and our platform will create your listing instantly.
+                </p>
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-white">
-                Speak in Kannada to List Your Craft
-              </h3>
-              <p className="text-xs sm:text-sm text-stone-300 max-w-xl">
-                Rural artisans don&apos;t need to type English forms. Simply describe your handicraft by voice in your mother tongue, and our platform will create your listing instantly.
-              </p>
+              <Link
+                href="/artisan/onboard"
+                className="group px-6 py-3 rounded-full bg-[#E67E22] hover:bg-[#cf6d17] text-white font-bold text-xs shadow-lg transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2 flex-shrink-0"
+              >
+                <Mic className="w-4 h-4 transition-transform group-hover:rotate-12" />
+                <span>Launch Voice Portal</span>
+              </Link>
             </div>
-            <Link
-              href="/artisan/onboard"
-              className="px-6 py-3 rounded-full bg-[#E67E22] hover:bg-[#cf6d17] text-white font-bold text-xs shadow-lg transition-all hover:scale-105 flex items-center gap-2 flex-shrink-0"
-            >
-              <Mic className="w-4 h-4" />
-              <span>Launch Voice Portal</span>
-            </Link>
-          </div>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* ── 5. ROYAL ELEPHANT MURAL FOLK ART BANNER ── */}
       <FolkArtBanner variant="elephant" />
 
-      {/* ── 6. THE STORY BEHIND EVERY CRAFT (Warm Truly Tribal Storytelling) ── */}
+      {/* ── 6. THE STORY BEHIND EVERY CRAFT (Scroll Reveal Animation) ── */}
       <section className="bg-[#180E07] py-16 px-4 sm:px-6 lg:px-8 border-b border-amber-950">
         <div className="max-w-6xl mx-auto space-y-10">
-          <div className="text-center max-w-2xl mx-auto">
+          <ScrollReveal direction="up" className="text-center max-w-2xl mx-auto">
             <span className="text-xs font-bold uppercase tracking-widest text-[#E67E22]">
               ಕೈಮಗ್ಗದ ಪವಿತ್ರತೆ • Why Handcrafted Matters
             </span>
@@ -351,11 +365,11 @@ export default function HomePage() {
               Handmade With Devotion, Not Mass-Produced by Machines
             </h2>
             <div className="w-16 h-1 bg-[#E67E22] mx-auto mt-2.5 rounded-full" />
-          </div>
+          </ScrollReveal>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             {/* Story Text */}
-            <div className="space-y-4 text-xs sm:text-sm text-stone-300 leading-relaxed">
+            <ScrollReveal direction="left" delayMs={100} className="space-y-4 text-xs sm:text-sm text-stone-300 leading-relaxed">
               <p>
                 In a world inundated with synthetic machine replicas, each piece at <strong>KalaSamanvaya</strong> preserves the soul, heritage, and generational knowledge of Karnataka&apos;s village craft traditions.
               </p>
@@ -388,16 +402,16 @@ export default function HomePage() {
               <div className="pt-2">
                 <button
                   onClick={() => setActiveStoryProduct(ARTISAN_PRODUCTS[0])}
-                  className="px-6 py-3 rounded-full border border-amber-500/60 bg-amber-950/40 hover:bg-amber-950/80 text-amber-200 font-bold text-xs transition-all inline-flex items-center gap-2"
+                  className="px-6 py-3 rounded-full border border-amber-500/60 bg-amber-950/40 hover:bg-amber-950/80 text-amber-200 font-bold text-xs transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center gap-2"
                 >
                   <Receipt className="w-4 h-4 text-[#E67E22]" />
                   <span>See Honest Cost & Wage Breakdown (ಬೆಲೆ ವಿವರ)</span>
                 </button>
               </div>
-            </div>
+            </ScrollReveal>
 
-            {/* Showcase Visual */}
-            <div className="rounded-2xl overflow-hidden border-2 border-amber-900/50 shadow-2xl bg-[#24130A] p-2.5 group">
+            {/* Showcase Visual with Scroll Reveal */}
+            <ScrollReveal direction="right" delayMs={100} className="rounded-2xl overflow-hidden border-2 border-amber-900/50 shadow-2xl bg-[#24130A] p-2.5 group">
               <div className="aspect-[4/3] rounded-xl overflow-hidden relative">
                 <img
                   src="/hero-crafts.jpg"
@@ -412,7 +426,7 @@ export default function HomePage() {
                   </p>
                 </div>
               </div>
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
@@ -420,11 +434,11 @@ export default function HomePage() {
       {/* ── 7. GOLDEN OCHRE MITHILA / MADHUBANI FOLK ART BANNER ── */}
       <FolkArtBanner variant="madhubani" />
 
-      {/* ── 8. OUR SHOP (Truly Tribal Curated Products) ── */}
+      {/* ── 8. OUR SHOP (Scroll Reveal Product Cards) ── */}
       <section className="wood-texture py-20 px-4 sm:px-6 lg:px-8 border-y border-amber-950/60">
         <div className="max-w-7xl mx-auto space-y-12">
           {/* Centered Heading */}
-          <div className="text-center">
+          <ScrollReveal direction="up" className="text-center">
             <span className="text-xs font-bold uppercase tracking-widest text-[#E67E22]">
               ವಿಶೇಷ ಕಲಾಕೃತಿಗಳು • Curated Collection
             </span>
@@ -435,105 +449,104 @@ export default function HomePage() {
             <p className="text-xs text-stone-300 mt-2">
               Karnataka Handcrafted Masterpieces • Direct from Rural Artisan Collectives
             </p>
-          </div>
+          </ScrollReveal>
 
-          {/* Product Cards Row */}
+          {/* Product Cards Row with Staggered Scroll Animation */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredShopProducts.map((product, idx) => (
-              <div
-                key={product.id}
-                className="group bg-[#2A1810] rounded-xl overflow-hidden border border-amber-900/40 shadow-lg flex flex-col justify-between hover:border-[#E67E22]/60 transition-all duration-300"
-              >
-                {/* Image Container with Orange Ribbon */}
-                <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-900">
-                  <img
-                    src={product.imageUrl}
-                    alt={product.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
+              <ScrollReveal key={product.id} direction="up" delayMs={idx * 100}>
+                <div className="group bg-[#2A1810] rounded-xl overflow-hidden border border-amber-900/40 shadow-lg flex flex-col justify-between hover:border-[#E67E22]/60 hover:-translate-y-1.5 transition-all duration-300 h-full">
+                  {/* Image Container with Orange Ribbon */}
+                  <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-900">
+                    <img
+                      src={product.imageUrl}
+                      alt={product.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
 
-                  {/* Ribbon Badge */}
-                  <div className="absolute top-0 left-0">
-                    <span className="inline-block px-3 py-1 bg-[#E67E22] text-white text-[10px] font-extrabold uppercase tracking-wider shadow-md">
-                      {idx === 0 ? "New Arrival" : "EXCLUSIVE PRODUCT"}
-                    </span>
-                  </div>
-
-                  {/* Quick View Hover Button */}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <button
-                      onClick={() => setActiveStoryProduct(product)}
-                      className="px-4 py-2 rounded-md bg-white/90 backdrop-blur-sm text-stone-900 font-bold text-xs shadow-lg hover:bg-white flex items-center gap-1.5 transition-transform hover:scale-105"
-                    >
-                      <Eye className="w-3.5 h-3.5 text-[#E67E22]" />
-                      <span>Quick View</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Card Bottom Content */}
-                <div className="p-4 space-y-2 flex-1 flex flex-col justify-between">
-                  <div>
-                    <h3 className="text-sm font-bold text-white line-clamp-1 group-hover:text-[#E67E22] transition-colors">
-                      {product.title}
-                    </h3>
-                    <p className="text-[11px] text-stone-400 line-clamp-1 mt-0.5">
-                      By {product.artisanName} • {product.artisanCluster}
-                    </p>
-                  </div>
-
-                  <div className="pt-2 border-t border-amber-900/40 flex items-center justify-between">
-                    <div>
-                      <span className="text-sm font-bold text-[#E67E22]">
-                        ₹{product.priceINR.toLocaleString("en-IN")}
-                      </span>
-                      <span className="ml-1.5 text-xs text-stone-500 line-through">
-                        ₹{product.compareAtPriceINR.toLocaleString("en-IN")}
+                    {/* Ribbon Badge */}
+                    <div className="absolute top-0 left-0">
+                      <span className="inline-block px-3 py-1 bg-[#E67E22] text-white text-[10px] font-extrabold uppercase tracking-wider shadow-md">
+                        {idx === 0 ? "New Arrival" : "EXCLUSIVE PRODUCT"}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-1.5">
+                    {/* Quick View Hover Button */}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <button
                         onClick={() => setActiveStoryProduct(product)}
-                        title="Why This Price?"
-                        className="p-1.5 rounded-lg border border-amber-700/50 hover:bg-amber-900/40 text-amber-300 text-xs transition-colors"
+                        className="px-4 py-2 rounded-md bg-white/90 backdrop-blur-sm text-stone-900 font-bold text-xs shadow-lg hover:bg-white flex items-center gap-1.5 transition-transform hover:scale-105"
                       >
-                        <Info className="w-3.5 h-3.5 text-[#E67E22]" />
-                      </button>
-
-                      <button
-                        onClick={() => setActiveCheckoutProduct(product)}
-                        className="px-3 py-1.5 rounded-lg bg-[#E67E22] hover:bg-[#cf6d17] text-white text-xs font-semibold transition-colors flex items-center gap-1"
-                      >
-                        <ShoppingBag className="w-3 h-3" />
-                        <span>Buy</span>
+                        <Eye className="w-3.5 h-3.5 text-[#E67E22]" />
+                        <span>Quick View</span>
                       </button>
                     </div>
                   </div>
+
+                  {/* Card Bottom Content */}
+                  <div className="p-4 space-y-2 flex-1 flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-sm font-bold text-white line-clamp-1 group-hover:text-[#E67E22] transition-colors">
+                        {product.title}
+                      </h3>
+                      <p className="text-[11px] text-stone-400 line-clamp-1 mt-0.5">
+                        By {product.artisanName} • {product.artisanCluster}
+                      </p>
+                    </div>
+
+                    <div className="pt-2 border-t border-amber-900/40 flex items-center justify-between">
+                      <div>
+                        <span className="text-sm font-bold text-[#E67E22]">
+                          ₹{product.priceINR.toLocaleString("en-IN")}
+                        </span>
+                        <span className="ml-1.5 text-xs text-stone-500 line-through">
+                          ₹{product.compareAtPriceINR.toLocaleString("en-IN")}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => setActiveStoryProduct(product)}
+                          title="Why This Price?"
+                          className="p-1.5 rounded-lg border border-amber-700/50 hover:bg-amber-900/40 text-amber-300 text-xs transition-colors hover:scale-105"
+                        >
+                          <Info className="w-3.5 h-3.5 text-[#E67E22]" />
+                        </button>
+
+                        <button
+                          onClick={() => setActiveCheckoutProduct(product)}
+                          className="px-3 py-1.5 rounded-lg bg-[#E67E22] hover:bg-[#cf6d17] active:scale-95 text-white text-xs font-semibold transition-all flex items-center gap-1 shadow-sm"
+                        >
+                          <ShoppingBag className="w-3 h-3" />
+                          <span>Buy</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
 
           {/* View Entire Collection Link */}
-          <div className="text-center pt-4">
+          <ScrollReveal direction="up" delayMs={150} className="text-center pt-4">
             <Link
               href="/marketplace"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full border border-amber-600/60 hover:bg-[#2A1810] text-amber-200 font-bold text-xs uppercase tracking-wider transition-all hover:scale-105"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full border border-amber-600/60 hover:bg-[#2A1810] text-amber-200 font-bold text-xs uppercase tracking-wider transition-all duration-200 hover:-translate-y-0.5 hover:scale-105"
             >
               <span>Explore All Products in Storefront</span>
               <ArrowRight className="w-4 h-4 text-[#E67E22]" />
             </Link>
-          </div>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* ── 9. TRIBAL WARLI FOLK ART CELEBRATION STRIP ── */}
       <FolkArtBanner variant="warli" />
 
-      {/* ── 10. BESPOKE & CORPORATE BULK GIFTING (Truly Tribal Style) ── */}
+      {/* ── 10. BESPOKE & CORPORATE BULK GIFTING (Scroll Reveal Animation) ── */}
       <section className="bg-[#180E07] py-20 px-4 sm:px-6 lg:px-8 border-b border-amber-950">
-        <div className="max-w-4xl mx-auto text-center space-y-6">
+        <ScrollReveal direction="up" className="max-w-4xl mx-auto text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-950/80 border border-amber-600/50 text-amber-300 text-xs font-bold uppercase tracking-wider">
             <Gift className="w-3.5 h-3.5 text-[#E67E22]" />
             <span>ಸಾಂಸ್ಥಿಕ ಉಡುಗೊರೆಗಳು • Handcrafted Bulk Gifting</span>
@@ -550,7 +563,7 @@ export default function HomePage() {
           <div className="pt-2 flex flex-wrap justify-center items-center gap-4">
             <Link
               href="/b2b"
-              className="px-8 py-3.5 rounded-full bg-[#E67E22] hover:bg-[#cf6d17] text-white font-bold text-sm shadow-xl transition-all hover:scale-105 inline-flex items-center gap-2"
+              className="px-8 py-3.5 rounded-full bg-[#E67E22] hover:bg-[#cf6d17] text-white font-bold text-sm shadow-xl transition-all duration-200 hover:-translate-y-0.5 hover:scale-105 inline-flex items-center gap-2"
             >
               <span>Inquire for Corporate Gifting</span>
               <ArrowRight className="w-4 h-4" />
@@ -558,12 +571,12 @@ export default function HomePage() {
 
             <Link
               href="/marketplace"
-              className="px-6 py-3.5 rounded-full border border-amber-500/60 bg-white/5 hover:bg-white/10 text-amber-200 font-semibold text-sm transition-all"
+              className="px-6 py-3.5 rounded-full border border-amber-500/60 bg-white/5 hover:bg-white/10 text-amber-200 font-semibold text-sm transition-all duration-200 hover:-translate-y-0.5"
             >
               <span>Browse Catalog</span>
             </Link>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* ── 11. TRADITIONAL GOLDEN FOLK ART FOOTER BORDER ── */}

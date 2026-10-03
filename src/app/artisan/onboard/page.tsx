@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import KannadaVoiceRecorder from "@/components/voice/KannadaVoiceRecorder";
 import FolkArtBanner from "@/components/shared/FolkArtBanner";
 import FolkArtBorder from "@/components/shared/FolkArtBorder";
+import ScrollReveal from "@/components/shared/ScrollReveal";
 import { ExtractedCraftListing } from "@/lib/voice/kannadaKeywords";
 import {
   Mic,
@@ -99,7 +100,7 @@ export default function ArtisanOnboardPage() {
       {/* ── HEADER BANNER ── */}
       <section className="bg-[#F5EFEB] pt-10 pb-8 px-4 sm:px-6 lg:px-8 border-b border-stone-200">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-1">
+          <ScrollReveal direction="up" className="space-y-1">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-stone-300 text-[#C85A32] text-xs font-semibold uppercase shadow-sm">
               <Mic className="w-3.5 h-3.5 text-[#C85A32]" />
               <span>{language === "kn" ? "ಗ್ರಾಮೀಣ ಕುಶಲಕರ್ಮಿಗಳ ವೇದಿಕೆ" : "Rural Artisan Voice Listing Portal"}</span>
@@ -112,13 +113,13 @@ export default function ArtisanOnboardPage() {
                 ? "ಟೈಪ್ ಮಾಡುವ ಅಗತ್ಯವಿಲ್ಲ • ಮಾತನಾಡಿ, ಪರಿಶೀಲಿಸಿ, ನೇರವಾಗಿ ಪ್ರಕಟಿಸಿ"
                 : "Zero typing friction • Speak in Kannada, review high-contrast cards, and publish"}
             </p>
-          </div>
+          </ScrollReveal>
 
           {/* Vernacular Language Switcher */}
-          <div className="flex items-center gap-1.5 p-1 bg-white rounded-xl border border-stone-300 shadow-sm self-start sm:self-auto">
+          <ScrollReveal direction="left" delayMs={50} className="flex items-center gap-1.5 p-1 bg-white rounded-xl border border-stone-300 shadow-sm self-start sm:self-auto">
             <button
               onClick={() => setLanguage("kn")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 ${
                 language === "kn"
                   ? "bg-[#C85A32] text-white shadow-sm"
                   : "text-stone-700 hover:text-[#C85A32]"
@@ -128,7 +129,7 @@ export default function ArtisanOnboardPage() {
             </button>
             <button
               onClick={() => setLanguage("en")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 ${
                 language === "en"
                   ? "bg-[#C85A32] text-white shadow-sm"
                   : "text-stone-700 hover:text-[#C85A32]"
@@ -136,7 +137,7 @@ export default function ArtisanOnboardPage() {
             >
               English
             </button>
-          </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -147,101 +148,105 @@ export default function ArtisanOnboardPage() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
         
         {/* Artisan Profile Card */}
-        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-[#C85A32] text-white flex items-center justify-center font-bold text-lg shadow-sm">
-              ಸ
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5 font-bold text-[#2A1810] text-sm">
-                <span>{artisanName}</span>
-                <UserCheck className="w-4 h-4 text-emerald-600" />
+        <ScrollReveal direction="up" delayMs={50}>
+          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-[#C85A32] text-white flex items-center justify-center font-bold text-lg shadow-sm">
+                ಸ
               </div>
-              <p className="text-stone-500 text-[11px]">{clusterRegion}</p>
+              <div>
+                <div className="flex items-center gap-1.5 font-bold text-[#2A1810] text-sm">
+                  <span>{artisanName}</span>
+                  <UserCheck className="w-4 h-4 text-emerald-600" />
+                </div>
+                <p className="text-stone-500 text-[11px]">{clusterRegion}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-full border border-emerald-300">
+                {language === "kn" ? "ಪರಿಶೀಲಿತ ಸದಸ್ಯೆ" : "Verified Maker"}
+              </span>
+              <span className="text-[10px] font-bold text-amber-900 bg-amber-100 px-2.5 py-1 rounded-full border border-amber-300">
+                GI Dharwad Application #85
+              </span>
             </div>
           </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-full border border-emerald-300">
-              {language === "kn" ? "ಪರಿಶೀಲಿತ ಸದಸ್ಯೆ" : "Verified Maker"}
-            </span>
-            <span className="text-[10px] font-bold text-amber-900 bg-amber-100 px-2.5 py-1 rounded-full border border-amber-300">
-              GI Dharwad Application #85
-            </span>
-          </div>
-        </div>
+        </ScrollReveal>
 
         {isSubmitted ? (
           /* ── SUCCESS REGISTRATION STATE ── */
-          <div className="bg-white p-8 sm:p-12 rounded-3xl border border-emerald-200 shadow-lg text-center space-y-6 animate-fadeIn">
-            <div className="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto border-2 border-emerald-300 shadow-sm">
-              <CheckCircle2 className="w-10 h-10" />
-            </div>
+          <ScrollReveal direction="up" delayMs={50}>
+            <div className="bg-white p-8 sm:p-12 rounded-3xl border border-emerald-200 shadow-lg text-center space-y-6 animate-fadeIn">
+              <div className="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto border-2 border-emerald-300 shadow-sm">
+                <CheckCircle2 className="w-10 h-10" />
+              </div>
 
-            <div className="space-y-2">
-              <span className="text-xs uppercase tracking-widest text-emerald-700 font-bold">
-                {language === "kn" ? "ಸರಕು ಯಶಸ್ವಿಯಾಗಿ ನೊಂದಾಯಿಸಲಾಗಿದೆ!" : "Inventory Registered Successfully!"}
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#2A1810]">
-                {listing.quantity} {listing.craftKannada} {language === "kn" ? "ಕ್ಲಸ್ಟರ್ ಸಂಗ್ರಹಕ್ಕೆ ಸೇರಿಸಲಾಗಿದೆ" : "Units Active in Cluster"}
-              </h2>
-              <p className="text-xs sm:text-sm text-stone-600 max-w-lg mx-auto">
-                {language === "kn"
-                  ? "ನಿಮ್ಮ ಸರಕು ಈಗ ಬಿ2ಬಿ ಬೃಹತ್ ಪೂರೈಕೆ ಮತ್ತು ನೇರ ಮಾರಾಟ ಮಳಿಗೆಯಲ್ಲಿ ಸಕ್ರಿಯವಾಗಿದೆ."
-                  : "Your units are now registered in the Dharwad cluster pool for B2B enterprise allocation and retail showcase."}
-              </p>
-            </div>
+              <div className="space-y-2">
+                <span className="text-xs uppercase tracking-widest text-emerald-700 font-bold">
+                  {language === "kn" ? "ಸರಕು ಯಶಸ್ವಿಯಾಗಿ ನೊಂದಾಯಿಸಲಾಗಿದೆ!" : "Inventory Registered Successfully!"}
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#2A1810]">
+                  {listing.quantity} {listing.craftKannada} {language === "kn" ? "ಕ್ಲಸ್ಟರ್ ಸಂಗ್ರಹಕ್ಕೆ ಸೇರಿಸಲಾಗಿದೆ" : "Units Active in Cluster"}
+                </h2>
+                <p className="text-xs sm:text-sm text-stone-600 max-w-lg mx-auto">
+                  {language === "kn"
+                    ? "ನಿಮ್ಮ ಸರಕು ಈಗ ಬಿ2ಬಿ ಬೃಹತ್ ಪೂರೈಕೆ ಮತ್ತು ನೇರ ಮಾರಾಟ ಮಳಿಗೆಯಲ್ಲಿ ಸಕ್ರಿಯವಾಗಿದೆ."
+                    : "Your units are now registered in the Dharwad cluster pool for B2B enterprise allocation and retail showcase."}
+                </p>
+              </div>
 
-            {/* Registered Batch Summary */}
-            <div className="bg-[#FAF7F2] p-5 rounded-2xl border border-stone-200 max-w-md mx-auto text-left text-xs space-y-3">
-              <div className="flex justify-between pb-2 border-b border-stone-200">
-                <span className="text-stone-500">{language === "kn" ? "ಕುಶಲಕರ್ಮಿ:" : "Artisan:"}</span>
-                <span className="font-bold text-[#2A1810]">{artisanName}</span>
+              {/* Registered Batch Summary */}
+              <div className="bg-[#FAF7F2] p-5 rounded-2xl border border-stone-200 max-w-md mx-auto text-left text-xs space-y-3">
+                <div className="flex justify-between pb-2 border-b border-stone-200">
+                  <span className="text-stone-500">{language === "kn" ? "ಕುಶಲಕರ್ಮಿ:" : "Artisan:"}</span>
+                  <span className="font-bold text-[#2A1810]">{artisanName}</span>
+                </div>
+                <div className="flex justify-between pb-2 border-b border-stone-200">
+                  <span className="text-stone-500">{language === "kn" ? "ಕರಕುಶಲ ಪ್ರಕಾರ:" : "Craft Type:"}</span>
+                  <span className="font-bold text-[#C85A32]">{listing.craft} ({listing.craftKannada})</span>
+                </div>
+                <div className="flex justify-between pb-2 border-b border-stone-200">
+                  <span className="text-stone-500">{language === "kn" ? "ಒಟ್ಟು ಯೂನಿಟ್‌ಗಳು:" : "Registered Quantity:"}</span>
+                  <span className="font-bold text-[#2A1810]">{listing.quantity} units</span>
+                </div>
+                <div className="flex justify-between pb-2 border-b border-stone-200">
+                  <span className="text-stone-500">{language === "kn" ? "ಪ್ರತಿ ಯೂನಿಟ್ ಬೆಲೆ:" : "Unit Price:"}</span>
+                  <span className="font-bold text-[#2A1810]">₹{listing.pricePerUnitINR}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-stone-500">{language === "kn" ? "ನಿರೀಕ್ಷಿತ ಒಟ್ಟು ಆದಾಯ:" : "Total Expected Inflow:"}</span>
+                  <span className="font-bold text-emerald-700 text-sm">₹{listing.totalValueINR.toLocaleString("en-IN")}</span>
+                </div>
               </div>
-              <div className="flex justify-between pb-2 border-b border-stone-200">
-                <span className="text-stone-500">{language === "kn" ? "ಕರಕುಶಲ ಪ್ರಕಾರ:" : "Craft Type:"}</span>
-                <span className="font-bold text-[#C85A32]">{listing.craft} ({listing.craftKannada})</span>
-              </div>
-              <div className="flex justify-between pb-2 border-b border-stone-200">
-                <span className="text-stone-500">{language === "kn" ? "ಒಟ್ಟು ಯೂನಿಟ್‌ಗಳು:" : "Registered Quantity:"}</span>
-                <span className="font-bold text-[#2A1810]">{listing.quantity} units</span>
-              </div>
-              <div className="flex justify-between pb-2 border-b border-stone-200">
-                <span className="text-stone-500">{language === "kn" ? "ಪ್ರತಿ ಯೂನಿಟ್ ಬೆಲೆ:" : "Unit Price:"}</span>
-                <span className="font-bold text-[#2A1810]">₹{listing.pricePerUnitINR}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-stone-500">{language === "kn" ? "ನಿರೀಕ್ಷಿತ ಒಟ್ಟು ಆದಾಯ:" : "Total Expected Inflow:"}</span>
-                <span className="font-bold text-emerald-700 text-sm">₹{listing.totalValueINR.toLocaleString("en-IN")}</span>
+
+              {/* Next Action Gateways */}
+              <div className="pt-4 flex flex-wrap justify-center gap-4">
+                <Link
+                  href="/b2b"
+                  className="px-6 py-3 rounded-full bg-[#C85A32] hover:bg-[#a84420] text-white font-bold text-xs shadow-md transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-2"
+                >
+                  <Layers className="w-4 h-4" />
+                  <span>{language === "kn" ? "ಬಿ2ಬಿ ಹಂಚಿಕೆ ಕನ್ಸೋಲ್ ಪರಿಶೀಲಿಸಿ" : "View B2B Allocation Console"}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+
+                <button
+                  onClick={() => setIsSubmitted(false)}
+                  className="px-6 py-3 rounded-full border border-stone-300 bg-white hover:bg-stone-50 text-stone-700 font-semibold text-xs transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-2"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  <span>{language === "kn" ? "ಇನ್ನೊಂದು ಸರಕು ನೊಂದಾಯಿಸಿ" : "List Another Batch"}</span>
+                </button>
               </div>
             </div>
-
-            {/* Next Action Gateways */}
-            <div className="pt-4 flex flex-wrap justify-center gap-4">
-              <Link
-                href="/b2b"
-                className="px-6 py-3 rounded-full bg-[#C85A32] hover:bg-[#a84420] text-white font-bold text-xs shadow-md transition-transform hover:scale-105 flex items-center gap-2"
-              >
-                <Layers className="w-4 h-4" />
-                <span>{language === "kn" ? "ಬಿ2ಬಿ ಹಂಚಿಕೆ ಕನ್ಸೋಲ್ ಪರಿಶೀಲಿಸಿ" : "View B2B Allocation Console"}</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-
-              <button
-                onClick={() => setIsSubmitted(false)}
-                className="px-6 py-3 rounded-full border border-stone-300 bg-white hover:bg-stone-50 text-stone-700 font-semibold text-xs transition-colors flex items-center gap-2"
-              >
-                <RefreshCw className="w-4 h-4" />
-                <span>{language === "kn" ? "ಇನ್ನೊಂದು ಸರಕು ನೊಂದಾಯಿಸಿ" : "List Another Batch"}</span>
-              </button>
-            </div>
-          </div>
+          </ScrollReveal>
         ) : (
           /* ── MAIN ONBOARDING FLOW ── */
           <div className="space-y-8">
             
             {/* Step 1: Kannada Voice Input Recorder */}
-            <div>
+            <ScrollReveal direction="up" delayMs={50}>
               <div className="flex items-center gap-2 mb-3">
                 <span className="w-6 h-6 rounded-full bg-[#C85A32] text-white flex items-center justify-center text-xs font-bold">
                   1
@@ -255,154 +260,156 @@ export default function ArtisanOnboardPage() {
                 language={language}
                 onListingExtracted={(extracted) => setListing(extracted)}
               />
-            </div>
+            </ScrollReveal>
 
             {/* Step 2: Touch-First Visual Review Card */}
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-[#C85A32] text-white flex items-center justify-center text-xs font-bold">
-                  2
-                </span>
-                <h3 className="text-base font-bold text-[#2A1810]">
-                  {language === "kn" ? "ಹಂತ ೨: ವಿವರಗಳ ಪರಿಶೀಲನೆ (ಸ್ಪರ್ಶ ನಿಯಂತ್ರಣ)" : "Step 2: Touch-First Review & Confirmation"}
-                </h3>
-              </div>
+            <ScrollReveal direction="up" delayMs={100}>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-full bg-[#C85A32] text-white flex items-center justify-center text-xs font-bold">
+                    2
+                  </span>
+                  <h3 className="text-base font-bold text-[#2A1810]">
+                    {language === "kn" ? "ಹಂತ ೨: ವಿವರಗಳ ಪರಿಶೀಲನೆ (ಸ್ಪರ್ಶ ನಿಯಂತ್ರಣ)" : "Step 2: Touch-First Review & Confirmation"}
+                  </h3>
+                </div>
 
-              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-stone-200 shadow-md space-y-6">
-                
-                {/* 4 Big High-Contrast Touch Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-white rounded-3xl p-6 sm:p-8 border border-stone-200 shadow-md space-y-6">
                   
-                  {/* Card 1: Craft Type */}
-                  <div className="bg-[#FAF7F2] p-5 rounded-2xl border border-stone-200 flex flex-col justify-between space-y-2">
-                    <span className="text-[11px] text-stone-500 font-semibold uppercase">
-                      {language === "kn" ? "ಕರಕುಶಲ ಪ್ರಕಾರ" : "Detected Craft"}
-                    </span>
-                    <div>
-                      <div className="text-xl font-bold text-[#2A1810]">{listing.craft}</div>
-                      <p className="text-xs text-[#C85A32] font-semibold">{listing.craftKannada}</p>
-                    </div>
-                    <span className="text-[10px] text-stone-400">Auto-extracted</span>
-                  </div>
-
-                  {/* Card 2: Quantity with Touch Plus/Minus */}
-                  <div className="bg-[#FAF7F2] p-5 rounded-2xl border border-stone-200 flex flex-col justify-between space-y-2">
-                    <span className="text-[11px] text-stone-500 font-semibold uppercase">
-                      {language === "kn" ? "ಲಭ್ಯ ಪ್ರಮಾಣ (ಯೂನಿಟ್)" : "Quantity (Units)"}
-                    </span>
-                    <div className="text-2xl font-black text-[#2A1810]">
-                      {listing.quantity} <span className="text-xs font-normal text-stone-500">units</span>
-                    </div>
-                    <div className="flex items-center gap-2 pt-1">
-                      <button
-                        type="button"
-                        onClick={() => updateQuantity(-10)}
-                        className="flex-1 py-1.5 bg-white hover:bg-stone-100 rounded-lg border border-stone-300 text-stone-700 font-bold flex items-center justify-center text-xs transition-colors shadow-sm"
-                      >
-                        <Minus className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => updateQuantity(10)}
-                        className="flex-1 py-1.5 bg-[#C85A32] hover:bg-[#a84420] rounded-lg text-white font-bold flex items-center justify-center text-xs transition-colors shadow-sm"
-                      >
-                        <Plus className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Card 3: Price in INR with Touch Controls */}
-                  <div className="bg-[#FAF7F2] p-5 rounded-2xl border border-stone-200 flex flex-col justify-between space-y-2">
-                    <span className="text-[11px] text-stone-500 font-semibold uppercase">
-                      {language === "kn" ? "ಪ್ರತಿ ಯೂನಿಟ್ ಬೆಲೆ (ರೂ.)" : "Unit Price (INR)"}
-                    </span>
-                    <div className="text-2xl font-black text-emerald-700">
-                      ₹{listing.pricePerUnitINR}
-                    </div>
-                    <div className="flex items-center gap-2 pt-1">
-                      <button
-                        type="button"
-                        onClick={() => updatePrice(-50)}
-                        className="flex-1 py-1.5 bg-white hover:bg-stone-100 rounded-lg border border-stone-300 text-stone-700 font-bold flex items-center justify-center text-xs transition-colors shadow-sm"
-                      >
-                        -₹50
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => updatePrice(50)}
-                        className="flex-1 py-1.5 bg-[#C85A32] hover:bg-[#a84420] rounded-lg text-white font-bold flex items-center justify-center text-xs transition-colors shadow-sm"
-                      >
-                        +₹50
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Card 4: Lead Time */}
-                  <div className="bg-[#FAF7F2] p-5 rounded-2xl border border-stone-200 flex flex-col justify-between space-y-2">
-                    <span className="text-[11px] text-stone-500 font-semibold uppercase">
-                      {language === "kn" ? "ಪೂರೈಕೆ ಸಮಯ (ದಿನಗಳು)" : "Lead Time"}
-                    </span>
-                    <div className="text-xl font-bold text-[#2A1810] flex items-center gap-1.5">
-                      <Clock className="w-5 h-5 text-[#C85A32]" />
-                      <span>{listing.leadTimeDays} {language === "kn" ? "ದಿನಗಳು" : "Days"}</span>
-                    </div>
-                    <span className="text-[10px] text-stone-400">Based on craft type</span>
-                  </div>
-
-                </div>
-
-                {/* Total Value & Direct Payout Guarantee */}
-                <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-stone-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
-                  <div className="flex items-center gap-3">
-                    <ShieldCheck className="w-6 h-6 text-emerald-600 flex-shrink-0" />
-                    <div>
-                      <div className="font-bold text-[#2A1810]">
-                        {language === "kn" ? "೯೫% ನೇರ ಕುಶಲಕರ್ಮಿ ಪಾವತಿ ಖಾತರಿ" : "95% Direct Artisan Payout Guarantee"}
-                      </div>
-                      <p className="text-stone-500 text-[11px]">
-                        {language === "kn"
-                          ? "ಮಧ್ಯವರ್ತಿಗಳ ಕಮಿಷನ್ ಇಲ್ಲದೆ ನೇರವಾಗಿ ನಿಮ್ಮ ಖಾತೆಗೆ ಜಮಾ"
-                          : "Direct bank transfer upon batch dispatch with zero middlemen deductions."}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="text-right">
-                    <span className="text-[10px] text-stone-500 uppercase tracking-wider block">
-                      {language === "kn" ? "ನಿರೀಕ್ಷಿತ ಒಟ್ಟು ಆದಾಯ" : "Total Batch Value"}
-                    </span>
-                    <span className="text-lg font-black text-emerald-700">
-                      ₹{listing.totalValueINR.toLocaleString("en-IN")}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Submit / Commit Button */}
-                <div className="pt-2">
-                  <button
-                    type="submit"
-                    disabled={isPublishing}
-                    className="w-full py-4 rounded-2xl bg-[#C85A32] hover:bg-[#a84420] disabled:opacity-50 text-white font-extrabold text-sm sm:text-base shadow-md transition-all hover:scale-[1.01] flex items-center justify-center gap-2"
-                  >
-                    {isPublishing ? (
-                      <span className="flex items-center gap-2">
-                        <RefreshCw className="w-5 h-5 animate-spin" />
-                        <span>{language === "kn" ? "ಸರ್ವರ್‌ಗೆ ನೊಂದಾಯಿಸಲಾಗುತ್ತಿದೆ..." : "Publishing to Marketplace Database..."}</span>
+                  {/* 4 Big High-Contrast Touch Cards */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    
+                    {/* Card 1: Craft Type */}
+                    <div className="bg-[#FAF7F2] p-5 rounded-2xl border border-stone-200 flex flex-col justify-between space-y-2">
+                      <span className="text-[11px] text-stone-500 font-semibold uppercase">
+                        {language === "kn" ? "ಕರಕುಶಲ ಪ್ರಕಾರ" : "Detected Craft"}
                       </span>
-                    ) : (
-                      <>
-                        <span>
+                      <div>
+                        <div className="text-xl font-bold text-[#2A1810]">{listing.craft}</div>
+                        <p className="text-xs text-[#C85A32] font-semibold">{listing.craftKannada}</p>
+                      </div>
+                      <span className="text-[10px] text-stone-400">Auto-extracted</span>
+                    </div>
+
+                    {/* Card 2: Quantity with Touch Plus/Minus */}
+                    <div className="bg-[#FAF7F2] p-5 rounded-2xl border border-stone-200 flex flex-col justify-between space-y-2">
+                      <span className="text-[11px] text-stone-500 font-semibold uppercase">
+                        {language === "kn" ? "ಲಭ್ಯ ಪ್ರಮಾಣ (ಯೂನಿಟ್)" : "Quantity (Units)"}
+                      </span>
+                      <div className="text-2xl font-black text-[#2A1810]">
+                        {listing.quantity} <span className="text-xs font-normal text-stone-500">units</span>
+                      </div>
+                      <div className="flex items-center gap-2 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => updateQuantity(-10)}
+                          className="flex-1 py-1.5 bg-white hover:bg-stone-100 rounded-lg border border-stone-300 text-stone-700 font-bold flex items-center justify-center text-xs transition-all duration-200 active:scale-95 shadow-sm"
+                        >
+                          <Minus className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => updateQuantity(10)}
+                          className="flex-1 py-1.5 bg-[#C85A32] hover:bg-[#a84420] rounded-lg text-white font-bold flex items-center justify-center text-xs transition-all duration-200 active:scale-95 shadow-sm"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Card 3: Price in INR with Touch Controls */}
+                    <div className="bg-[#FAF7F2] p-5 rounded-2xl border border-stone-200 flex flex-col justify-between space-y-2">
+                      <span className="text-[11px] text-stone-500 font-semibold uppercase">
+                        {language === "kn" ? "ಪ್ರತಿ ಯೂನಿಟ್ ಬೆಲೆ (ರೂ.)" : "Unit Price (INR)"}
+                      </span>
+                      <div className="text-2xl font-black text-emerald-700">
+                        ₹{listing.pricePerUnitINR}
+                      </div>
+                      <div className="flex items-center gap-2 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => updatePrice(-50)}
+                          className="flex-1 py-1.5 bg-white hover:bg-stone-100 rounded-lg border border-stone-300 text-stone-700 font-bold flex items-center justify-center text-xs transition-all duration-200 active:scale-95 shadow-sm"
+                        >
+                          -₹50
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => updatePrice(50)}
+                          className="flex-1 py-1.5 bg-[#C85A32] hover:bg-[#a84420] rounded-lg text-white font-bold flex items-center justify-center text-xs transition-all duration-200 active:scale-95 shadow-sm"
+                        >
+                          +₹50
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Card 4: Lead Time */}
+                    <div className="bg-[#FAF7F2] p-5 rounded-2xl border border-stone-200 flex flex-col justify-between space-y-2">
+                      <span className="text-[11px] text-stone-500 font-semibold uppercase">
+                        {language === "kn" ? "ಪೂರೈಕೆ ಸಮಯ (ದಿನಗಳು)" : "Lead Time"}
+                      </span>
+                      <div className="text-xl font-bold text-[#2A1810] flex items-center gap-1.5">
+                        <Clock className="w-5 h-5 text-[#C85A32]" />
+                        <span>{listing.leadTimeDays} {language === "kn" ? "ದಿನಗಳು" : "Days"}</span>
+                      </div>
+                      <span className="text-[10px] text-stone-400">Based on craft type</span>
+                    </div>
+
+                  </div>
+
+                  {/* Total Value & Direct Payout Guarantee */}
+                  <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-stone-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+                    <div className="flex items-center gap-3">
+                      <ShieldCheck className="w-6 h-6 text-emerald-600 flex-shrink-0" />
+                      <div>
+                        <div className="font-bold text-[#2A1810]">
+                          {language === "kn" ? "೯೫% ನೇರ ಕುಶಲಕರ್ಮಿ ಪಾವತಿ ಖಾತರಿ" : "95% Direct Artisan Payout Guarantee"}
+                        </div>
+                        <p className="text-stone-500 text-[11px]">
                           {language === "kn"
-                            ? `ಸರಕನ್ನು ನೊಂದಾಯಿಸಿ (${listing.quantity} ಯೂನಿಟ್‌ಗಳು • ₹${listing.totalValueINR.toLocaleString("en-IN")})`
-                            : `Commit Batch to Cluster Inventory (${listing.quantity} Units • ₹${listing.totalValueINR.toLocaleString("en-IN")})`}
+                            ? "ಮಧ್ಯವರ್ತಿಗಳ ಕಮಿಷನ್ ಇಲ್ಲದೆ ನೇರವಾಗಿ ನಿಮ್ಮ ಖಾತೆಗೆ ಜಮಾ"
+                            : "Direct bank transfer upon batch dispatch with zero middlemen deductions."}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="text-right">
+                      <span className="text-[10px] text-stone-500 uppercase tracking-wider block">
+                        {language === "kn" ? "ನಿರೀಕ್ಷಿತ ಒಟ್ಟು ಆದಾಯ" : "Total Batch Value"}
+                      </span>
+                      <span className="text-lg font-black text-emerald-700">
+                        ₹{listing.totalValueINR.toLocaleString("en-IN")}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Submit / Commit Button */}
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      disabled={isPublishing}
+                      className="w-full py-4 rounded-2xl bg-[#C85A32] hover:bg-[#a84420] disabled:opacity-50 text-white font-extrabold text-sm sm:text-base shadow-md transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2"
+                    >
+                      {isPublishing ? (
+                        <span className="flex items-center gap-2">
+                          <RefreshCw className="w-5 h-5 animate-spin" />
+                          <span>{language === "kn" ? "ಸರ್ವರ್‌ಗೆ ನೊಂದಾಯಿಸಲಾಗುತ್ತಿದೆ..." : "Publishing to Marketplace Database..."}</span>
                         </span>
-                        <ArrowRight className="w-5 h-5" />
-                      </>
-                    )}
-                  </button>
+                      ) : (
+                        <>
+                          <span>
+                            {language === "kn"
+                              ? `ಸರಕನ್ನು ನೊಂದಾಯಿಸಿ (${listing.quantity} ಯೂನಿಟ್‌ಗಳು • ₹${listing.totalValueINR.toLocaleString("en-IN")})`
+                              : `Commit Batch to Cluster Inventory (${listing.quantity} Units • ₹${listing.totalValueINR.toLocaleString("en-IN")})`}
+                          </span>
+                          <ArrowRight className="w-5 h-5" />
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </form>
+              </form>
+            </ScrollReveal>
           </div>
         )}
 
