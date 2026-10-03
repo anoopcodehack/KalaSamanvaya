@@ -1,7 +1,7 @@
 <div align="center">
 
 # KALASAMANVAYA (ಕಲಾ ಸಮನ್ವಯ)
-### Digital Market Access & Multi-Artisan Fulfilment Platform
+### Enterprise Multi-Artisan Fulfilment Platform
 
 [![Next.js](https://img.shields.io/badge/Next.js-14.2-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
@@ -10,14 +10,14 @@
 [![DEVHACK 2026](https://img.shields.io/badge/DEVHACK_2026-PS_4.2-green?style=for-the-badge)](https://github.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-**A Kannada-first platform helping local artisans showcase, price, and sell their crafts—with coordinated multi-artisan fulfilment for bulk orders.**
+**Turning Fragmented Artisan Capacity into a Coordinated B2B Fulfilment Network.**
 
 *DEVHACK 2026 | PS 4.2 — Digital Market Access for Local Artisans*  
 **Sahyadri College of Engineering & Management, Mangaluru**
 
 ```text
-Core Pipeline:
-Kannada Voice Listing ──▶ Product Catalogue & Craft Story ──▶ Retail Order / Mock Checkout ──▶ Coordinated Bulk Fulfilment
+Platform Pipeline:
+Artisan Voice Listing ──▶ Product Catalogue & Story ──▶ Retail Checkout ──▶ Coordinated Bulk Fulfilment
 ```
 
 [Live Demo](https://kalasamanvaya.vercel.app) • [PS 4.2 Alignment](#-alignment-with-ps-42-requirements) • [Architecture](#️-guiding-architectural-principle) • [Allocation Engine](#-deterministic-allocation-engine) • [Benchmark Dataset](#-demonstrated-recovery-scenario) • [Growth & Scale](#-growth-flywheel--scalability) • [Setup Guide](#-local-development-setup) • [License](#-license)
@@ -32,10 +32,13 @@ Kannada Voice Listing ──▶ Product Catalogue & Craft Story ──▶ Retail
 
 Individual artisans operate with constrained production bandwidth, while **enterprise buyers may require bulk volumes of 200–500+ units within fixed deadlines.**
 
-> **Core Principle:**  
-> *"Speech recognition simplifies artisan onboarding; transparent craft stories justify pricing; deterministic algorithms coordinate bulk fulfilment."*
+> **The Core Insight:**  
+> *"Small artisans have small capacities. Larger buyers have bulk requirements. We coordinate the gap."*
 
-Existing marketplaces offer isolated retail listings. They fail to turn fragmented rural craft capacity into coordinated supply. **Buyers face coordination friction and may turn to standardized alternatives when handmade supply cannot reliably meet volume or deadlines.**
+> **Core Principle:**  
+> *"Speech recognition simplifies artisan onboarding; craft storytelling justifies pricing; deterministic algorithms coordinate bulk fulfilment."*
+
+Existing marketplaces only solve 1-to-1 discovery. They completely fail at multi-artisan coordinated fulfillment. **Buyers face coordination friction and may turn to standardized alternatives when handmade supply cannot reliably meet volume or deadlines.**
 
 **KalaSamanvaya (ಕಲಾ ಸಮನ್ವಯ)** introduces a **coordinated fulfillment layer**. Instead of treating every maker as an isolated seller, our deterministic allocation engine aggregates compatible cluster capacity into a single, verifiable B2B delivery plan—backed by **capacity-update recovery** and accessible Kannada voice-assisted onboarding.
 
@@ -58,7 +61,7 @@ This prototype addresses four PS 4.2 capability areas:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│      ONE PLATFORM. TWO USER JOURNEYS. ONE CAPACITY ENGINE.  │
+│    ONE PLATFORM. TWO USER JOURNEYS. ONE FULFILMENT ENGINE.  │
 └─────────────────────────────────────────────────────────────┘
                                │
             ┌──────────────────┴──────────────────┐
