@@ -1,7 +1,7 @@
 <div align="center">
 
 # KALASAMANVAYA (ಕಲಾ ಸಮನ್ವಯ)
-### One Enterprise Order. Many Artisans. One Deterministic Fulfilment Engine.
+### Digital Market Access & Multi-Artisan Fulfilment Platform
 
 [![Next.js](https://img.shields.io/badge/Next.js-14.2-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
@@ -10,12 +10,17 @@
 [![DEVHACK 2026](https://img.shields.io/badge/DEVHACK_2026-PS_4.2-green?style=for-the-badge)](https://github.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-**Helping Karnataka artisan clusters fulfil bulk orders that no single maker can complete alone.**
+**A Kannada-first platform helping local artisans showcase, price, and sell their crafts—with coordinated multi-artisan fulfilment for bulk orders.**
 
 *DEVHACK 2026 | PS 4.2 — Digital Market Access for Local Artisans*  
 **Sahyadri College of Engineering & Management, Mangaluru**
 
-[Live Demo](https://kalasamanvaya.vercel.app) • [PS 4.2 Deliverables](#-direct-alignment-with-ps-42-official-deliverables) • [Architecture](#️-guiding-architectural-principle) • [Allocation Engine](#-deterministic-allocation-engine) • [Benchmark Dataset](#-demonstrated-recovery-scenario) • [Setup Guide](#-local-development-setup) • [License](#-license)
+```text
+Core Pipeline:
+Kannada Voice Listing ──▶ Product Catalogue & Craft Story ──▶ Retail Order / Mock Checkout ──▶ Coordinated Bulk Fulfilment
+```
+
+[Live Demo](https://kalasamanvaya.vercel.app) • [PS 4.2 Alignment](#-alignment-with-ps-42-requirements) • [Architecture](#️-guiding-architectural-principle) • [Allocation Engine](#-deterministic-allocation-engine) • [Benchmark Dataset](#-demonstrated-recovery-scenario) • [Growth & Scale](#-growth-flywheel--scalability) • [Setup Guide](#-local-development-setup) • [License](#-license)
 
 ---
 
@@ -25,12 +30,12 @@
 
 ## 📌 Executive Summary
 
-Individual artisans operate with constrained production bandwidth, while **Enterprise buyers may require bulk volumes of 200–500+ units within fixed deadlines.**
+Individual artisans operate with constrained production bandwidth, while **enterprise buyers may require bulk volumes of 200–500+ units within fixed deadlines.**
 
-> **Core Thesis:**  
-> *"Small artisans have small capacities. Larger buyers have bulk requirements. We coordinate the gap."*
+> **Core Principle:**  
+> *"Speech recognition simplifies artisan onboarding; transparent craft stories justify pricing; deterministic algorithms coordinate bulk fulfilment."*
 
-Existing digital marketplaces focus strictly on individual catalog discovery. When an enterprise buyer needs 200 authentic handcrafted Kasuti shawls or terracotta pottery sets, single-artisan stores fail due to supply bottlenecks. **Buyers face coordination friction and may turn to standardized alternatives when handmade supply cannot reliably meet volume or deadlines.**
+Existing marketplaces offer isolated retail listings. They fail to turn fragmented rural craft capacity into coordinated supply. **Buyers face coordination friction and may turn to standardized alternatives when handmade supply cannot reliably meet volume or deadlines.**
 
 **KalaSamanvaya (ಕಲಾ ಸಮನ್ವಯ)** introduces a **coordinated fulfillment layer**. Instead of treating every maker as an isolated seller, our deterministic allocation engine aggregates compatible cluster capacity into a single, verifiable B2B delivery plan—backed by **capacity-update recovery** and accessible Kannada voice-assisted onboarding.
 
@@ -44,8 +49,8 @@ This prototype addresses four PS 4.2 capability areas:
 | :--- | :--- | :---: |
 | **1. Working Storefront / Catalogue Interface**<br>*(Artisans can plausibly use with minimal training)* | Clean, visual catalogue specifically customized for **Kasuti embroidery**, **Beedu handloom craft**, and **Coastal pottery**. Low cognitive load interface requiring minimal digital literacy. | `Implemented` |
 | **2. Simple Listing & Order Flow**<br>*(Payment integration can be mocked)* | **Kannada voice-assisted listing (`kn-IN`)** allows rural artisans to list items verbally without typing. Streamlined checkout flow with mock payment confirmation and instant order summary. | `Implemented prototype` |
-| **3. Craft-Storytelling & Provenance**<br>*(To support fair pricing & craft value)* | Digital Provenance Passports linking each product to maker bio, geographic cluster origin, and craft technique history to support artisan pricing. | `Planned roadmap` |
-| **4. Capacity-Aware Multi-Artisan Fulfillment**<br>*(Coordinated cluster supply)* | Solves the **scale mismatch** by aggregating fragmented artisan capacity into bulk fulfillment plans for enterprise buyers. | `Implemented` |
+| **3. Craft-Storytelling & Pricing Support**<br>*(To communicate handmade value)* | **Craft-Story Card:** Visual maker bio, process, material, regional heritage, and pricing context to communicate handmade value (`Implemented prototype`). QR-linked digital provenance passports (`Planned roadmap`). | `Implemented prototype` / `Planned roadmap` |
+| **4. Capacity-Aware Multi-Artisan Fulfillment**<br>*(Coordinated cluster supply)* | Solves the **scale mismatch** by aggregating fragmented artisan capacity into bulk fulfillment plans for enterprise buyers with dynamic capacity-update recovery. | `Implemented` |
 
 ---
 
@@ -322,6 +327,18 @@ Triggers dynamic recovery when an active maker encounters a capacity constraint.
   }
 }
 ```
+
+---
+
+## 🔄 Growth Flywheel & Scalability
+
+```text
+Voice Onboarding ──▶ Direct Catalogue Sales ──▶ Coordinated Bulk Capacity ──▶ Higher Rural Inflow ──▶ Cluster Retention
+```
+
+* **From Discovery to Coordination:** Ordinary storefronts connect 1 buyer to 1 seller. KalaSamanvaya gives artisans a direct storefront AND coordinates 1 enterprise order across $N$ participating makers.
+* **Craft-Agnostic Core Engine:** The fulfillment algorithm operates on 4 standardized inputs: `[Craft Type] + [Capacity] + [Turnaround] + [Location]`. Extensible to Channapatna toys, Kinnal crafts, and Ilkal weaving post-pilot.
+* **Operational Data Advantage:** Aggregating structured cluster capacity data through active platform operations creates a dependable fulfillment asset that standard marketplaces lack.
 
 ---
 
