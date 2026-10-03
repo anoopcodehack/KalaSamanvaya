@@ -2,7 +2,7 @@
 
 import React from "react";
 import { ArtisanProduct } from "@/lib/db/products";
-import { X, Clock, Sparkles, ShieldCheck, HeartHandshake, AlertCircle, MapPin, CheckCircle2 } from "lucide-react";
+import { X, Clock, Receipt, ArrowRight, ShieldCheck, HeartHandshake, AlertCircle, MapPin, CheckCircle2 } from "lucide-react";
 
 interface WhyThisPriceModalProps {
   product: ArtisanProduct | null;
@@ -31,7 +31,7 @@ export default function WhyThisPriceModal({
         <div className="bg-[#2A1810] text-[#FAF6F0] px-6 py-4 flex items-center justify-between border-b border-amber-800/40">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-[#D9822B] text-white flex items-center justify-center font-bold">
-              <Sparkles className="w-5 h-5 text-amber-100" />
+              <Receipt className="w-5 h-5 text-amber-100" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -285,7 +285,7 @@ export default function WhyThisPriceModal({
               className="flex-1 sm:flex-none px-6 py-2.5 rounded-lg bg-[#C85A32] hover:bg-[#A34828] text-white font-semibold text-xs shadow-md transition-all flex items-center justify-center gap-2"
             >
               <span>Support {product.artisanName} (₹{product.priceINR.toLocaleString("en-IN")})</span>
-              <Sparkles className="w-3.5 h-3.5" />
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>

@@ -42,7 +42,7 @@ export default function RootLayout({
             </Link>
 
             {/* Desktop Navigation (Truly Tribal: Home, About Us, Business Solutions, Blog, Shop, More) */}
-            <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-xs font-bold text-stone-700">
+            <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-xs font-semibold text-stone-700">
               <Link href="/" className="hover:text-[#C85A32] transition-colors py-1">
                 Home
               </Link>
@@ -52,12 +52,11 @@ export default function RootLayout({
               <Link href="/b2b" className="hover:text-[#C85A32] transition-colors py-1">
                 Business Solutions
               </Link>
-              <Link href="/marketplace" className="hover:text-[#C85A32] transition-colors py-1 text-[#C85A32] flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5 text-[#D9822B]" />
-                <span>Shop</span>
+              <Link href="/marketplace" className="hover:text-[#C85A32] transition-colors py-1 text-[#C85A32] font-bold">
+                Shop
               </Link>
-              <Link href="/artisan/onboard" className="hover:text-[#C85A32] transition-colors py-1 flex items-center gap-1">
-                <Mic className="w-3.5 h-3.5 text-[#C85A32]" />
+              <Link href="/artisan/onboard" className="hover:text-[#C85A32] transition-colors py-1 flex items-center gap-1.5">
+                <Mic className="w-3.5 h-3.5 text-stone-500" />
                 <span>Voice Portal</span>
               </Link>
             </nav>

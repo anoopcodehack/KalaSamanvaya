@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Mic, MicOff, Volume2, Sparkles, AlertCircle, RefreshCw } from "lucide-react";
+import { Mic, MicOff, Volume2, AlertCircle, RefreshCw } from "lucide-react";
 import { parseKannadaTranscript, ExtractedCraftListing } from "@/lib/voice/kannadaKeywords";
 
 interface KannadaVoiceRecorderProps {
@@ -265,7 +265,7 @@ export default function KannadaVoiceRecorder({
             >
               <div className="text-xs font-bold text-amber-200 group-hover:text-white flex items-center justify-between">
                 <span>{language === "kn" ? sample.kannadaLabel : sample.label}</span>
-                <Sparkles className="w-3 h-3 text-[#E67E22]" />
+                <Volume2 className="w-3.5 h-3.5 text-[#E67E22]" />
               </div>
               <p className="text-[10px] text-stone-400 line-clamp-1 mt-1 font-serif">
                 &quot;{sample.transcript}&quot;

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { ArtisanProduct } from "@/lib/db/products";
-import { Sparkles, MapPin, ShoppingBag, Clock } from "lucide-react";
+import { Info, MapPin, ShoppingBag, Clock } from "lucide-react";
 
 interface ProductCardProps {
   product: ArtisanProduct;
@@ -38,7 +38,7 @@ export default function ProductCard({
             onClick={() => onOpenWhyThisPrice(product)}
             className="px-3.5 py-2 rounded-full bg-white text-[#2A1810] text-xs font-bold shadow-lg hover:bg-amber-50 flex items-center gap-1.5 transition-transform hover:scale-105"
           >
-            <Sparkles className="w-3.5 h-3.5 text-[#C85A32]" />
+            <Info className="w-3.5 h-3.5 text-[#C85A32]" />
             <span>Why This Price?</span>
           </button>
         </div>
@@ -103,9 +103,9 @@ export default function ProductCard({
           <div className="grid grid-cols-2 gap-2 pt-1">
             <button
               onClick={() => onOpenWhyThisPrice(product)}
-              className="w-full px-2.5 py-2 rounded-lg border border-[#D9822B]/60 text-[#2A1810] hover:bg-amber-100/70 text-xs font-semibold flex items-center justify-center gap-1 transition-colors"
+              className="w-full px-2.5 py-2 rounded-lg border border-[#D9822B]/60 text-[#2A1810] hover:bg-amber-100/70 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
             >
-              <Sparkles className="w-3 h-3 text-[#D9822B]" />
+              <Info className="w-3.5 h-3.5 text-[#D9822B]" />
               <span>Why This Price?</span>
             </button>
 
