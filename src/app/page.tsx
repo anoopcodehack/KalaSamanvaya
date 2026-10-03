@@ -24,6 +24,8 @@ import {
   XCircle,
   MapPin,
   Clock,
+  Building2,
+  Users,
 } from "lucide-react";
 
 export default function HomePage() {
@@ -109,181 +111,228 @@ export default function HomePage() {
       {/* ── 2. VIBRANT KALAMKARI KRISHNA & PEACOCKS FOLK ART BANNER ── */}
       <FolkArtBanner variant="krishna" />
 
-      {/* ── 3. HERITAGE IMPACT & ARTISAN HONOR BAR (Scroll Reveal Animation) ── */}
-      <section className="bg-[#180E07] border-b border-amber-950/80 py-8 px-4 sm:px-6 lg:px-8">
+      {/* ── 3. HERITAGE IMPACT & ARTISAN HONOR BAR (Warm Authentic Craft Strip) ── */}
+      <section className="bg-[#20120A] border-b border-amber-950/80 py-7 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <ScrollReveal direction="up" delayMs={50}>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center divide-y lg:divide-y-0 lg:divide-x divide-amber-900/40">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center divide-y lg:divide-y-0 lg:divide-x divide-amber-900/30">
               <div className="pt-2 lg:pt-0">
                 <span className="text-[11px] font-bold uppercase tracking-widest text-[#E67E22] block mb-1">
                   Living Traditions
                 </span>
                 <div className="text-2xl sm:text-3xl font-extrabold text-white">4 Craft Clusters</div>
-                <div className="text-xs text-stone-400 mt-1">Dharwad, Bidar, Belagavi & Udupi</div>
-              </div>
-
-              <div className="pt-2 lg:pt-0">
-                <span className="text-[11px] font-bold uppercase tracking-widest text-emerald-400 block mb-1">
-                  Direct Maker Earnings
-                </span>
-                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400">₹1,24,500+</div>
-                <div className="text-xs text-stone-400 mt-1">Directly disbursed to artisan families</div>
+                <div className="text-xs text-stone-300 mt-1">Dharwad, Bidar, Belagavi & Udupi</div>
               </div>
 
               <div className="pt-2 lg:pt-0">
                 <span className="text-[11px] font-bold uppercase tracking-widest text-amber-300 block mb-1">
-                  Fair Living Wage
+                  Direct Maker Share
                 </span>
-                <div className="text-2xl sm:text-3xl font-extrabold text-amber-300">75% Direct Pay</div>
-                <div className="text-xs text-stone-400 mt-1">Transparent breakdown on every piece</div>
+                <div className="text-2xl sm:text-3xl font-extrabold text-white">75%+ Direct Pay</div>
+                <div className="text-xs text-stone-300 mt-1">Fair wages direct to artisan accounts</div>
               </div>
 
               <div className="pt-2 lg:pt-0">
-                <span className="text-[11px] font-bold uppercase tracking-widest text-amber-400 block mb-1">
-                  Fair-Trade Guarantee
+                <span className="text-[11px] font-bold uppercase tracking-widest text-[#E67E22] block mb-1">
+                  GI Heritage Certified
+                </span>
+                <div className="text-2xl sm:text-3xl font-extrabold text-white">100% Handcrafted</div>
+                <div className="text-xs text-stone-300 mt-1">Zero synthetic powerloom replicas</div>
+              </div>
+
+              <div className="pt-2 lg:pt-0">
+                <span className="text-[11px] font-bold uppercase tracking-widest text-amber-300 block mb-1">
+                  Direct Market Access
                 </span>
                 <div className="text-2xl sm:text-3xl font-extrabold text-white">Zero Middlemen</div>
-                <div className="text-xs text-stone-400 mt-1">From artisan hands to your home</div>
+                <div className="text-xs text-stone-300 mt-1">From artisan hands to conscious patrons</div>
               </div>
             </div>
           </ScrollReveal>
         </div>
       </section>
 
-      {/* ── 4. THE RURAL ARTISAN CRISIS & OUR 4-PILLAR SOLUTION (Problem vs. Solution) ── */}
-      <section className="bg-[#180E07] py-16 px-4 sm:px-6 lg:px-8 border-b border-amber-950/80">
-        <div className="max-w-6xl mx-auto space-y-10">
+      {/* ── 4. OUR FAIR-TRADE CRAFT COMMITMENT (Authentic Heritage Narrative & Model) ── */}
+      <section className="bg-[#1A0E08] py-16 px-4 sm:px-6 lg:px-8 border-b border-amber-950/80">
+        <div className="max-w-6xl mx-auto space-y-12">
+          
+          {/* Section Heading */}
           <ScrollReveal direction="up" className="text-center max-w-3xl mx-auto space-y-2">
             <span className="text-xs font-bold uppercase tracking-widest text-[#E67E22]">
-              ಸಮಸ್ಯೆ ಮತ್ತು ಪರಿಹಾರ • The Artisan Reality & Our Model
+              ನಮ್ಮ ಧ್ಯೇಯ • Our Fair-Trade Craft Commitment
             </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
-              Why Karnataka&apos;s Artisans Need KalaSamanvaya
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-wide">
+              Direct from Artisan Hands: Preserving Karnataka&apos;s Living Arts
             </h2>
             <div className="w-16 h-1 bg-[#E67E22] mx-auto mt-2 rounded-full" />
-            <p className="text-xs sm:text-sm text-stone-300">
-              Centuries-old Karnataka craft traditions are dying not from lack of artistic mastery, but because conventional trade channels exploit rural makers. Here is how we bridge the gap.
+            <p className="text-xs sm:text-sm text-stone-300 leading-relaxed pt-2">
+              Centuries-old Karnataka craft traditions are dying not from lack of artistic mastery, but because conventional trade intermediaries extract 80% margins and sell machine counterfeits. Here is how KalaSamanvaya restores dignity, transparency, and sustainable livelihoods to rural master makers.
             </p>
           </ScrollReveal>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Column 1: The Broken Middleman System (The Problem) */}
-            <ScrollReveal direction="right" delayMs={50} className="bg-[#24130A] rounded-2xl p-6 sm:p-8 border border-red-900/30 shadow-xl space-y-6">
-              <div className="flex items-center gap-3 pb-4 border-b border-amber-900/30">
-                <div className="w-10 h-10 rounded-xl bg-red-950/80 border border-red-800/40 text-red-400 flex items-center justify-center font-bold">
-                  <XCircle className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="text-[10px] text-red-400 font-bold uppercase tracking-wider block">
-                    The Reality Faced by Rural Artisans
+          {/* 4 Cultural Heritage & Fair-Trade Pillar Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
+            
+            {/* Pillar 1: Fair Wages */}
+            <ScrollReveal direction="up" delayMs={50} className="bg-[#24130A] rounded-2xl p-6 sm:p-7 border border-amber-900/40 shadow-xl hover:border-[#E67E22]/60 transition-all duration-300 flex flex-col justify-between group">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="w-11 h-11 rounded-xl bg-amber-900/40 border border-amber-700/40 text-[#E67E22] flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <Receipt className="w-5 h-5 text-[#E67E22]" />
+                  </div>
+                  <span className="px-3 py-1 rounded-full bg-amber-950/80 border border-amber-700/50 text-amber-300 text-[10px] font-bold uppercase tracking-wider">
+                    75%+ Direct Wage
                   </span>
-                  <h3 className="text-lg font-bold text-white">
-                    The Broken Middleman Trap
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-bold text-white group-hover:text-amber-200 transition-colors">
+                    Eliminating the 80% Middleman Margin
                   </h3>
+                  <p className="text-xs text-stone-300 mt-2 leading-relaxed">
+                    In conventional trade, rural Kasuti and Beedu crafters receive barely ₹150–₹250 for works resold at ₹2,500+ in urban luxury boutiques.
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-amber-900/30 space-y-2 text-xs">
+                  <div className="text-stone-300 flex items-start gap-2">
+                    <span className="text-[#E67E22] font-bold">The Solution:</span>
+                    <span>Direct digital wage disbursements into rural women&apos;s bank accounts with zero broker cuts.</span>
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-4 text-xs">
-                <div className="flex gap-3">
-                  <XCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-stone-200 block text-sm">70–80% Margin Lost to Intermediaries</strong>
-                    <p className="text-stone-400 mt-0.5 leading-relaxed">
-                      Artisans receive barely ₹150–₹250 for a Kasuti shawl that is resold for ₹2,500+ in urban luxury stores.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <XCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-stone-200 block text-sm">Synthetic Machine Replicas & Counterfeits</strong>
-                    <p className="text-stone-400 mt-0.5 leading-relaxed">
-                      4-minute synthetic powerloom prints flood city retail stalls, masquerading as 38-hour authentic handlooms.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <XCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-stone-200 block text-sm">Digital & Language Literacy Barriers</strong>
-                    <p className="text-stone-400 mt-0.5 leading-relaxed">
-                      Rural women cannot navigate complex English forms, GST portals, or typing-heavy e-commerce apps.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <XCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-stone-200 block text-sm">Single-Maker Bulk Capacity Bottleneck</strong>
-                    <p className="text-stone-400 mt-0.5 leading-relaxed">
-                      Corporate buyers shun rural artisans for 200+ unit orders because a single illness causes order default.
-                    </p>
-                  </div>
-                </div>
+              <div className="pt-4 mt-4 border-t border-amber-900/30">
+                <Link
+                  href="/marketplace"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#E67E22] hover:text-amber-200 transition-colors"
+                >
+                  <span>See &apos;Why This Price?&apos; breakdown</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
               </div>
             </ScrollReveal>
 
-            {/* Column 2: The KalaSamanvaya Model (Our Solution) */}
-            <ScrollReveal direction="left" delayMs={100} className="bg-[#24130A] rounded-2xl p-6 sm:p-8 border border-emerald-900/40 shadow-xl space-y-6">
-              <div className="flex items-center gap-3 pb-4 border-b border-amber-900/30">
-                <div className="w-10 h-10 rounded-xl bg-emerald-950/80 border border-emerald-800/40 text-emerald-400 flex items-center justify-center font-bold">
-                  <CheckCircle2 className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block">
-                    The KalaSamanvaya Fair-Trade Platform
+            {/* Pillar 2: Provenance & GI Protection */}
+            <ScrollReveal direction="up" delayMs={100} className="bg-[#24130A] rounded-2xl p-6 sm:p-7 border border-amber-900/40 shadow-xl hover:border-[#E67E22]/60 transition-all duration-300 flex flex-col justify-between group">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="w-11 h-11 rounded-xl bg-amber-900/40 border border-amber-700/40 text-[#E67E22] flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <Award className="w-5 h-5 text-[#E67E22]" />
+                  </div>
+                  <span className="px-3 py-1 rounded-full bg-amber-950/80 border border-amber-700/50 text-amber-300 text-[10px] font-bold uppercase tracking-wider">
+                    GI Authenticity
                   </span>
-                  <h3 className="text-lg font-bold text-white">
-                    Our 4-Pillar Living Solution
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-bold text-white group-hover:text-amber-200 transition-colors">
+                    Protecting 38-Hour Handwork from Machine Counterfeits
                   </h3>
+                  <p className="text-xs text-stone-300 mt-2 leading-relaxed">
+                    Cheap 4-minute synthetic powerloom prints flood city stalls, misleading buyers and driving authentic hand-stitch traditions to extinction.
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-amber-900/30 space-y-2 text-xs">
+                  <div className="text-stone-300 flex items-start gap-2">
+                    <span className="text-[#E67E22] font-bold">The Solution:</span>
+                    <span>Every piece features verified GI cluster provenance, artisan biographies, and stitch-level authenticity cards.</span>
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-4 text-xs">
-                <div className="flex gap-3">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-stone-200 block text-sm">75%+ Direct Payout into Artisan Accounts</strong>
-                    <p className="text-stone-400 mt-0.5 leading-relaxed">
-                      Direct fair-trade disbursements to rural women&apos;s bank accounts with zero middlemen deductions.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-stone-200 block text-sm">Transparent Cost Breakdown: &quot;Why This Price?&quot;</strong>
-                    <p className="text-stone-400 mt-0.5 leading-relaxed">
-                      Every product discloses handcraft hours, material source, and educates patrons on why true handwork is worth it.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-stone-200 block text-sm">Kannada Voice-First Inventory Listing</strong>
-                    <p className="text-stone-400 mt-0.5 leading-relaxed">
-                      Artisans speak naturally in Kannada to register crafts—zero English, zero typing, instant cataloguing.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-stone-200 block text-sm">Multi-Cluster B2B Bulk Fulfillment Engine</strong>
-                    <p className="text-stone-400 mt-0.5 leading-relaxed">
-                      Pools orders of 200+ units across coordinated SHGs with automated standby buffer balancing.
-                    </p>
-                  </div>
-                </div>
+              <div className="pt-4 mt-4 border-t border-amber-900/30">
+                <Link
+                  href="/marketplace"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#E67E22] hover:text-amber-200 transition-colors"
+                >
+                  <span>Explore certified craft stories</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
               </div>
             </ScrollReveal>
+
+            {/* Pillar 3: Voice Onboarding */}
+            <ScrollReveal direction="up" delayMs={150} className="bg-[#24130A] rounded-2xl p-6 sm:p-7 border border-amber-900/40 shadow-xl hover:border-[#E67E22]/60 transition-all duration-300 flex flex-col justify-between group">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="w-11 h-11 rounded-xl bg-amber-900/40 border border-amber-700/40 text-[#E67E22] flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <Mic className="w-5 h-5 text-[#E67E22]" />
+                  </div>
+                  <span className="px-3 py-1 rounded-full bg-amber-950/80 border border-amber-700/50 text-amber-300 text-[10px] font-bold uppercase tracking-wider">
+                    Voice Inclusion
+                  </span>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-bold text-white group-hover:text-amber-200 transition-colors">
+                    Breaking English & Digital Form Barriers
+                  </h3>
+                  <p className="text-xs text-stone-300 mt-2 leading-relaxed">
+                    Rural women crafters cannot navigate complex English e-commerce forms, multi-step portals, or typing-heavy software.
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-amber-900/30 space-y-2 text-xs">
+                  <div className="text-stone-300 flex items-start gap-2">
+                    <span className="text-[#E67E22] font-bold">The Solution:</span>
+                    <span>Spoken Kannada voice technology parses spoken audio into verified product catalog entries—zero typing required.</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4 mt-4 border-t border-amber-900/30">
+                <Link
+                  href="/artisan/onboard"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#E67E22] hover:text-amber-200 transition-colors"
+                >
+                  <span>Experience Kannada Voice Portal</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </ScrollReveal>
+
+            {/* Pillar 4: B2B Multi-Cluster Fulfilment */}
+            <ScrollReveal direction="up" delayMs={200} className="bg-[#24130A] rounded-2xl p-6 sm:p-7 border border-amber-900/40 shadow-xl hover:border-[#E67E22]/60 transition-all duration-300 flex flex-col justify-between group">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="w-11 h-11 rounded-xl bg-amber-900/40 border border-amber-700/40 text-[#E67E22] flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <Building2 className="w-5 h-5 text-[#E67E22]" />
+                  </div>
+                  <span className="px-3 py-1 rounded-full bg-amber-950/80 border border-amber-700/50 text-amber-300 text-[10px] font-bold uppercase tracking-wider">
+                    Multi-Cluster Scale
+                  </span>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-bold text-white group-hover:text-amber-200 transition-colors">
+                    Coordinated 200+ Unit Corporate Fulfilment
+                  </h3>
+                  <p className="text-xs text-stone-300 mt-2 leading-relaxed">
+                    Corporate gifting buyers avoid rural artisans because a single artisan&apos;s illness or material shortage can cause order default.
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-amber-900/30 space-y-2 text-xs">
+                  <div className="text-stone-300 flex items-start gap-2">
+                    <span className="text-[#E67E22] font-bold">The Solution:</span>
+                    <span>Our multi-cluster coordination engine divides bulk quotas across self-help groups with automated standby cluster balancing.</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4 mt-4 border-t border-amber-900/30">
+                <Link
+                  href="/b2b"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#E67E22] hover:text-amber-200 transition-colors"
+                >
+                  <span>Open B2B Fulfillment Console</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </ScrollReveal>
+
           </div>
         </div>
       </section>
