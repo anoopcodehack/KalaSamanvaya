@@ -1,7 +1,7 @@
 <div align="center">
 
 # KALASAMANVAYA (ಕಲಾ ಸಮನ್ವಯ)
-### Enterprise Multi-Artisan Fulfilment Platform
+### Digital Market Access & Multi-Artisan Fulfilment Platform
 
 [![Next.js](https://img.shields.io/badge/Next.js-14.2-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
@@ -10,14 +10,14 @@
 [![DEVHACK 2026](https://img.shields.io/badge/DEVHACK_2026-PS_4.2-green?style=for-the-badge)](https://github.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-**Turning Fragmented Artisan Capacity into a Coordinated B2B Fulfilment Network.**
+**A simple platform for local artisans to showcase, price, and sell their crafts—powered by a coordinated multi-artisan fulfilment engine for bulk orders.**
 
 *DEVHACK 2026 | PS 4.2 — Digital Market Access for Local Artisans*  
 **Sahyadri College of Engineering & Management, Mangaluru**
 
 ```text
-Platform Pipeline:
-Artisan Voice Listing ──▶ Product Catalogue & Story ──▶ Retail Checkout ──▶ Coordinated Bulk Fulfilment
+Core Platform Pipeline:
+Kannada Voice Listing ──▶ Product Catalogue & Craft Story ──▶ Retail Order / Mock Checkout ──▶ Coordinated Bulk Fulfilment
 ```
 
 [Live Demo](https://kalasamanvaya.vercel.app) • [PS 4.2 Alignment](#alignment-with-ps-42-requirements) • [Architecture](#system-architecture) • [Allocation Engine](#deterministic-allocation-engine) • [Benchmark Scenario](#benchmark-recovery-scenario) • [API Specification](#api-specification) • [Getting Started](#local-development-setup) • [License](#license)
@@ -36,9 +36,9 @@ Individual artisans operate with constrained production bandwidth, while **enter
 > *"Small artisans have small capacities. Larger buyers have bulk requirements. We coordinate the gap."*
 
 > **Core Principle:**  
-> *"Speech recognition simplifies artisan onboarding; craft storytelling justifies pricing; deterministic algorithms coordinate bulk fulfilment."*
+> *"Speech recognition simplifies artisan onboarding; transparent craft stories justify pricing; deterministic algorithms coordinate bulk fulfilment."*
 
-Existing marketplaces only solve 1-to-1 discovery. They completely fail at multi-artisan coordinated fulfillment. **Buyers face coordination friction and may turn to standardized alternatives when handmade supply cannot reliably meet volume or deadlines.**
+Existing marketplaces solve discovery (1-to-1 retail). Our platform solves coordinated multi-artisan fulfillment (N-to-1 bulk demand). **Buyers face coordination friction and may turn to standardized alternatives when handmade supply cannot reliably meet volume or deadlines.**
 
 **KalaSamanvaya (ಕಲಾ ಸಮನ್ವಯ)** introduces a **coordinated fulfillment layer**. Instead of treating every maker as an isolated seller, our deterministic allocation engine aggregates compatible cluster capacity into a single, verifiable B2B delivery plan—backed by **capacity-update recovery** and accessible Kannada voice-assisted onboarding.
 
@@ -50,9 +50,9 @@ This prototype addresses four PS 4.2 capability areas:
 
 | Official PS 4.2 Capability Area | Implementation in KalaSamanvaya | Status |
 | :--- | :--- | :---: |
-| **1. Working Storefront / Catalogue Interface**<br>*(Artisans can plausibly use with minimal training)* | Clean, visual catalogue specifically customized for **Kasuti embroidery**, **Beedu handloom craft**, and **Coastal pottery**. Low cognitive load interface requiring minimal digital literacy. | `Implemented` |
-| **2. Simple Listing & Order Flow**<br>*(Payment integration can be mocked)* | **Kannada voice-assisted listing (`kn-IN`)** allows rural artisans to list items verbally without typing. Streamlined checkout flow with mock payment confirmation and instant order summary. | `Implemented prototype` |
-| **3. Craft-Storytelling & Pricing Support**<br>*(To communicate handmade value)* | **Craft-Story Card:** Visual maker bio, process, material, regional heritage, and pricing context to communicate handmade value (`Implemented prototype`). QR-linked digital provenance passports (`Planned roadmap`). | `Implemented prototype` / `Planned roadmap` |
+| **1. Working Storefront / Catalogue Interface**<br>*(Artisans can plausibly use with minimal training)* | Clean, visual catalogue specifically customized for **Kasuti embroidery**, **Beedu basketry & craft**, and **Coastal pottery**. Low cognitive load interface displaying maker profiles and pricing. | `Implemented` |
+| **2. Simple Listing & Order Flow**<br>*(Payment integration can be mocked)* | **Kannada voice-assisted listing (`kn-IN`)** + **Kannada Order Inbox** allowing rural artisans to list verbally without typing and review/accept production allocations. Streamlined retail mock checkout. | `Implemented prototype` |
+| **3. Craft-Storytelling & Pricing Support**<br>*(To communicate handmade value)* | **"Why This Price?" Craft Card:** Transparent breakdown of hand labor hours, authentic materials, and regional heritage to communicate handmade value. QR-linked digital provenance passports (`Planned roadmap`). | `Implemented prototype` / `Planned roadmap` |
 | **4. Capacity-Aware Multi-Artisan Fulfillment**<br>*(Coordinated cluster supply)* | Solves the **scale mismatch** by aggregating fragmented artisan capacity into bulk fulfillment plans for enterprise buyers with dynamic capacity-update recovery. | `Implemented` |
 
 ---
@@ -193,13 +193,16 @@ All technical claims within this repository are categorized into verified tiers 
 
 | Feature | Correct Status | Operational Reality |
 | :--- | :---: | :--- |
+| **Storefront & Catalogue** | `Implemented` | Responsive product catalogue showcasing authentic maker profiles, craft items, and retail pricing. |
 | **Multi-artisan allocation** | `Implemented` | Deterministic score calculation ($S_i$) and sequential allocation execute in pure TypeScript within the repository. |
 | **Capacity-update rebalancing** | `Implemented` | Recalculates allocation after a capacity update and routes available standby capacity in the prototype. |
-| **Kannada voice UI** | `Implemented prototype` | Built using the browser-based Web Speech API with language tag `kn-IN` and heuristic extraction. |
+| **Kannada voice UI** | `Implemented prototype` | Browser-based Web Speech API with language tag `kn-IN` and heuristic extraction. |
+| **"Why This Price?" Craft Card** | `Implemented prototype` | Transparent breakdown of labor hours, materials, and regional heritage to communicate handmade value. |
+| **Artisan Order Inbox** | `Implemented prototype` | Visual Kannada interface for rural artisans to review and accept cluster production commitments. |
 | **200-unit scenario** | `Demonstrated benchmark scenario` | Benchmark test data used to prove algorithmic correctness for a 200-unit Kasuti fulfillment order. |
 | **Provenance/QR** | `Planned roadmap` | Digital Provenance Passports linking each product to maker bio and cluster heritage to support artisan pricing. |
 | **Artisan verification** | `Pilot target` | Identity and craft verification planned during onboarding for field pilot. |
-| **50+ maker expansion** | `Pilot target` | Planned 90-day onboarding milestone across Karnataka artisan clusters. |
+| **50+ maker expansion** | `Pilot target` | Planned 90-day onboarding milestone across Karnataka artisan clusters (Kasuti & Beedu crafts). |
 | **Transparent artisan payout model** | `Pilot target` | Maximize transparent artisan earnings through clearly itemized platform and fulfillment costs. |
 
 ---
