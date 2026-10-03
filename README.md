@@ -20,7 +20,7 @@ Platform Pipeline:
 Artisan Voice Listing ──▶ Product Catalogue & Story ──▶ Retail Checkout ──▶ Coordinated Bulk Fulfilment
 ```
 
-[Live Demo](https://kalasamanvaya.vercel.app) • [PS 4.2 Alignment](#-alignment-with-ps-42-requirements) • [Architecture](#️-guiding-architectural-principle) • [Allocation Engine](#-deterministic-allocation-engine) • [Benchmark Dataset](#-demonstrated-recovery-scenario) • [Growth & Scale](#-growth-flywheel--scalability) • [Setup Guide](#-local-development-setup) • [License](#-license)
+[Live Demo](https://kalasamanvaya.vercel.app) • [PS 4.2 Alignment](#alignment-with-ps-42-requirements) • [Architecture](#system-architecture) • [Allocation Engine](#deterministic-allocation-engine) • [Benchmark Scenario](#benchmark-recovery-scenario) • [API Specification](#api-specification) • [Getting Started](#local-development-setup) • [License](#license)
 
 ---
 
@@ -28,7 +28,7 @@ Artisan Voice Listing ──▶ Product Catalogue & Story ──▶ Retail Check
 
 > **Benchmark-data notice:** Capacity, scores, locations, prices, and recovery outcomes shown in this README are prototype test data unless explicitly identified as measured pilot results. The 200-unit order is a proof-of-concept scenario, not a completed customer order.
 
-## 📌 Executive Summary
+## Overview
 
 Individual artisans operate with constrained production bandwidth, while **enterprise buyers may require bulk volumes of 200–500+ units within fixed deadlines.**
 
@@ -44,7 +44,7 @@ Existing marketplaces only solve 1-to-1 discovery. They completely fail at multi
 
 ---
 
-## 🎯 Alignment with PS 4.2 Requirements
+## Alignment with PS 4.2 Requirements
 
 This prototype addresses four PS 4.2 capability areas:
 
@@ -57,7 +57,7 @@ This prototype addresses four PS 4.2 capability areas:
 
 ---
 
-## 🏛️ Guiding Architectural Principle
+## System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -95,7 +95,7 @@ This prototype addresses four PS 4.2 capability areas:
 
 ---
 
-## 🔬 Deterministic Allocation Engine
+## Deterministic Allocation Engine
 
 The platform coordinates bulk enterprise orders through a 5-stage deterministic pipeline:
 
@@ -138,7 +138,7 @@ $$\text{Shortfall} = \max\left(0, D - \sum_{i=1}^{n} a_i\right)$$
 
 ---
 
-## 📊 Demonstrated Recovery Scenario
+## Benchmark Recovery Scenario
 
 *(Benchmark test scenario: Requirement of 200 Handcrafted Kasuti Shawls | Deadline: 20 Days)*
 
@@ -160,7 +160,7 @@ Dynamic Rebalance:   A(40) + B(70) + C(60) + D(30) = 200 / 200 (Deficit fully re
 
 ---
 
-## 🎙️ Kannada Voice-Assisted Onboarding (`kn-IN`)
+## Voice-Assisted Onboarding (kn-IN)
 
 To eliminate digital literacy barriers, artisans register their inventory using browser-based voice input:
 
@@ -187,7 +187,7 @@ To eliminate digital literacy barriers, artisans register their inventory using 
 
 ---
 
-## 🏷️ System Verification Matrix
+## System Verification Matrix
 
 All technical claims within this repository are categorized into verified tiers matching prototype status and future roadmap:
 
@@ -204,7 +204,7 @@ All technical claims within this repository are categorized into verified tiers 
 
 ---
 
-## 📁 Repository Directory Structure
+## Repository Structure
 
 ```text
 d:/KalaSamanvaya/
@@ -258,7 +258,7 @@ d:/KalaSamanvaya/
 
 ---
 
-## 🔌 API Reference
+## API Specification
 
 ### 1. Execute Allocation
 **`POST /api/allocate`**
@@ -296,7 +296,7 @@ Computes deterministic order allocation across registered cluster makers.
 }
 ```
 
-### 💡 Illustrative Unit Economics (B2B Bulk Order)
+### Unit Economics (B2B Bulk Order)
 
 * **200-Unit Enterprise Order × ₹600 Average Unit Value** = ₹1,20,000 GMV
 * **Proposed 4% Platform Coordination Fee** = ₹4,800 Platform Revenue
@@ -333,7 +333,7 @@ Triggers dynamic recovery when an active maker encounters a capacity constraint.
 
 ---
 
-## 🔄 Growth Flywheel & Scalability
+## Growth Flywheel & Scalability
 
 ```text
 Voice Onboarding ──▶ Direct Catalogue Sales ──▶ Coordinated Bulk Capacity ──▶ Higher Rural Inflow ──▶ Cluster Retention
@@ -345,7 +345,7 @@ Voice Onboarding ──▶ Direct Catalogue Sales ──▶ Coordinated Bulk Cap
 
 ---
 
-## 💻 Local Development Setup
+## Local Development Setup
 
 ### Prerequisites
 * **Node.js:** v18.0.0 or higher
@@ -380,7 +380,7 @@ Voice Onboarding ──▶ Direct Catalogue Sales ──▶ Coordinated Bulk Cap
 
 ---
 
-## 👥 Team Details
+## Team
 
 * **Project:** DEVHACK 2026 — PS 4.2: Digital Market Access for Local Artisans
 * **Institution:** Sahyadri College of Engineering & Management, Mangaluru
@@ -392,7 +392,7 @@ Voice Onboarding ──▶ Direct Catalogue Sales ──▶ Coordinated Bulk Cap
 
 ---
 
-## 📄 License
+## License
 
 This project is open-source and licensed under the [MIT License](LICENSE).
 
