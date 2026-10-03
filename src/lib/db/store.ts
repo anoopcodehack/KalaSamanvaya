@@ -1,4 +1,5 @@
 import { ARTISAN_PRODUCTS, ArtisanProduct } from "./products";
+import { getMongoDb } from "./mongodb";
 
 export interface OrderItem {
   productId: string;
@@ -29,6 +30,7 @@ export interface CustomerOrder {
 interface GlobalDatabase {
   products: ArtisanProduct[];
   orders: CustomerOrder[];
+  isMongoInitialized: boolean;
 }
 
 const globalForDb = globalThis as unknown as {
@@ -88,37 +90,100 @@ if (!globalForDb.kalaSamanvayaDb) {
         totalArtisanPayoutINR: 1420,
       },
     ],
+    isMongoInitialized: false,
   };
 }
 
 export const db = globalForDb.kalaSamanvayaDb;
 
-// Helper query functions
-export function getAllProducts(): ArtisanProduct[] {
+// Helper query functions with dual MongoDB + Memory Sync
+export async function getAllProducts(): Promise<ArtisanProduct[]> {
+  try {
+    const mongo = await getMongoDb();
+    if (mongo) {
+      const collection = mongo.collection<ArtisanProduct>("products");
+      const count = await collection.countDocuments();
+      if (count === 0) {
+        // Seed initial heritage products to Mongo Atlas
+        await collection.insertMany(ARTISAN_PRODUCTS as any);
+      }
+      const mongoProducts = await collection.find({}).sort({ _id: -1 }).toArray();
+      if (mongoProducts.length > 0) {
+        db.products = mongoProducts;
+        return mongoProducts;
+      }
+    }
+  } catch (err) {
+    console.warn("MongoDB read failed, using memory fallback:", err);
+  }
   return db.products;
 }
 
-export function getProductById(id: string): ArtisanProduct | undefined {
+export async function getProductById(id: string): Promise<ArtisanProduct | undefined> {
+  try {
+    const mongo = await getMongoDb();
+    if (mongo) {
+      const prod = await mongo.collection<ArtisanProduct>("products").findOne({ id });
+      if (prod) return prod;
+    }
+  } catch (err) {
+    // Fallback to memory
+  }
   return db.products.find((p) => p.id === id);
 }
 
-export function addProduct(product: ArtisanProduct): ArtisanProduct {
+export async function addProduct(product: ArtisanProduct): Promise<ArtisanProduct> {
   db.products.unshift(product);
+  try {
+    const mongo = await getMongoDb();
+    if (mongo) {
+      await mongo.collection("products").insertOne(product as any);
+    }
+  } catch (err) {
+    console.warn("MongoDB write failed, preserved in memory:", err);
+  }
   return product;
 }
 
-export function getAllOrders(): CustomerOrder[] {
+export async function getAllOrders(): Promise<CustomerOrder[]> {
+  try {
+    const mongo = await getMongoDb();
+    if (mongo) {
+      const mongoOrders = await mongo.collection<CustomerOrder>("orders").find({}).sort({ _id: -1 }).toArray();
+      if (mongoOrders.length > 0) {
+        db.orders = mongoOrders;
+        return mongoOrders;
+      }
+    }
+  } catch (err) {
+    console.warn("MongoDB orders read failed, using memory fallback:", err);
+  }
   return db.orders;
 }
 
-export function createOrder(order: CustomerOrder): CustomerOrder {
+export async function createOrder(order: CustomerOrder): Promise<CustomerOrder> {
   db.orders.unshift(order);
-  // Deduct stock
+  // Deduct stock in memory
   for (const item of order.items) {
     const prod = db.products.find((p) => p.id === item.productId);
     if (prod && prod.stockAvailable >= item.quantity) {
       prod.stockAvailable -= item.quantity;
     }
+  }
+  try {
+    const mongo = await getMongoDb();
+    if (mongo) {
+      await mongo.collection("orders").insertOne(order as any);
+      // Deduct stock in Mongo
+      for (const item of order.items) {
+        await mongo.collection("products").updateOne(
+          { id: item.productId },
+          { $inc: { stockAvailable: -item.quantity } }
+        );
+      }
+    }
+  } catch (err) {
+    console.warn("MongoDB order save failed, preserved in memory:", err);
   }
   return order;
 }

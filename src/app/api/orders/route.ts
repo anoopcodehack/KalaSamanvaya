@@ -3,7 +3,7 @@ import { getAllOrders, createOrder, getProductById, CustomerOrder } from "@/lib/
 
 export async function GET() {
   try {
-    const orders = getAllOrders();
+    const orders = await getAllOrders();
     return NextResponse.json({
       success: true,
       count: orders.length,
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const product = getProductById(body.productId);
+    const product = await getProductById(body.productId);
     if (!product) {
       return NextResponse.json(
         { error: "Product not found" },
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
       totalArtisanPayoutINR: artisanPayout,
     };
 
-    const savedOrder = createOrder(newOrder);
+    const savedOrder = await createOrder(newOrder);
 
     return NextResponse.json({
       success: true,

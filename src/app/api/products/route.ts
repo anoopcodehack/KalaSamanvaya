@@ -8,7 +8,7 @@ export async function GET(req: Request) {
     const craft = searchParams.get("craft");
     const query = searchParams.get("q");
 
-    let products = getAllProducts();
+    let products = await getAllProducts();
 
     if (craft && craft !== "ALL") {
       products = products.filter((p) => p.craftType.toLowerCase() === craft.toLowerCase());
@@ -96,7 +96,7 @@ export async function POST(req: Request) {
       tags: [body.craftType, "Handmade", "FairPrice"],
     };
 
-    const saved = addProduct(newProduct);
+    const saved = await addProduct(newProduct);
 
     return NextResponse.json({
       success: true,
