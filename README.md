@@ -1,7 +1,7 @@
 <div align="center">
 
-# KalaSamanvaya (ಕಲಾ ಸಮನ್ವಯ)
-### Enterprise Multi-Artisan Fulfillment Platform
+# KALASAMANVAYA (ಕಲಾ ಸಮನ್ವಯ)
+### One Enterprise Order. Many Artisans. One Deterministic Fulfilment Engine.
 
 [![Next.js](https://img.shields.io/badge/Next.js-14.2-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
@@ -10,9 +10,9 @@
 [![DEVHACK 2026](https://img.shields.io/badge/DEVHACK_2026-PS_4.2-green?style=for-the-badge)](https://github.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-**Coordinating Fragmented Artisan Capacity into Deterministic B2B Fulfillment Plans**
+**Helping Karnataka artisan clusters fulfil bulk orders that no single maker can complete alone.**
 
-*DEVHACK 2026 — Problem Statement 4.2: Digital Market Access for Local Artisans*  
+*DEVHACK 2026 | PS 4.2 — Digital Market Access for Local Artisans*  
 **Sahyadri College of Engineering & Management, Mangaluru**
 
 [Live Demo](https://kalasamanvaya.vercel.app) • [PS 4.2 Deliverables](#-direct-alignment-with-ps-42-official-deliverables) • [Architecture](#️-guiding-architectural-principle) • [Allocation Engine](#-deterministic-allocation-engine) • [Benchmark Dataset](#-demonstrated-recovery-scenario) • [Setup Guide](#-local-development-setup) • [License](#-license)
@@ -21,28 +21,30 @@
 
 </div>
 
+> **Benchmark-data notice:** Capacity, scores, locations, prices, and recovery outcomes shown in this README are prototype test data unless explicitly identified as measured pilot results. The 200-unit order is a proof-of-concept scenario, not a completed customer order.
+
 ## 📌 Executive Summary
 
-Individual artisans operate with constrained production bandwidth, while enterprise clients (corporate gifting, hospitality, academic institutions, events) require bulk volumes ranging from **200 to 500+ units** with guaranteed lead times.
+Individual artisans operate with constrained production bandwidth, while **Enterprise buyers may require bulk volumes of 200–500+ units within fixed deadlines.**
 
 > **Core Thesis:**  
-> *"Small artisans have small capacities. Larger buyers have larger requirements. We coordinate the gap."*
+> *"Small artisans have small capacities. Larger buyers have bulk requirements. We coordinate the gap."*
 
-Existing digital marketplaces focus strictly on individual catalog discovery. When an enterprise buyer needs 200 authentic handcrafted Kasuti shawls or terracotta pottery sets, single-artisan stores fail due to supply bottlenecks. Buyers face intense coordination friction or resort to machine-made substitutes.
+Existing digital marketplaces focus strictly on individual catalog discovery. When an enterprise buyer needs 200 authentic handcrafted Kasuti shawls or terracotta pottery sets, single-artisan stores fail due to supply bottlenecks. **Buyers face coordination friction and may turn to standardized alternatives when handmade supply cannot reliably meet volume or deadlines.**
 
-**KalaSamanvaya (ಕಲಾ ಸಮನ್ವಯ)** introduces a **coordinated fulfillment layer**. Instead of treating every maker as an isolated seller, our deterministic allocation engine aggregates compatible cluster capacity into a single, verifiable B2B delivery plan—backed by dynamic dropout recovery and accessible Kannada voice-assisted onboarding.
+**KalaSamanvaya (ಕಲಾ ಸಮನ್ವಯ)** introduces a **coordinated fulfillment layer**. Instead of treating every maker as an isolated seller, our deterministic allocation engine aggregates compatible cluster capacity into a single, verifiable B2B delivery plan—backed by **capacity-update recovery** and accessible Kannada voice-assisted onboarding.
 
 ---
 
-## 🎯 Direct Alignment with PS 4.2 Official Deliverables
+## 🎯 Alignment with PS 4.2 Requirements
 
-This prototype directly addresses the three core requirements specified in the **DEVHACK 2026 PS 4.2 problem statement**:
+This prototype addresses four PS 4.2 capability areas:
 
-| Official PS 4.2 Deliverable | Implementation in KalaSamanvaya | Status |
+| Official PS 4.2 Capability Area | Implementation in KalaSamanvaya | Status |
 | :--- | :--- | :---: |
 | **1. Working Storefront / Catalogue Interface**<br>*(Artisans can plausibly use with minimal training)* | Clean, visual catalogue specifically customized for **Kasuti embroidery**, **Beedu handloom craft**, and **Coastal pottery**. Low cognitive load interface requiring minimal digital literacy. | `Implemented` |
-| **2. Simple Listing & Order Flow**<br>*(Payment integration can be mocked)* | **Kannada voice-assisted listing (`kn-IN`)** allows rural artisans to list items verbally without typing. Streamlined checkout flow with mock payment confirmation and instant order summary. | `Implemented` |
-| **3. Craft-Storytelling & Provenance**<br>*(To support fair pricing & craft value)* | **Digital Provenance Passports** linking each product to maker bio, geographic cluster origin (Dharwad, Udupi, Gurupura), and GI technique history to substantiate premium handcrafted pricing. | `Implemented` |
+| **2. Simple Listing & Order Flow**<br>*(Payment integration can be mocked)* | **Kannada voice-assisted listing (`kn-IN`)** allows rural artisans to list items verbally without typing. Streamlined checkout flow with mock payment confirmation and instant order summary. | `Implemented prototype` |
+| **3. Craft-Storytelling & Provenance**<br>*(To support fair pricing & craft value)* | Digital Provenance Passports linking each product to maker bio, geographic cluster origin, and craft technique history to support artisan pricing. | `Planned roadmap` |
 | **4. Capacity-Aware Multi-Artisan Fulfillment**<br>*(Coordinated cluster supply)* | Solves the **scale mismatch** by aggregating fragmented artisan capacity into bulk fulfillment plans for enterprise buyers. | `Implemented` |
 
 ---
@@ -59,7 +61,8 @@ This prototype directly addresses the three core requirements specified in the *
    [ B2B Institutional ]                 [ B2C Retail Discovery ]
    • Bulk orders (200–500 units)         • One-of-a-kind craft items
    • Multi-artisan aggregation           • Direct maker interaction
-   • Deterministic SLA & delivery        • Digital provenance certificates
+   • Deterministic allocation and        • Digital provenance certificates
+     delivery planning                   • Authentic craft stories
             │                                     │
             └──────────────────┬──────────────────┘
                                ▼
@@ -68,56 +71,68 @@ This prototype directly addresses the three core requirements specified in the *
         │  • Hard Craft Compatibility Filtering       │
         │  • Deterministic Scoring: Sᵢ = f(A, T, L)   │
         │  • Sequential Greedy Order Partitioning     │
-        │  • Dynamic Dropout & Capacity Recovery      │
+        │  • Capacity-update rebalancing and standby  │
+        │    recovery                                 │
         └─────────────────────────────────────────────┘
                                ▲
                                │
             ┌──────────────────┴──────────────────┐
             ▼                                     ▼
     [ Regional Clusters ]                [ Speech Recognition ]
-    • Kasuti (Dharwad/Udupi)             • Browser-based kn-IN
-    • Coastal Pottery (DK)               • Heuristic field extraction
-    • Beedu Handlooms (Udupi)            • Low-literacy review flow
+    • Kasuti demonstration data from     • Browser-based kn-IN
+      Karnataka clusters                 • Heuristic field extraction
+    • Coastal Pottery (DK)               • Low-literacy review flow
+    • Beedu Handlooms (Udupi)
 ```
 
 ---
 
 ## 🔬 Deterministic Allocation Engine
 
-The allocation engine operates deterministically to eliminate unpredictability for enterprise procurement teams.
+The platform coordinates bulk enterprise orders through a 5-stage deterministic pipeline:
+
+```text
+[ 1. Hard Filter ] ──▶ [ 2. Match Rank ] ──▶ [ 3. Sequential Allocation ] ──▶ [ 4. Rebalance ] ──▶ [ 5. Shortfall Alert ]
+```
 
 ### 1. Hard Craft Filtering
 Artisans must strictly match the required craft category:
 $$\text{Eligible}(i) = \begin{cases} 1 & \text{if } \text{Craft}_i = \text{Craft}_{\text{Order}} \land c_i > 0 \\ 0 & \text{otherwise} \end{cases}$$
 
 ### 2. Multi-Criteria Match Scoring
-For each eligible artisan $i$, a composite score $S_i \in [0, 1]$ is computed using three deterministic parameters:
+For each eligible artisan $i$, a composite match score $S_i \in [0, 1]$ is computed:
 
-$$S_i = 0.45 \cdot A_i + 0.35 \cdot T_i + 0.20 \cdot L_i$$
+$$S_i = 0.45 \cdot (\text{Availability}) + 0.35 \cdot (\text{Turnaround}) + 0.20 \cdot (\text{Logistics})$$
 
-* **Availability Score ($A_i$):** Ratio of current available capacity $c_i$ to overall monthly capacity $C_{\max, i}$:
+* **Availability Score ($A_i$):** Ratio of current uncommitted capacity $c_i$ to overall monthly capacity $C_{\max, i}$:
   $$A_i = \frac{c_i}{C_{\max, i}}$$
 * **Turnaround Fit ($T_i$):** Buffer margin between maker lead time and buyer deadline:
   $$T_i = \begin{cases} 0.60 + 0.40 \left(1 - \frac{\text{LeadTime}_i}{\text{Deadline} + 1}\right) & \text{if } \text{LeadTime}_i \le \text{Deadline} \\ \max\left(0.10, 0.50 - 0.10(\text{LeadTime}_i - \text{Deadline})\right) & \text{if } \text{LeadTime}_i > \text{Deadline} \end{cases}$$
-* **Location Fit ($L_i$):** Proximity to regional logistics consolidation center:
+* **Logistics Fit ($L_i$):** Proximity to regional logistics consolidation center:
   $$L_i = \max\left(0.20, 1 - \frac{\text{Distance}_i}{250\text{ km}}\right)$$
 
 ### 3. Sequential Greedy Allocation
 Artisans are sorted descending by $S_i$ (ties broken by higher remaining capacity). For an order demand $D$:
 
-$$a_i = \min\left(c_i, \max\left(0, D - \sum_{j=1}^{i-1} a_j\right)\right)$$
+$$a_i = \min(c_i, \text{Remaining Demand})$$
 
-### 4. Shortfall Detection & Standby Buffers
-* **Shortfall Calculation:**
-  $$\text{Shortfall} = \max\left(0, D - \sum_{i=1}^{n} a_i\right)$$
-  *Example:* If available capacity is only 160 units for a 200-unit requirement, the system reports: **`160/200 allocated; 40-unit shortfall detected`**.
-* **Standby Buffer:** Unallocated capacity of partially utilized artisans and zero-allocated qualifying artisans are preserved as active standby reserves.
+### 4. Dynamic Rebalance & Standby Buffers
+Unallocated capacity of partially utilized artisans and zero-allocated qualifying artisans are preserved as active standby reserves. When an artisan reports a capacity drop, the engine rebalances the deficit across available cluster buffers.
+
+### 5. Shortfall Detection Alert
+If total cluster capacity is insufficient to satisfy the order quantity, the engine flags an explicit shortfall:
+
+$$\text{Shortfall} = \max\left(0, D - \sum_{i=1}^{n} a_i\right)$$
+
+* **Shortfall Detection Test (If Total Capacity is Reduced to 160):**
+  * **Result:** `160 / 200 Allocated; 40-Unit Shortfall Detected`
+  * **Action:** Shortfall flag + recommended next action: source additional cluster capacity.
 
 ---
 
 ## 📊 Demonstrated Recovery Scenario
 
-*(Verified test scenario matching MVP code, seed dataset, and video demonstration)*
+*(Benchmark test scenario: Requirement of 200 Handcrafted Kasuti Shawls | Deadline: 20 Days)*
 
 ### Scenario: Enterprise Order for 200 Kasuti Handcrafted Units
 
@@ -125,7 +140,7 @@ $$a_i = \min\left(c_i, \max\left(0, D - \sum_{j=1}^{i-1} a_j\right)\right)$$
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Artisan A (Savita N.)** | Dharwad Central | **0.94** | 80 | **80 units** | 0 | **40 units** *(Capacity drop)* |
 | **Artisan B (Manjula P.)** | Kalghatgi Sangha | **0.88** | 70 | **70 units** | 0 | **70 units** *(Unchanged)* |
-| **Artisan C (Girija K.)** | Coastal Kasuti (Udupi) | **0.81** | 60 | **50 units** | 10 units | **60 units** *(Absorbs +10 buffer)* |
+| **Artisan C (Girija K.)** | Udupi demonstration cluster | **0.81** | 60 | **50 units** | 10 units | **60 units** *(Absorbs +10 buffer)* |
 | **Artisan D (Renuka B.)** | Navalgund Group | **0.72** | 40 | **0 units** | 40 units | **30 units** *(Activated from standby)* |
 | **Total** | — | — | **250** | **200 / 200 Fulfilled** | **50 units** | **200 / 200 Re-fulfilled** |
 
@@ -149,7 +164,7 @@ To eliminate digital literacy barriers, artisans register their inventory using 
        │  Real-time streaming transcript
        ▼
 [ Structured Extraction ]
-       │  Heuristic pattern matcher with fallback LLM parser
+       │  Heuristic structured extraction with optional LLM fallback
        ▼
 [ Visual Review Modal ]
        │  Large tap targets, vernacular preview, one-touch confirmation
@@ -160,21 +175,24 @@ To eliminate digital literacy barriers, artisans register their inventory using 
 * **No Typing Friction:** Transcribes native Kannada speech directly within Chromium-based browsers.
 * **Extraction Fields:** Identifies craft type (ಕಸೂತಿ / ಮಡಿಕೆ / ಬೀಡು), available units, price in INR, and turnaround time.
 * **Human-in-the-Loop Review:** Artisan reviews numeric values on high-contrast cards before publishing.
+* **Standalone Execution:** Speech recognition and heuristic extraction work without an LLM API; the LLM parser is optional when configured.
 
 ---
 
 ## 🏷️ System Verification Matrix
 
-All technical claims within this repository are categorized into three verified levels:
+All technical claims within this repository are categorized into verified tiers matching prototype status and future roadmap:
 
-| System Dimension | Label | Operational Reality |
+| Feature | Correct Status | Operational Reality |
 | :--- | :---: | :--- |
-| **Multi-Artisan Allocation Algorithm** | `Implemented` | Deterministic score calculation ($S_i$) and sequential allocation execute in pure TypeScript within the repository. |
-| **Dynamic Dropout Recovery** | `Implemented` | Rebalance recalculation handles capacity updates and standby re-routing in real-time. |
-| **Kannada Voice UI** | `Implemented` | Built using the browser-based Web Speech API with language tag `kn-IN` and heuristic extraction. |
-| **Cluster Demonstration Scenario** | `Demonstrated Scenario` | Benchmark test data used to prove algorithmic correctness for a 200-unit Kasuti fulfillment order. |
-| **Middleman Disintermediation** | `Pilot Target` | Maximize transparent artisan payouts by eliminating predatory middleman markups during pilot deployment. |
-| **Cluster Expansion (50+ Makers)** | `Pilot Target` | Planned 90-day onboarding milestone across Dakshina Kannada, Udupi, and Dharwad. |
+| **Multi-artisan allocation** | `Implemented` | Deterministic score calculation ($S_i$) and sequential allocation execute in pure TypeScript within the repository. |
+| **Capacity-update rebalancing** | `Implemented` | Recalculates allocation after a capacity update and routes available standby capacity in the prototype. |
+| **Kannada voice UI** | `Implemented prototype` | Built using the browser-based Web Speech API with language tag `kn-IN` and heuristic extraction. |
+| **200-unit scenario** | `Demonstrated benchmark scenario` | Benchmark test data used to prove algorithmic correctness for a 200-unit Kasuti fulfillment order. |
+| **Provenance/QR** | `Planned roadmap` | Digital Provenance Passports linking each product to maker bio and cluster heritage to support artisan pricing. |
+| **Artisan verification** | `Pilot target` | Identity and craft verification planned during onboarding for field pilot. |
+| **50+ maker expansion** | `Pilot target` | Planned 90-day onboarding milestone across Karnataka artisan clusters. |
+| **Transparent artisan payout model** | `Pilot target` | Maximize transparent artisan earnings through clearly itemized platform and fulfillment costs. |
 
 ---
 
@@ -218,8 +236,7 @@ d:/KalaSamanvaya/
 │   │   │   ├── allocator.ts       # Greedy sequential allocator & shortfall detector
 │   │   │   └── recalculator.ts    # Rebalancing engine for capacity drops & standby buffers
 │   │   ├── voice/                 # Regional Kannada Language Helpers
-│   │   │   ├── kannadaKeywords.ts # Vernacular dictionary for Kasuti, Pottery, Beedu
-│   │   │   └── geminiExtractor.ts # Fallback LLM structured extraction prompt
+│   │   │   └── kannadaKeywords.ts # Vernacular dictionary & heuristic parser for Kasuti, Pottery, Beedu
 │   │   ├── db/                    # Data Layer
 │   │   │   └── mockData.ts        # Golden dataset (Artisans A, B, C, D with verified scores)
 │   │   └── utils.ts               # Currency formatting (INR) & classname merger
@@ -246,9 +263,9 @@ Computes deterministic order allocation across registered cluster makers.
   "orderId": "ORD-2026-KASUTI",
   "craft": "Kasuti",
   "requiredQuantity": 200,
-  "deliveryDeadlineDays": 30,
+  "deliveryDeadlineDays": 20,
   "destinationDistrict": "Bengaluru",
-  "budgetPerUnitINR": 1600
+  "budgetPerUnitINR": 600
 }
 
 // Response (200 OK)
@@ -270,6 +287,13 @@ Computes deterministic order allocation across registered cluster makers.
   ]
 }
 ```
+
+### 💡 Illustrative Unit Economics (B2B Bulk Order)
+
+* **200-Unit Enterprise Order × ₹600 Average Unit Value** = ₹1,20,000 GMV
+* **Proposed 4% Platform Coordination Fee** = ₹4,800 Platform Revenue
+* **Primary (B2B Bulk Fulfilment):** Proposed 3–5% platform coordination fee on completed multi-artisan orders.
+* **Secondary (B2C Retail Storefront):** Proposed 5–8% transactional fee on individual retail sales via the artisan showcase.
 
 ### 2. Recalculate on Dropout
 **`POST /api/reallocate`**
@@ -355,5 +379,6 @@ This project is open-source and licensed under the [MIT License](LICENSE).
 ---
 
 <div align="center">
+  <sub>"We are not replacing the artisan. We are making fragmented artisan capacity enterprise-ready."</sub><br>
   <sub>KalaSamanvaya • Coordinated Supply Chain Infrastructure for Indian Artisans</sub>
 </div>
