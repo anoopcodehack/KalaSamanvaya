@@ -43,7 +43,7 @@ This prototype directly addresses the three core requirements specified in the *
 | **1. Working Storefront / Catalogue Interface**<br>*(Artisans can plausibly use with minimal training)* | Clean, visual catalogue specifically customized for **Kasuti embroidery**, **Beedu handloom craft**, and **Coastal pottery**. Low cognitive load interface requiring minimal digital literacy. | `Implemented` |
 | **2. Simple Listing & Order Flow**<br>*(Payment integration can be mocked)* | **Kannada voice-assisted listing (`kn-IN`)** allows rural artisans to list items verbally without typing. Streamlined checkout flow with mock payment confirmation and instant order summary. | `Implemented` |
 | **3. Craft-Storytelling & Provenance**<br>*(To support fair pricing & craft value)* | **Digital Provenance Passports** linking each product to maker bio, geographic cluster origin (Dharwad, Udupi, Gurupura), and GI technique history to substantiate premium handcrafted pricing. | `Implemented` |
-| **⭐ The Top 30 Winning Differentiator:**<br>**Capacity-Aware Multi-Artisan Fulfillment** | While standard submissions only build a basic B2C storefront, KalaSamanvaya solves the fundamental **scale mismatch**—aggregating fragmented artisan capacity into bulk fulfillment for enterprise clients. | `Implemented` |
+| **4. Capacity-Aware Multi-Artisan Fulfillment**<br>*(Coordinated cluster supply)* | Solves the **scale mismatch** by aggregating fragmented artisan capacity into bulk fulfillment plans for enterprise buyers. | `Implemented` |
 
 ---
 
@@ -163,18 +163,18 @@ To eliminate digital literacy barriers, artisans register their inventory using 
 
 ---
 
-## 🏷️ Truth-Safe Classification Matrix
+## 🏷️ System Verification Matrix
 
-In accordance with strict hackathon evaluation ethics, all claims in this repository are categorized into three verified levels:
+All technical claims within this repository are categorized into three verified levels:
 
 | System Dimension | Label | Operational Reality |
 | :--- | :---: | :--- |
 | **Multi-Artisan Allocation Algorithm** | `Implemented` | Deterministic score calculation ($S_i$) and sequential allocation execute in pure TypeScript within the repository. |
 | **Dynamic Dropout Recovery** | `Implemented` | Rebalance recalculation handles capacity updates and standby re-routing in real-time. |
 | **Kannada Voice UI** | `Implemented` | Built using the browser-based Web Speech API with language tag `kn-IN` and heuristic extraction. |
-| **Slide 4 Cluster Scenario** | `Demonstrated Scenario` | Benchmark test data used to prove algorithmic correctness for a 200-unit Kasuti fulfillment order. |
+| **Cluster Demonstration Scenario** | `Demonstrated Scenario` | Benchmark test data used to prove algorithmic correctness for a 200-unit Kasuti fulfillment order. |
 | **Middleman Disintermediation** | `Pilot Target` | Maximize transparent artisan payouts by eliminating predatory middleman markups during pilot deployment. |
-| **Cluster Expansion (50+ Makers)** | `Pilot Target` | Planned 90-day post-hackathon onboarding milestone across Dakshina Kannada, Udupi, and Dharwad. |
+| **Cluster Expansion (50+ Makers)** | `Pilot Target` | Planned 90-day onboarding milestone across Dakshina Kannada, Udupi, and Dharwad. |
 
 ---
 
@@ -336,10 +336,9 @@ Triggers dynamic recovery when an active maker encounters a capacity constraint.
 
 ---
 
-## 👥 Team & Submission Details
+## 👥 Team Details
 
-* **Hackathon:** DEVHACK 2026
-* **Problem Statement:** PS 4.2 — Digital Market Access for Local Artisans
+* **Project:** DEVHACK 2026 — PS 4.2: Digital Market Access for Local Artisans
 * **Institution:** Sahyadri College of Engineering & Management, Mangaluru
 * **Team Members:**
   * **Anoop A.** 
