@@ -4,7 +4,7 @@ import Link from "next/link";
 import FolkArtBorder from "@/components/shared/FolkArtBorder";
 import LogoLoader from "@/components/shared/LogoLoader";
 import Navbar from "@/components/layout/Navbar";
-import { MessageCircle } from "lucide-react";
+import CraftChatBot from "@/components/shared/CraftChatBot";
 
 export const metadata: Metadata = {
   title: "KalaSamanvaya (ಕಲಾ ಸಮನ್ವಯ) | Digital Market Access for Karnataka Artisans",
@@ -33,17 +33,8 @@ export default function RootLayout({
         {/* Main Content Area */}
         <main className="flex-1">{children}</main>
 
-        {/* Floating Orange Chat Button (Truly Tribal bottom-right widget) */}
-        <div className="fixed bottom-6 right-6 z-40">
-          <Link
-            href="/artisan/onboard"
-            className="w-13 h-13 p-3.5 rounded-full bg-[#E67E22] hover:bg-[#cf6d17] text-white shadow-2xl flex items-center justify-center transition-all hover:scale-110 border-2 border-white/80 group"
-            aria-label="Artisan Voice Assistant"
-            title="Voice Portal & Craft Assistant"
-          >
-            <MessageCircle className="w-6 h-6 text-white group-hover:rotate-12 transition-transform" />
-          </Link>
-        </div>
+        {/* Interactive Craft Concierge & Voice Chat Bot */}
+        <CraftChatBot />
 
         {/* Folk Art Decorative Border above footer */}
         <FolkArtBorder variant="gold" />
