@@ -141,8 +141,8 @@ export default function ArtisanOnboardPage() {
         </div>
       </section>
 
-      {/* Decorative Folk Art Strip */}
-      <FolkArtBanner />
+      {/* Decorative Tribal Warli Folk Art Strip */}
+      <FolkArtBanner variant="warli" />
 
       {/* ── MAIN CONTENT ── */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">

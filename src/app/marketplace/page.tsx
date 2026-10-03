@@ -6,6 +6,7 @@ import ProductCard from "@/components/marketplace/ProductCard";
 import WhyThisPriceModal from "@/components/marketplace/WhyThisPriceModal";
 import MockCheckoutModal from "@/components/marketplace/MockCheckoutModal";
 import FolkArtBorder from "@/components/shared/FolkArtBorder";
+import FolkArtBanner from "@/components/shared/FolkArtBanner";
 import { Sparkles, ShieldCheck, HeartHandshake, Filter, ArrowRight, Award, Search } from "lucide-react";
 import Link from "next/link";
 
@@ -152,8 +153,8 @@ export default function MarketplacePage() {
         </div>
       </section>
 
-      {/* Decorative Traditional Folk Border */}
-      <FolkArtBorder variant="gold" />
+      {/* Authentic Indian Folk Art Divider Strip (Madhubani / Mithila Heritage) */}
+      <FolkArtBanner variant="madhubani" />
 
       {/* ── 2. OUR OFFERINGS & STORY SECTION (Matching Image 2) ── */}
       <section className="bg-[#2A1810] text-[#FAF6F0] py-16 px-4 sm:px-6 lg:px-8 border-b border-amber-950">
@@ -231,6 +232,9 @@ export default function MarketplacePage() {
           </div>
         </div>
       </section>
+
+      {/* Royal Elephant Mural Folk Art Banner */}
+      <FolkArtBanner variant="elephant" />
 
       {/* Decorative Border */}
       <FolkArtBorder variant="terracotta" />
@@ -313,6 +317,9 @@ export default function MarketplacePage() {
           </div>
         )}
       </section>
+
+      {/* Tribal Warli Folk Art Strip */}
+      <FolkArtBanner variant="warli" />
 
       {/* Floating Trust Badge (like Truly Tribal bottom-left) */}
       <div className="fixed bottom-5 left-5 z-40 bg-white/95 backdrop-blur-md rounded-xl p-2.5 shadow-xl border border-amber-300 text-xs flex items-center gap-3 hidden sm:flex">

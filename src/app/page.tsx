@@ -17,57 +17,101 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#1F130B] text-[#FAF6F0] selection:bg-[#E67E22] selection:text-white">
-      {/* ── 1. HERO SECTION (Truly Tribal Screenshot 1) ── */}
-      <section className="relative w-full min-h-[580px] sm:min-h-[660px] flex items-center bg-[#150B05] overflow-hidden">
-        {/* Rich atmospheric background photography */}
+      {/* ── 1. HERO SECTION (Full Traditional Indian Craft Background) ── */}
+      <section className="relative w-full min-h-[640px] sm:min-h-[720px] flex items-center bg-[#150B05] overflow-hidden">
+        {/* Full high-definition traditional craft background */}
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-40 filter brightness-90 transform scale-105 transition-transform duration-1000"
+          className="absolute inset-0 bg-cover bg-center sm:bg-right opacity-85 filter brightness-95 transform scale-100 transition-transform duration-1000"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1600&q=80')`,
+            backgroundImage: `url('/hero-crafts.jpg')`,
+            backgroundPosition: "center 30%",
           }}
         />
-        {/* Soft vignette overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/30" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1F130B] via-transparent to-black/30" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 z-10 w-full">
-          <div className="max-w-2xl space-y-6">
-            <span className="text-xs sm:text-sm font-bold tracking-widest text-[#E67E22] uppercase">
-              WHERE TRADITION MEETS THOUGHTFUL GIFTING
-            </span>
+        {/* Cinematic contrast gradient: dark on left for text legibility, transparent on right so the traditional craft is fully visible */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/75 sm:via-black/55 to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1F130B] via-transparent to-black/40" />
 
-            <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight leading-tight">
-              Gifts That Tell <br />
-              <span className="text-[#E67E22]">Karnataka&apos;s Story.</span>
-            </h1>
+        {/* Ambient warm light highlights */}
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#E67E22]/15 rounded-full blur-3xl pointer-events-none" />
 
-            <p className="text-base sm:text-lg text-stone-200/90 leading-relaxed font-normal max-w-lg">
-              Beautifully handcrafted. Authentically Indian. Meaningful for every occasion—connecting rural Kasuti, Beedu, and pottery collectives directly to your home.
-            </p>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 z-10 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            
+            {/* Left Glass Panel: Text & CTAs */}
+            <div className="lg:col-span-7 xl:col-span-6 space-y-6 bg-black/45 backdrop-blur-md p-6 sm:p-10 rounded-3xl border border-white/10 shadow-2xl">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-950/90 border border-amber-500/50 text-amber-300 text-xs font-bold tracking-wider uppercase shadow-lg">
+                <Sparkles className="w-3.5 h-3.5 text-[#E67E22]" />
+                <span>ಕಲಾ ಸಮನ್ವಯ • Authentic Karnataka Heritage</span>
+              </div>
 
-            <div className="pt-2 flex flex-wrap items-center gap-4">
-              <Link
-                href="/marketplace"
-                className="px-8 py-3.5 rounded-full bg-[#E67E22] hover:bg-[#cf6d17] text-white font-bold text-sm shadow-xl transition-all hover:scale-105 inline-flex items-center gap-2"
-              >
-                <span>Explore Collection</span>
-                <ChevronRight className="w-4 h-4" />
-              </Link>
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
+                Gifts That Tell <br />
+                <span className="text-[#E67E22]">Karnataka&apos;s Story.</span>
+              </h1>
 
-              <button
-                onClick={() => setActiveStoryProduct(ARTISAN_PRODUCTS[0])}
-                className="px-6 py-3.5 rounded-full border border-amber-400/50 hover:bg-white/10 text-amber-200 font-semibold text-sm transition-all inline-flex items-center gap-2"
-              >
-                <Sparkles className="w-4 h-4 text-[#E67E22]" />
-                <span>Why This Price?</span>
-              </button>
+              <p className="text-sm sm:text-base text-stone-200 leading-relaxed font-normal">
+                Exquisite hand-carved rosewood jali elephants, hand-painted temple mural art, Mysore inlay craftsmanship, and pure Kasuti embroidery—crafted by indigenous master artisan families across Karnataka with transparent fair-trade payouts.
+              </p>
+
+              <div className="pt-2 flex flex-wrap items-center gap-4">
+                <Link
+                  href="/marketplace"
+                  className="px-8 py-3.5 rounded-full bg-[#E67E22] hover:bg-[#cf6d17] text-white font-bold text-sm shadow-xl shadow-amber-950/50 transition-all hover:scale-105 inline-flex items-center gap-2"
+                >
+                  <span>Explore Collection</span>
+                  <ChevronRight className="w-4 h-4" />
+                </Link>
+
+                <button
+                  onClick={() => setActiveStoryProduct(ARTISAN_PRODUCTS[0])}
+                  className="px-6 py-3.5 rounded-full border border-amber-400/50 bg-white/5 hover:bg-white/15 text-amber-200 font-semibold text-sm transition-all inline-flex items-center gap-2"
+                >
+                  <Sparkles className="w-4 h-4 text-[#E67E22]" />
+                  <span>Why This Price? (ಬೆಲೆ ವಿವರ)</span>
+                </button>
+              </div>
+
+              {/* Traditional Trust Pillars */}
+              <div className="grid grid-cols-3 gap-3 pt-6 border-t border-amber-900/60 text-xs text-amber-200/90">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-[#E67E22] flex-shrink-0" />
+                  <span>100% Handcrafted</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <HeartHandshake className="w-4 h-4 text-[#E67E22] flex-shrink-0" />
+                  <span>75% Direct Payout</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-[#E67E22] flex-shrink-0" />
+                  <span>GI Heritage Clusters</span>
+                </div>
+              </div>
             </div>
+
+            {/* Right Column: Floating Heritage Spotlight Pill */}
+            <div className="lg:col-span-5 xl:col-span-6 hidden lg:flex flex-col justify-end items-end h-full">
+              <div className="bg-black/55 backdrop-blur-md p-4 rounded-2xl border border-amber-500/30 text-right shadow-2xl max-w-sm space-y-1.5 animate-fadeIn">
+                <div className="flex items-center justify-end gap-2 text-[#E67E22] text-xs font-bold uppercase tracking-wider">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Master Craftsmen Heritage</span>
+                </div>
+                <div className="text-sm font-bold text-white">
+                  Karnataka Traditional Treasures
+                </div>
+                <p className="text-[11px] text-stone-300 leading-snug">
+                  Temple mural brass art, rosewood lattice elephants, and traditional Mysore lacquerware inlay boxes.
+                </p>
+              </div>
+            </div>
+
           </div>
         </div>
 
-        {/* Floating Google Review Badge (Matching Screenshot 1 Bottom Left) */}
-        <div className="absolute bottom-6 left-6 z-20 bg-white/95 text-stone-900 rounded-xl px-3.5 py-2.5 shadow-2xl border border-stone-200 text-xs hidden sm:flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 font-bold flex items-center justify-center text-sm border border-blue-100">
+        {/* Floating Google Review Badge */}
+        <div className="absolute bottom-4 left-6 z-20 bg-white/95 text-stone-900 rounded-xl px-3.5 py-2 shadow-2xl border border-stone-200 text-xs hidden sm:flex items-center gap-3">
+          <div className="w-7 h-7 rounded-full bg-blue-50 text-blue-600 font-bold flex items-center justify-center text-xs border border-blue-100">
             G
           </div>
           <div>
@@ -75,13 +119,13 @@ export default function HomePage() {
               <span>5.0</span>
               <span className="text-amber-500">★★★★★</span>
             </div>
-            <div className="text-[10px] text-stone-500 font-medium">48 VERIFIED REVIEWS</div>
+            <div className="text-[9px] text-stone-500 font-medium">48 VERIFIED PATRON REVIEWS</div>
           </div>
         </div>
       </section>
 
-      {/* ── 2. VIBRANT INDIAN FOLK ART BANNER (Screenshot 2 Top) ── */}
-      <FolkArtBanner />
+      {/* ── 2. VIBRANT INDIAN FOLK ART BANNER (Krishna & Peacocks Kalamkari Strip) ── */}
+      <FolkArtBanner variant="krishna" />
 
       {/* ── 3. OUR OFFERINGS SECTION (Truly Tribal Screenshot 2) ── */}
       <section className="wood-texture py-20 px-4 sm:px-6 lg:px-8 border-y border-amber-950/60">
@@ -124,14 +168,14 @@ export default function HomePage() {
               <div className="rounded-2xl overflow-hidden border-2 border-amber-900/40 shadow-2xl bg-[#160D07] p-2.5 group">
                 <div className="aspect-[4/3] rounded-xl overflow-hidden relative">
                   <img
-                    src="https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=800&q=80"
-                    alt="Karnataka Traditional Craft Hamper"
+                    src="/hero-crafts.jpg"
+                    alt="Karnataka Traditional Heritage Craft Treasures"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                   <div className="absolute bottom-3 left-3 right-3 text-white text-xs">
-                    <span className="font-bold text-amber-300">Authentic Artisan Craft Hamper</span>
-                    <p className="text-[11px] text-stone-300">Handcrafted Beedu Wildgrass & Kasuti Silk</p>
+                    <span className="font-bold text-amber-300">Karnataka Masterpiece Hamper</span>
+                    <p className="text-[11px] text-stone-300">Mysore Inlay, Sandalwood Jali & Traditional Folk Art</p>
                   </div>
                 </div>
               </div>
@@ -140,8 +184,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 4. VIBRANT FOLK ART BANNER (Screenshot 3 Top) ── */}
-      <FolkArtBanner />
+      {/* ── 4. ROYAL ELEPHANT MURAL FOLK ART BANNER ── */}
+      <FolkArtBanner variant="elephant" />
 
       {/* ── 5. OUR SHOP SECTION (Truly Tribal Screenshot 3) ── */}
       <section className="wood-texture py-20 px-4 sm:px-6 lg:px-8 border-y border-amber-950/60">
@@ -237,6 +281,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── TRIBAL WARLI FOLK ART CELEBRATION STRIP ── */}
+      <FolkArtBanner variant="warli" />
 
       {/* ── 6. CRAFT SPOTLIGHT BANNER (Truly Tribal Screenshot 4) ── */}
       <section className="wood-texture relative py-20 px-4 sm:px-6 lg:px-8 border-t border-amber-950">
