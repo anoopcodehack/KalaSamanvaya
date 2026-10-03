@@ -15,7 +15,7 @@
 *DEVHACK 2026 — Problem Statement 4.2: Digital Market Access for Local Artisans*  
 **Sahyadri College of Engineering & Management, Mangaluru**
 
-[Live Demo](https://kalasamanvaya.vercel.app) • [Architecture](#-system-architecture) • [Algorithm & Math](#-deterministic-allocation-engine) • [Verified Dataset](#-demonstrated-recovery-scenario) • [Setup Guide](#-local-development-setup) • [License](#-license)
+[Live Demo](https://kalasamanvaya.vercel.app) • [PS 4.2 Deliverables](#-direct-alignment-with-ps-42-official-deliverables) • [Architecture](#️-guiding-architectural-principle) • [Allocation Engine](#-deterministic-allocation-engine) • [Benchmark Dataset](#-demonstrated-recovery-scenario) • [Setup Guide](#-local-development-setup) • [License](#-license)
 
 ---
 
@@ -31,6 +31,19 @@ Individual artisans operate with constrained production bandwidth, while enterpr
 Existing digital marketplaces focus strictly on individual catalog discovery. When an enterprise buyer needs 200 authentic handcrafted Kasuti shawls or terracotta pottery sets, single-artisan stores fail due to supply bottlenecks. Buyers face intense coordination friction or resort to machine-made substitutes.
 
 **KalaSamanvaya (ಕಲಾ ಸಮನ್ವಯ)** introduces a **coordinated fulfillment layer**. Instead of treating every maker as an isolated seller, our deterministic allocation engine aggregates compatible cluster capacity into a single, verifiable B2B delivery plan—backed by dynamic dropout recovery and accessible Kannada voice-assisted onboarding.
+
+---
+
+## 🎯 Direct Alignment with PS 4.2 Official Deliverables
+
+This prototype directly addresses the three core requirements specified in the **DEVHACK 2026 PS 4.2 problem statement**:
+
+| Official PS 4.2 Deliverable | Implementation in KalaSamanvaya | Status |
+| :--- | :--- | :---: |
+| **1. Working Storefront / Catalogue Interface**<br>*(Artisans can plausibly use with minimal training)* | Clean, visual catalogue specifically customized for **Kasuti embroidery**, **Beedu handloom craft**, and **Coastal pottery**. Low cognitive load interface requiring minimal digital literacy. | `Implemented` |
+| **2. Simple Listing & Order Flow**<br>*(Payment integration can be mocked)* | **Kannada voice-assisted listing (`kn-IN`)** allows rural artisans to list items verbally without typing. Streamlined checkout flow with mock payment confirmation and instant order summary. | `Implemented` |
+| **3. Craft-Storytelling & Provenance**<br>*(To support fair pricing & craft value)* | **Digital Provenance Passports** linking each product to maker bio, geographic cluster origin (Dharwad, Udupi, Gurupura), and GI technique history to substantiate premium handcrafted pricing. | `Implemented` |
+| **⭐ The Top 30 Winning Differentiator:**<br>**Capacity-Aware Multi-Artisan Fulfillment** | While standard submissions only build a basic B2C storefront, KalaSamanvaya solves the fundamental **scale mismatch**—aggregating fragmented artisan capacity into bulk fulfillment for enterprise clients. | `Implemented` |
 
 ---
 
