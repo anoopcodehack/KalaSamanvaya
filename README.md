@@ -329,10 +329,10 @@ Triggers dynamic recovery when an active maker encounters a capacity constraint.
 * **Problem Statement:** PS 4.2 — Digital Market Access for Local Artisans
 * **Institution:** Sahyadri College of Engineering & Management, Mangaluru
 * **Team Members:**
-  * **Anoop A.** — *Team Lead, Full-Stack Architecture & Allocation Engine*
-  * *[Member 2]* — *Frontend UX & Kannada Speech Integration*
-  * *[Member 3]* — *Data Models, Clustering & Provenance Passports*
-  * *[Member 4]* — *Business Model & Enterprise Buyer Workflows*
+  * **Anoop A.** 
+  * *[Member 2]* 
+  * *[Member 3]*
+  * *[Member 4]* 
 
 ---
 
