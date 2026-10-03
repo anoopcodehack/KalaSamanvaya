@@ -388,7 +388,7 @@ Voice Onboarding ──▶ Direct Catalogue Sales ──▶ Coordinated Bulk Cap
 * **Project:** DEVHACK 2026 — PS 4.2: Digital Market Access for Local Artisans
 * **Institution:** Sahyadri College of Engineering & Management, Mangaluru
 * **Team Members:**
-  * **Anoop A.** 
+  * **** 
   * *[Member 2]* 
   * *[Member 3]*
   * *[Member 4]* 
