@@ -17,14 +17,13 @@ import {
   KeyRound,
   CheckCircle2,
   Volume2,
-  Sparkles,
   ChevronRight,
   PackageCheck
 } from "lucide-react";
 
-export type UserRole = "artisan" | "enterprise" | "patron";
+type UserRole = "artisan" | "enterprise" | "patron";
 
-export interface DemoUser {
+interface DemoUser {
   id: string;
   role: UserRole;
   name: string;
@@ -37,7 +36,7 @@ export interface DemoUser {
   defaultRoute: string;
 }
 
-export const DEMO_PERSONAS: DemoUser[] = [
+const DEMO_PERSONAS: DemoUser[] = [
   {
     id: "user-artisan-01",
     role: "artisan",

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { ArtisanProduct } from "@/lib/db/products";
-import { X, CheckCircle2, ShieldCheck, Truck, CreditCard, Sparkles, MapPin, Smartphone } from "lucide-react";
+import { X, CheckCircle2, ShieldCheck, Truck, CreditCard, ShoppingBag, ArrowRight, MapPin, Smartphone } from "lucide-react";
 
 interface MockCheckoutModalProps {
   product: ArtisanProduct | null;
@@ -74,14 +74,14 @@ export default function MockCheckoutModal({
         <div className="bg-[#2A1810] text-[#FAF6F0] px-6 py-4 flex items-center justify-between border-b border-amber-800/40">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-full bg-[#C85A32] flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-white" />
+              <ShoppingBag className="w-4 h-4 text-white" />
             </div>
             <div>
               <h3 className="text-base font-bold tracking-wide">
                 {isSuccess ? "Order Confirmed!" : "Direct Artisan Mock Checkout"}
               </h3>
               <p className="text-xs text-amber-200/80">
-                {isSuccess ? "ಧನ್ಯವಾದಗಳು • Empowering Karnataka Craft Clusters" : "Zero Middlemen • 95% Direct Payout to Rural Artisan"}
+                {isSuccess ? "ಧನ್ಯವಾದಗಳು • Empowering Karnataka Craft Clusters" : "Zero Middlemen • 75%+ Direct Payout to Rural Artisan"}
               </p>
             </div>
           </div>
@@ -316,7 +316,7 @@ export default function MockCheckoutModal({
                 ) : (
                   <>
                     <span>Confirm Order (₹{product.priceINR.toLocaleString("en-IN")})</span>
-                    <Sparkles className="w-3.5 h-3.5" />
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </>
                 )}
               </button>

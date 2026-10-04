@@ -16,14 +16,20 @@ import {
   ChevronRight,
   PackageCheck,
   LogOut,
-  RefreshCw
+  RefreshCw,
+  ShieldCheck
 } from "lucide-react";
+import { ARTISAN_PRODUCTS } from "@/lib/db/products";
+import MockCheckoutModal from "@/components/marketplace/MockCheckoutModal";
 
 export default function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
+  const [checkoutModalOpen, setCheckoutModalOpen] = useState(false);
+  const [cartQuantity, setCartQuantity] = useState(1);
 
   useEffect(() => {
     const loadUser = () => {
@@ -100,8 +106,9 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="border-b border-stone-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-50 shadow-sm transition-shadow">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <>
+      <header className="border-b border-stone-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-50 shadow-sm transition-shadow">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
           {/* ── 1. PROMINENT BIG LOGO (Sleek nav, big crisp logo) ── */}
@@ -242,17 +249,19 @@ export default function Navbar() {
               </Link>
             )}
 
-            {/* Shopping Cart Button with subtle tilt & badge pulse */}
-            <Link
-              href="/marketplace#catalog"
+            {/* Shopping Cart Button - Opens Interactive Slide-out Cart Drawer */}
+            <button
+              type="button"
+              onClick={() => setCartDrawerOpen(true)}
               className="group relative p-2 rounded-full text-stone-800 hover:text-[#C85A32] hover:bg-stone-50 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 ease-out"
-              aria-label="Shopping Cart"
+              aria-label="Shopping Cart (1 item)"
+              title="Open Handcrafted Cart (1 item)"
             >
               <ShoppingBag className="w-5 h-5 transition-transform duration-200 ease-out group-hover:-rotate-6 group-hover:scale-105" />
               <span className="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-[#C85A32] text-white text-[10px] font-bold flex items-center justify-center shadow-xs transition-transform duration-200 ease-out group-hover:scale-110">
-                1
+                {cartQuantity}
               </span>
-            </Link>
+            </button>
 
             {/* Mobile Menu Hamburger Toggle */}
             <button
@@ -327,5 +336,187 @@ export default function Navbar() {
         </div>
       )}
     </header>
+
+    {/* ── INTERACTIVE CART DRAWER (Positioned Outside Header) ── */}
+    {cartDrawerOpen && (
+      <div className="fixed inset-0 z-[100] overflow-hidden text-[#2A1810]">
+        {/* Full-screen Dark Backdrop */}
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-fadeIn z-[100]"
+          onClick={() => setCartDrawerOpen(false)}
+        />
+
+        {/* Full-height Slide-out Drawer Panel */}
+        <div className="fixed inset-y-0 right-0 max-w-full flex pl-10 z-[101] h-screen pointer-events-none">
+          <div className="w-screen max-w-md bg-[#FAF7F2] shadow-2xl flex flex-col justify-between border-l border-stone-200 animate-slideInRight h-full pointer-events-auto">
+              
+              {/* Header */}
+              <div className="p-4 sm:p-5 bg-white border-b border-stone-200 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-amber-50 text-[#C85A32] flex items-center justify-center border border-amber-200">
+                    <ShoppingBag className="w-5 h-5 text-[#C85A32]" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-[#2A1810]">
+                      Your Handcrafted Cart
+                    </h3>
+                    <p className="text-[11px] text-stone-500 font-medium">
+                      {cartQuantity} Authentic Karnataka Artisan Piece
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setCartDrawerOpen(false)}
+                  className="p-2 rounded-xl text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors"
+                  aria-label="Close cart"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Free Pan-India Delivery Ribbon */}
+              <div className="bg-[#24130A] text-amber-200 text-xs py-2 px-4 flex items-center justify-between">
+                <span className="text-[11px] font-semibold text-emerald-400">
+                  Free Pan-India Delivery Unlocked!
+                </span>
+                <span className="text-[10px] text-stone-400">GI Certified</span>
+              </div>
+
+              {/* Cart Items Area */}
+              <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
+                <div className="bg-white rounded-2xl p-4 border border-stone-200 shadow-xs space-y-3">
+                  <div className="flex gap-3.5">
+                    <img
+                      src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=300&q=80"
+                      alt="Dharwad Kasuti Silk Shawl"
+                      className="w-20 h-20 object-cover rounded-xl border border-stone-200 flex-shrink-0"
+                    />
+
+                    <div className="flex-1 space-y-1">
+                      <span className="px-2 py-0.5 rounded bg-amber-100 text-[#C85A32] text-[10px] font-bold uppercase tracking-wider">
+                        Kasuti GI Heritage
+                      </span>
+                      <h4 className="font-bold text-sm text-[#2A1810] leading-snug">
+                        Dharwad Heritage Kasuti Silk Shawl
+                      </h4>
+                      <p className="text-[11px] text-stone-500">
+                        Maker: Savita Naik (Dharwad Kendra)
+                      </p>
+                      <div className="flex items-baseline gap-2 pt-0.5">
+                        <span className="font-extrabold text-[#C85A32] text-sm">
+                          ₹1,850
+                        </span>
+                        <span className="text-stone-400 line-through text-xs">
+                          ₹2,400
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Quantity & Payout Row */}
+                  <div className="pt-2.5 border-t border-stone-100 flex items-center justify-between text-xs">
+                    {/* Quantity Selector */}
+                    <div className="flex items-center border border-stone-300 rounded-lg overflow-hidden bg-[#FAF7F2]">
+                      <button
+                        type="button"
+                        onClick={() => setCartQuantity(Math.max(1, cartQuantity - 1))}
+                        className="px-2.5 py-1 text-stone-600 hover:bg-stone-200 transition-colors font-bold"
+                      >
+                        -
+                      </button>
+                      <span className="px-3 py-1 font-bold text-stone-800">
+                        {cartQuantity}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setCartQuantity(cartQuantity + 1)}
+                        className="px-2.5 py-1 text-stone-600 hover:bg-stone-200 transition-colors font-bold"
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    {/* Direct Fair Wage Payout */}
+                    <div className="text-right">
+                      <span className="text-[10px] text-stone-500 block">
+                        Direct Artisan Wage (75%):
+                      </span>
+                      <span className="font-extrabold text-emerald-700 text-xs">
+                        ₹{(1380 * cartQuantity).toLocaleString("en-IN")}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Fair-Trade Promise Note */}
+                <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/80 text-xs space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-[#C85A32]">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>Fair-Trade Direct Payment Guarantee</span>
+                  </div>
+                  <p className="text-[11px] text-stone-600 leading-relaxed">
+                    Zero middlemen deductions. 75%+ of this purchase directly credits Savita Naik&apos;s Aadhaar-linked bank account in Dharwad.
+                  </p>
+                </div>
+              </div>
+
+              {/* Drawer Footer & Checkout Button */}
+              <div className="p-4 sm:p-5 bg-white border-t border-stone-200 space-y-3">
+                <div className="space-y-1.5 text-xs text-stone-600">
+                  <div className="flex justify-between">
+                    <span>Subtotal:</span>
+                    <span className="font-semibold text-stone-800">
+                      ₹{(1850 * cartQuantity).toLocaleString("en-IN")}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Pan-India Delivery:</span>
+                    <span className="font-bold text-emerald-600">FREE</span>
+                  </div>
+                  <div className="flex justify-between text-sm font-extrabold text-[#2A1810] pt-1.5 border-t border-stone-100">
+                    <span>Total Order Value:</span>
+                    <span className="text-[#C85A32] text-base">
+                      ₹{(1850 * cartQuantity).toLocaleString("en-IN")}
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCartDrawerOpen(false);
+                    setCheckoutModalOpen(true);
+                  }}
+                  className="w-full py-3.5 px-4 rounded-xl bg-[#C85A32] hover:bg-[#a84420] text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 hover:-translate-y-0.5 active:translate-y-0"
+                >
+                  <span>Proceed to Instant Mock Checkout (UPI)</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+
+                <div className="text-center pt-1">
+                  <Link
+                    href="/marketplace#catalog"
+                    onClick={() => setCartDrawerOpen(false)}
+                    className="text-xs text-stone-500 hover:text-[#C85A32] underline"
+                  >
+                    Or explore more handcrafted collections
+                  </Link>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── MOCK CHECKOUT MODAL ── */}
+      <MockCheckoutModal
+        isOpen={checkoutModalOpen}
+        onClose={() => setCheckoutModalOpen(false)}
+        product={ARTISAN_PRODUCTS[0]}
+      />
+    </>
   );
 }
