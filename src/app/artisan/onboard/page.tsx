@@ -17,7 +17,8 @@ import {
   Minus,
   RefreshCw,
   UserCheck,
-  Award
+  Award,
+  PackageCheck
 } from "lucide-react";
 import Link from "next/link";
 
@@ -97,6 +98,32 @@ export default function ArtisanOnboardPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#2A1810]">
+      {/* ── ARTISAN PORTAL SUB-NAV TABS ── */}
+      <div className="bg-[#24130A] border-b border-amber-900/40 text-stone-200">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-14">
+            <div className="flex items-center gap-2 sm:gap-4 text-xs font-semibold">
+              <Link
+                href="/artisan/onboard"
+                className="px-3.5 py-1.5 rounded-lg bg-[#E67E22] text-white font-bold shadow-xs flex items-center gap-1.5"
+              >
+                <Mic className="w-3.5 h-3.5 text-white" />
+                <span>{language === "kn" ? "ಧ್ವನಿ ನೊಂದಣಿ" : "Voice Listing"}</span>
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              </Link>
+
+              <Link
+                href="/artisan/inbox"
+                className="px-3 py-1.5 rounded-lg text-stone-300 hover:text-white hover:bg-white/10 transition-colors flex items-center gap-1.5"
+              >
+                <PackageCheck className="w-3.5 h-3.5 text-[#E67E22]" />
+                <span>{language === "kn" ? "ಆರ್ಡರ್ ಇನ್‌ಬಾಕ್ಸ್" : "Order Inbox"}</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* ── HEADER BANNER ── */}
       <section className="bg-[#F5EFEB] pt-10 pb-8 px-4 sm:px-6 lg:px-8 border-b border-stone-200">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
