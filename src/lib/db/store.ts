@@ -149,7 +149,12 @@ export async function getAllOrders(): Promise<CustomerOrder[]> {
   try {
     const mongo = await getMongoDb();
     if (mongo) {
-      const mongoOrders = await mongo.collection<CustomerOrder>("orders").find({}).sort({ _id: -1 }).toArray();
+      const collection = mongo.collection<CustomerOrder>("orders");
+      const count = await collection.countDocuments();
+      if (count === 0 && db.orders.length > 0) {
+        await collection.insertMany(db.orders as any);
+      }
+      const mongoOrders = await collection.find({}).sort({ _id: -1 }).toArray();
       if (mongoOrders.length > 0) {
         db.orders = mongoOrders;
         return mongoOrders;
