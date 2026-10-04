@@ -25,7 +25,7 @@ export async function POST(req: Request) {
         const audioMime = mimeType || "audio/webm";
 
         const geminiRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -88,7 +88,7 @@ Return ONLY a valid JSON object matching this schema without markdown code block
     if (transcript && isGeminiAvailable) {
       try {
         const geminiRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -121,7 +121,7 @@ Extract into pure JSON without code fences:
 
         if (geminiRes.ok) {
           const data = await geminiRes.json();
-          const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+          const rawText = data?.candidates?.[0]?.content?.parts?.find((p: any) => p.text)?.text || "";
           const cleaned = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
           const parsed = JSON.parse(cleaned);
           if (parsed.craft && parsed.quantity && parsed.pricePerUnitINR) {

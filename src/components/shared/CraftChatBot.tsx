@@ -6,76 +6,140 @@ import {
   MessageCircle,
   X,
   Send,
-  Info,
   Mic,
   MicOff,
   ShoppingBag,
   Building2,
-  Receipt,
   RotateCcw,
-  CheckCircle2,
-  ChevronRight
+  ChevronRight,
+  Volume2,
+  VolumeX,
+  Sparkles,
+  Info
 } from "lucide-react";
+import { playSpeech, stopSpeech } from "@/lib/voice/playSpeech";
 
 interface ChatMessage {
   id: string;
   sender: "bot" | "user";
   text: string;
-  kannadaText?: string;
   timestamp: string;
   actionLink?: {
     label: string;
     href: string;
-    icon?: "shop" | "voice" | "b2b" | "info";
+    icon?: string;
   };
 }
 
-const INITIAL_MESSAGES: ChatMessage[] = [
-  {
-    id: "msg-welcome",
-    sender: "bot",
-    text: "ನಮಸ್ಕಾರ! Welcome to KalaSamanvaya. I am your Karnataka Craft & Fair-Trade Guide. How can I assist you with authentic handlooms, artisan fair-wages, or bespoke corporate gifting?",
-    timestamp: "Just now",
-  },
-];
+const INITIAL_MESSAGES: Record<"kn" | "en", ChatMessage[]> = {
+  kn: [
+    {
+      id: "msg-welcome-kn",
+      sender: "bot",
+      text: "ನಮಸ್ಕಾರ! ಕಲಾ ಸಮನ್ವಯಕ್ಕೆ ಸ್ವಾಗತ. ನಾನು ನಿಮ್ಮ ಕರಕುಶಲ ಮತ್ತು ನೇರ ಗ್ರಾಹಕ ಮಾರ್ಗದರ್ಶಿ. ಕಸೂತಿ ಶಾಲುಗಳು, ಬೀಡು ಹುಲ್ಲಿನ ಬುಟ್ಟಿಗಳು ಅಥವಾ ಬೃಹತ್ ಕಾರ್ಪೊರೇಟ್ ಉಡುಗೊರೆಗಳ ಬಗ್ಗೆ ನೀವು ಏನು ತಿಳಿಯಲು ಬಯಸುತ್ತೀರಿ?",
+      timestamp: "Just now",
+      actionLink: {
+        label: "ಕರಕುಶಲ ಮಳಿಗೆ ನೋಡಿ",
+        href: "/marketplace",
+        icon: "shop",
+      },
+    },
+  ],
+  en: [
+    {
+      id: "msg-welcome-en",
+      sender: "bot",
+      text: "Namaskara! Welcome to KalaSamanvaya. I am your Karnataka Craft & Fair-Trade Concierge. Ask me anything about our authentic GI handlooms, transparent 74.6% direct artisan payouts, or bespoke corporate gifting!",
+      timestamp: "Just now",
+      actionLink: {
+        label: "Explore Handcrafted Store",
+        href: "/marketplace",
+        icon: "shop",
+      },
+    },
+  ],
+};
 
-const SUGGESTED_QUESTIONS = [
-  {
-    label: "Why does Kasuti cost ₹1,850?",
-    query: "Why does the Dharwad Kasuti silk shawl cost ₹1,850?",
-  },
-  {
-    label: "Where is Artisan Voice Portal?",
-    query: "Where is the separate voice listing portal for rural artisans?",
-  },
-  {
-    label: "Need 200 bulk corporate gifts",
-    query: "How can I order 200 handcrafted items for corporate gifting?",
-  },
-  {
-    label: "What is Beedu wildgrass craft?",
-    query: "Tell me about Udupi Beedu wildgrass basketry.",
-  },
-];
+const SUGGESTED_QUESTIONS = {
+  kn: [
+    { label: "ಕಸೂತಿ ಬೆಲೆ ಏಕೆ ₹1,850?", query: "ಧಾರವಾಡ ಕಸೂತಿ ಶಾಲಿನ ಬೆಲೆ ಏಕೆ ₹1,850 ಮತ್ತು ಕುಶಲಕರ್ಮಿಗೆ ಎಷ್ಟು ಸಿಗುತ್ತದೆ?" },
+    { label: "ಕುಶಲಕರ್ಮಿಗಳಿಗೆ ನೇರ ಪಾವತಿ ಹೇಗೆ?", query: "ಕುಶಲಕರ್ಮಿಗಳಿಗೆ ನೇರ ಬ್ಯಾಂಕ್ ಜಮಾ (DBT) ಹೇಗೆ ತಲುಪುತ್ತದೆ?" },
+    { label: "200 ಬೃಹತ್ ಉಡುಗೊರೆಗಳು", query: "200 ಬೃಹತ್ ಕಾರ್ಪೊರೇಟ್ ಉಡುಗೊರೆಗಳನ್ನು ಆರ್ಡರ್ ಮಾಡುವುದು ಹೇಗೆ?" },
+    { label: "ಧ್ವನಿ ನೊಂದಣಿ ಎಲ್ಲಿದೆ?", query: "ಗ್ರಾಮೀಣ ಕುಶಲಕರ್ಮಿಗಳ ಧ್ವನಿ ನೊಂದಣಿ ಪೋರ್ಟಲ್ ಎಲ್ಲಿದೆ?" },
+    { label: "ಉಡುಪಿ ಬೀಡು ಬುಟ್ಟಿ ವಿವರ", query: "ಉಡುಪಿಯ ಸಾಂಪ್ರದಾಯಿಕ ಬೀಡು ಹುಲ್ಲಿನ ಬುಟ್ಟಿಗಳ ವಿಶೇಷತೆ ಏನು?" },
+  ],
+  en: [
+    { label: "Why does Kasuti cost ₹1,850?", query: "Why does the Dharwad Kasuti silk shawl cost ₹1,850 and how much goes to the artisan?" },
+    { label: "How do artisans get paid?", query: "How does the direct 74.6% DBT bank payout work for artisans?" },
+    { label: "Need 200 bulk corporate gifts", query: "How does the multi-cluster 200 bulk allocation work for corporate gifting?" },
+    { label: "Where is Artisan Voice Portal?", query: "Where is the voice listing portal for rural makers?" },
+    { label: "What is Beedu wildgrass craft?", query: "Tell me about Udupi Beedu wildgrass basketry." },
+  ],
+};
 
 export default function CraftChatBot() {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
+  const [language, setLanguage] = useState<"kn" | "en">("kn");
+  const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES.kn);
   const [inputValue, setInputValue] = useState("");
   const [isListening, setIsListening] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
 
-  // Auto-scroll to bottom of messages
+  // Auto-scroll to bottom
   useEffect(() => {
     if (isOpen) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, isOpen, isTyping]);
 
-  // Voice speech-to-text support inside chat
+  // Clean audio on close
+  useEffect(() => {
+    if (!isOpen) {
+      stopSpeech();
+      setSpeakingMsgId(null);
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch (_) {}
+      }
+      setIsListening(false);
+    }
+  }, [isOpen]);
+
+  // Switch initial messages if switched when at start
+  const handleSwitchLanguage = (newLang: "kn" | "en") => {
+    setLanguage(newLang);
+    stopSpeech();
+    setSpeakingMsgId(null);
+    if (messages.length <= 1) {
+      setMessages(INITIAL_MESSAGES[newLang]);
+    }
+  };
+
+  // Voice speech synthesis for bot messages
+  const handleToggleSpeak = (msgId: string, text: string) => {
+    if (speakingMsgId === msgId) {
+      stopSpeech();
+      setSpeakingMsgId(null);
+      return;
+    }
+
+    const hasKannada = /[\u0C80-\u0CFF]/.test(text);
+    const audioLang = hasKannada ? "kn" : "en";
+
+    playSpeech(
+      text,
+      audioLang,
+      () => setSpeakingMsgId(msgId),
+      () => setSpeakingMsgId(null)
+    );
+  };
+
+  // Voice speech-to-text input (Mic button)
   const toggleListening = () => {
     if (isListening) {
       recognitionRef.current?.stop();
@@ -87,13 +151,17 @@ export default function CraftChatBot() {
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      alert("Speech recognition is not supported in this browser. Please type your question.");
+      alert(
+        language === "kn"
+          ? "ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಧ್ವನಿ ಗುರುತಿಸುವಿಕೆ ಲಭ್ಯವಿಲ್ಲ. ದಯವಿಟ್ಟು ಟೈಪ್ ಮಾಡಿ."
+          : "Speech recognition is not supported in this browser. Please type your query."
+      );
       return;
     }
 
     try {
       const recognition = new SpeechRecognition();
-      recognition.lang = "kn-IN"; // Supports Kannada & English
+      recognition.lang = language === "kn" ? "kn-IN" : "en-IN";
       recognition.interimResults = false;
       recognition.continuous = false;
 
@@ -109,121 +177,20 @@ export default function CraftChatBot() {
 
       recognitionRef.current = recognition;
       recognition.start();
-    } catch (e) {
+    } catch (_) {
       setIsListening(false);
     }
   };
 
-  const getBotResponse = (query: string): ChatMessage => {
-    const q = query.toLowerCase();
-
-    // 1. Pricing & Fair Wage Questions
-    if (q.includes("price") || q.includes("cost") || q.includes("1850") || q.includes("why") || q.includes("ಬೆಲೆ")) {
-      return {
-        id: `bot-${Date.now()}`,
-        sender: "bot",
-        text: "At KalaSamanvaya, 75%+ of the price (₹1,380 out of ₹1,850) goes directly to the master artisan woman's bank account. A traditional Kasuti shawl requires 38 hours of counted-thread needlework without knots, compared to a 4-minute synthetic factory print. Our 'Why This Price?' feature ensures zero middleman exploitation.",
-        timestamp: "Just now",
-        actionLink: {
-          label: "View Fair Price Breakdown in Store",
-          href: "/marketplace",
-          icon: "shop",
-        },
-      };
-    }
-
-    // 2. Voice Listing & Rural Artisan Onboarding
-    if (q.includes("voice") || q.includes("kannada") || q.includes("artisan") || q.includes("list") || q.includes("onboard") || q.includes("ಧ್ವನಿ")) {
-      return {
-        id: `bot-${Date.now()}`,
-        sender: "bot",
-        text: "For rural artisans, we built a separate, dedicated Voice Portal (/artisan/onboard). Artisans don't need to type English forms or chat — they simply speak in native Kannada (e.g., 'ನನ್ನ ಬಳಿ 80 ಕಸೂತಿ ಶಾಲುಗಳಿವೆ, ಬೆಲೆ 600 ರೂಪಾಯಿ') and our system auto-populates their product listings!",
-        timestamp: "Just now",
-        actionLink: {
-          label: "Open Dedicated Voice Portal",
-          href: "/artisan/onboard",
-          icon: "voice",
-        },
-      };
-    }
-
-    // 3. Corporate Bulk Gifting & B2B
-    if (q.includes("bulk") || q.includes("corporate") || q.includes("b2b") || q.includes("200") || q.includes("order") || q.includes("gift") || q.includes("ಸಂಸ್ಥೆ")) {
-      return {
-        id: `bot-${Date.now()}`,
-        sender: "bot",
-        text: "For orders of 200+ units, our Coordinated Multi-Cluster Fulfillment Engine divides quotas across self-help groups (e.g., Cluster A: 80, B: 70, C: 50 = 200 units). If an artisan faces illness, our automated simulator reallocates to standby clusters with zero delivery delay!",
-        timestamp: "Just now",
-        actionLink: {
-          label: "Open B2B Fulfillment Console",
-          href: "/b2b",
-          icon: "b2b",
-        },
-      };
-    }
-
-    // 4. Kasuti Craft
-    if (q.includes("kasuti") || q.includes("dharwad") || q.includes("ಕಸೂತಿ")) {
-      return {
-        id: `bot-${Date.now()}`,
-        sender: "bot",
-        text: "Kasuti is an intricate 7th-century Chalukyan hand-counted embroidery from Dharwad and Navalgund with GI protection. It uses Gavanti (double running) and Murgi (zig-zag) stitches where both sides of the pure mulberry silk appear identical with zero visible knots.",
-        timestamp: "Just now",
-        actionLink: {
-          label: "Explore Kasuti Collection",
-          href: "/marketplace?category=Kasuti",
-          icon: "shop",
-        },
-      };
-    }
-
-    // 5. Beedu Wildgrass Basketry
-    if (q.includes("beedu") || q.includes("basket") || q.includes("grass") || q.includes("udupi") || q.includes("ಬೀಡು")) {
-      return {
-        id: `bot-${Date.now()}`,
-        sender: "bot",
-        text: "Beedu is an indigenous coastal craft from Udupi. Artisans harvest riverside wildgrass, sun-cure the stalks for three weeks, and plait them tightly into durable, moisture-resistant hampers without synthetic coatings.",
-        timestamp: "Just now",
-        actionLink: {
-          label: "Explore Beedu Hampers",
-          href: "/marketplace?category=Beedu",
-          icon: "shop",
-        },
-      };
-    }
-
-    // 6. Pottery & Terracotta
-    if (q.includes("pottery") || q.includes("clay") || q.includes("terracotta") || q.includes("khanapur") || q.includes("ಮಡಿಕೆ")) {
-      return {
-        id: `bot-${Date.now()}`,
-        sender: "bot",
-        text: "Khanapur and coastal Karnataka pottery is crafted using native riverbed clay. The carafes and water jugs are wheel-thrown, agate-burnished, and fired in traditional wood kilns, naturally keeping water chilled and alkaline.",
-        timestamp: "Just now",
-        actionLink: {
-          label: "Explore Terracotta Crafts",
-          href: "/marketplace?category=Pottery",
-          icon: "shop",
-        },
-      };
-    }
-
-    // Default Fallback
-    return {
-      id: `bot-${Date.now()}`,
-      sender: "bot",
-      text: "KalaSamanvaya directly connects rural Karnataka artisan clusters (Dharwad Kasuti, Udupi Beedu, Belagavi Pottery, Bidar Bidriware) to conscious patrons and corporate gifting buyers. How can I help you explore our collections or fair-trade model?",
-      timestamp: "Just now",
-      actionLink: {
-        label: "Browse Handcrafted Storefront",
-        href: "/marketplace",
-        icon: "shop",
-      },
-    };
-  };
-
-  const handleSend = (textToSend?: string) => {
+  // Send message to backend Gemini /api/chat
+  const handleSend = async (textToSend?: string) => {
     const messageText = (textToSend || inputValue).trim();
     if (!messageText) return;
+
+    // Detect language of question
+    if (/[\u0C80-\u0CFF]/.test(messageText)) {
+      setLanguage("kn");
+    }
 
     const userMsg: ChatMessage = {
       id: `user-${Date.now()}`,
@@ -236,11 +203,48 @@ export default function CraftChatBot() {
     setInputValue("");
     setIsTyping(true);
 
-    setTimeout(() => {
-      const botResponse = getBotResponse(messageText);
-      setMessages((prev) => [...prev, botResponse]);
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: messageText }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const botMsg: ChatMessage = {
+          id: `bot-${Date.now()}`,
+          sender: "bot",
+          text: data.response || "Welcome to KalaSamanvaya!",
+          timestamp: "Just now",
+          actionLink: data.actionLink,
+        };
+        setMessages((prev) => [...prev, botMsg]);
+      } else {
+        throw new Error("Chat request failed");
+      }
+    } catch (err) {
+      // Local fallback
+      const fallbackText =
+        language === "kn"
+          ? "ಕಲಾ ಸಮನ್ವಯವು ಕರ್ನಾಟಕದ ನೈಜ ಕರಕುಶಲಕರ್ಮಿಗಳನ್ನು (ಧಾರವಾಡ ಕಸೂತಿ, ಉಡುಪಿ ಬೀಡು, ಖಾನಾಪುರ ಮಡಿಕೆ) ನೇರವಾಗಿ ಗ್ರಾಹಕರಿಗೆ ಸಂಪರ್ಕಿಸುತ್ತದೆ. ಶೇಕಡಾ 75 ಕ್ಕೂ ಹೆಚ್ಚು ನೇರ ಕೂಲಿ ಹಣ ಕುಶಲಕರ್ಮಿಗಳ ಬ್ಯಾಂಕ್ ಖಾತೆಗೆ ಜಮಾ ಆಗುತ್ತದೆ."
+          : "KalaSamanvaya directly connects Karnataka master craftswomen (Dharwad Kasuti, Udupi Beedu, Khanapur Terracotta) with conscious patrons, ensuring 74.6% direct artisan payouts and GI provenance.";
+
+      const botMsg: ChatMessage = {
+        id: `bot-${Date.now()}`,
+        sender: "bot",
+        text: fallbackText,
+        timestamp: "Just now",
+        actionLink: {
+          label: language === "kn" ? "ಮಳಿಗೆ ನೋಡಿ" : "Browse Store",
+          href: "/marketplace",
+          icon: "shop",
+        },
+      };
+      setMessages((prev) => [...prev, botMsg]);
+    } finally {
       setIsTyping(false);
-    }, 450);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -251,12 +255,16 @@ export default function CraftChatBot() {
   };
 
   const resetChat = () => {
-    setMessages(INITIAL_MESSAGES);
+    stopSpeech();
+    setSpeakingMsgId(null);
+    setMessages(INITIAL_MESSAGES[language]);
   };
+
+  const currentSuggestions = SUGGESTED_QUESTIONS[language];
 
   return (
     <>
-      {/* ── 1. FLOATING CHAT BUBBLE BUTTON (Tactile & Accessible) ── */}
+      {/* ── 1. FLOATING CHAT BUBBLE BUTTON ── */}
       <div className="fixed bottom-6 right-6 z-40">
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -264,7 +272,7 @@ export default function CraftChatBot() {
             isOpen ? "rotate-90 bg-stone-900" : ""
           }`}
           aria-label={isOpen ? "Close Craft Concierge" : "Open Craft Concierge"}
-          title="KalaSamanvaya Craft Concierge & Buyer Support"
+          title="KalaSamanvaya Craft Concierge & Buyer Assistant"
         >
           {isOpen ? (
             <X className="w-6 h-6 text-white" />
@@ -274,14 +282,14 @@ export default function CraftChatBot() {
         </button>
       </div>
 
-      {/* ── 2. CHAT DRAWER WINDOW (High-End Indian Craft Aesthetic) ── */}
+      {/* ── 2. CHAT DRAWER WINDOW ── */}
       {isOpen && (
-        <div className="fixed bottom-24 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[380px] max-h-[580px] h-[520px] bg-white rounded-3xl shadow-2xl border border-stone-200 flex flex-col overflow-hidden animate-fadeIn text-[#2A1810]">
+        <div className="fixed bottom-24 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[400px] max-h-[600px] h-[540px] bg-white rounded-3xl shadow-2xl border border-stone-200 flex flex-col overflow-hidden animate-fadeIn text-[#2A1810]">
           
           {/* Header */}
           <div className="bg-[#2A1810] text-[#FAF6F0] p-4 flex items-center justify-between border-b border-amber-900/40">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-[#E67E22] text-white flex items-center justify-center font-bold text-xs shadow-md">
+              <div className="w-9 h-9 rounded-full bg-[#E67E22] text-white flex items-center justify-center font-bold text-xs shadow-md border border-amber-300">
                 ಕಲಾ
               </div>
               <div>
@@ -290,15 +298,37 @@ export default function CraftChatBot() {
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 </div>
                 <p className="text-[10px] text-amber-200/80">
-                  Heritage Guide & Buyer Assistant
+                  {language === "kn" ? "ಕರ್ನಾಟಕ ಕಲಾ & ಗ್ರಾಹಕ ಸಹಾಯಕ" : "Heritage Guide & Buyer Assistant"}
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
+              {/* Language Switcher Pill */}
+              <div className="flex items-center bg-white/10 rounded-full p-0.5 border border-amber-700/50 text-[10px] font-bold">
+                <button
+                  type="button"
+                  onClick={() => handleSwitchLanguage("kn")}
+                  className={`px-2 py-0.5 rounded-full transition-colors ${
+                    language === "kn" ? "bg-[#E67E22] text-white" : "text-amber-200/70 hover:text-white"
+                  }`}
+                >
+                  ಕನ್ನಡ
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSwitchLanguage("en")}
+                  className={`px-2 py-0.5 rounded-full transition-colors ${
+                    language === "en" ? "bg-[#E67E22] text-white" : "text-amber-200/70 hover:text-white"
+                  }`}
+                >
+                  Eng
+                </button>
+              </div>
+
               <button
                 onClick={resetChat}
-                title="Reset Conversation"
+                title={language === "kn" ? "ಹೊಸ ಸಂಭಾಷಣೆ" : "Reset Conversation"}
                 className="p-1.5 rounded-lg text-amber-200/70 hover:text-white hover:bg-white/10 transition-colors text-xs"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
@@ -315,47 +345,77 @@ export default function CraftChatBot() {
 
           {/* Messages Area */}
           <div className="flex-1 p-4 overflow-y-auto space-y-3.5 bg-[#FAF7F2] text-xs">
-            {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex flex-col ${
-                  msg.sender === "user" ? "items-end" : "items-start"
-                }`}
-              >
+            {messages.map((msg) => {
+              const isSpeakingThis = speakingMsgId === msg.id;
+
+              return (
                 <div
-                  className={`max-w-[85%] p-3.5 rounded-2xl shadow-xs leading-relaxed ${
-                    msg.sender === "user"
-                      ? "bg-[#C85A32] text-white rounded-br-none"
-                      : "bg-white text-stone-800 border border-stone-200/80 rounded-bl-none"
+                  key={msg.id}
+                  className={`flex flex-col ${
+                    msg.sender === "user" ? "items-end" : "items-start"
                   }`}
                 >
-                  <p>{msg.text}</p>
+                  <div
+                    className={`max-w-[88%] p-3.5 rounded-2xl shadow-xs leading-relaxed ${
+                      msg.sender === "user"
+                        ? "bg-[#C85A32] text-white rounded-br-none"
+                        : "bg-white text-stone-800 border border-stone-200/80 rounded-bl-none"
+                    }`}
+                  >
+                    <p className="whitespace-pre-wrap">{msg.text}</p>
 
-                  {/* Optional Action Button Link inside Bot Bubble */}
-                  {msg.actionLink && (
-                    <div className="mt-2.5 pt-2 border-t border-stone-100">
-                      <Link
-                        href={msg.actionLink.href}
-                        onClick={() => setIsOpen(false)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-[#C85A32] font-bold text-[11px] border border-amber-300 transition-colors"
-                      >
-                        {msg.actionLink.icon === "voice" && <Mic className="w-3.5 h-3.5 text-[#C85A32]" />}
-                        {msg.actionLink.icon === "b2b" && <Building2 className="w-3.5 h-3.5 text-[#C85A32]" />}
-                        {msg.actionLink.icon === "shop" && <ShoppingBag className="w-3.5 h-3.5 text-[#C85A32]" />}
-                        <span>{msg.actionLink.label}</span>
-                        <ChevronRight className="w-3.5 h-3.5 text-[#C85A32]" />
-                      </Link>
-                    </div>
-                  )}
+                    {/* Bot Voice Speaker Icon */}
+                    {msg.sender === "bot" && (
+                      <div className="mt-2.5 pt-2 border-t border-stone-100 flex items-center justify-between">
+                        <button
+                          type="button"
+                          onClick={() => handleToggleSpeak(msg.id, msg.text)}
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all border ${
+                            isSpeakingThis
+                              ? "bg-red-50 text-red-700 border-red-300 animate-pulse"
+                              : "bg-amber-50 hover:bg-amber-100 text-[#C85A32] border-amber-200"
+                          }`}
+                          title="Listen in authentic audio"
+                        >
+                          {isSpeakingThis ? (
+                            <>
+                              <VolumeX className="w-3.5 h-3.5 text-red-600" />
+                              <span>{language === "kn" ? "ಧ್ವನಿ ನಿಲ್ಲಿಸಿ" : "Stop Voice"}</span>
+                            </>
+                          ) : (
+                            <>
+                              <Volume2 className="w-3.5 h-3.5 text-[#C85A32]" />
+                              <span>{language === "kn" ? "ಧ್ವನಿಯಲ್ಲಿ ಕೇಳಿ" : "Listen in Audio"}</span>
+                            </>
+                          )}
+                        </button>
+
+                        {/* Action Link inside Bot Bubble */}
+                        {msg.actionLink && (
+                          <Link
+                            href={msg.actionLink.href}
+                            onClick={() => setIsOpen(false)}
+                            className="inline-flex items-center gap-1 text-[11px] font-bold text-[#C85A32] hover:underline"
+                          >
+                            <span>{msg.actionLink.label}</span>
+                            <ChevronRight className="w-3.5 h-3.5" />
+                          </Link>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-[10px] text-stone-400 mt-1 px-1">
+                    {msg.timestamp}
+                  </span>
                 </div>
-                <span className="text-[10px] text-stone-400 mt-1 px-1">
-                  {msg.timestamp}
-                </span>
-              </div>
-            ))}
+              );
+            })}
 
             {isTyping && (
-              <div className="flex items-center gap-1.5 p-3 bg-white rounded-2xl border border-stone-200 w-20">
+              <div className="flex items-center gap-1.5 p-3 bg-white rounded-2xl border border-stone-200 w-24">
+                <span className="text-[11px] text-stone-400 font-semibold mr-1">
+                  {language === "kn" ? "ಉತ್ತರ..." : "Typing..."}
+                </span>
                 <span className="w-1.5 h-1.5 rounded-full bg-[#C85A32] animate-bounce" />
                 <span className="w-1.5 h-1.5 rounded-full bg-[#C85A32] animate-bounce [animation-delay:0.15s]" />
                 <span className="w-1.5 h-1.5 rounded-full bg-[#C85A32] animate-bounce [animation-delay:0.3s]" />
@@ -367,7 +427,7 @@ export default function CraftChatBot() {
 
           {/* Quick Suggestion Chips */}
           <div className="p-2.5 bg-white border-t border-stone-200 overflow-x-auto scrollbar-none flex items-center gap-1.5">
-            {SUGGESTED_QUESTIONS.map((s, idx) => (
+            {currentSuggestions.map((s, idx) => (
               <button
                 key={idx}
                 type="button"
@@ -385,19 +445,31 @@ export default function CraftChatBot() {
             <button
               type="button"
               onClick={toggleListening}
-              className={`p-2 rounded-xl transition-all ${
+              className={`p-2.5 rounded-xl transition-all ${
                 isListening
-                  ? "bg-red-500 text-white animate-pulse"
-                  : "bg-stone-100 hover:bg-amber-100 text-[#C85A32]"
+                  ? "bg-red-500 text-white animate-pulse shadow-md"
+                  : "bg-stone-100 hover:bg-amber-100 text-[#C85A32] border border-amber-200"
               }`}
-              title={isListening ? "Listening in Kannada..." : "Speak your question (Kannada / English)"}
+              title={
+                isListening
+                  ? language === "kn"
+                    ? "ಕೇಳಿಸಿಕೊಳ್ಳಲಾಗುತ್ತಿದೆ..."
+                    : "Listening..."
+                  : language === "kn"
+                  ? "ಕನ್ನಡದಲ್ಲಿ ಮಾತನಾಡಿ ಕೇಳಿ"
+                  : "Speak question in English or Kannada"
+              }
             >
               {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
             </button>
 
             <input
               type="text"
-              placeholder="Ask in Kannada or English..."
+              placeholder={
+                language === "kn"
+                  ? "ಕನ್ನಡದಲ್ಲಿ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಕೇಳಿ..."
+                  : "Ask in Kannada or English..."
+              }
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -408,7 +480,8 @@ export default function CraftChatBot() {
               type="button"
               onClick={() => handleSend()}
               disabled={!inputValue.trim()}
-              className="p-2 rounded-xl bg-[#C85A32] hover:bg-[#a84420] disabled:opacity-40 text-white transition-colors flex-shrink-0"
+              className="p-2.5 rounded-xl bg-[#C85A32] hover:bg-[#a84420] disabled:opacity-40 text-white transition-colors flex-shrink-0"
+              title="Send"
             >
               <Send className="w-4 h-4" />
             </button>
