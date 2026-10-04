@@ -8,6 +8,7 @@ import ScrollReveal from "@/components/shared/ScrollReveal";
 import { ARTISAN_PRODUCTS, ArtisanProduct } from "@/lib/db/products";
 import WhyThisPriceModal from "@/components/marketplace/WhyThisPriceModal";
 import MockCheckoutModal from "@/components/marketplace/MockCheckoutModal";
+import CraftPassportModal from "@/components/marketplace/CraftPassportModal";
 import {
   ArrowRight,
   Info,
@@ -26,11 +27,13 @@ import {
   Clock,
   Building2,
   Users,
+  QrCode,
 } from "lucide-react";
 
 export default function HomePage() {
   const [activeStoryProduct, setActiveStoryProduct] = useState<ArtisanProduct | null>(null);
   const [activeCheckoutProduct, setActiveCheckoutProduct] = useState<ArtisanProduct | null>(null);
+  const [activePassportProduct, setActivePassportProduct] = useState<ArtisanProduct | null>(null);
 
   const featuredShopProducts = ARTISAN_PRODUCTS.slice(0, 4);
 
@@ -82,6 +85,14 @@ export default function HomePage() {
               >
                 <Info className="w-4 h-4 text-[#E67E22]" />
                 <span>Fair Price Promise (ಬೆಲೆ ವಿವರ)</span>
+              </button>
+
+              <button
+                onClick={() => setActivePassportProduct(ARTISAN_PRODUCTS[0])}
+                className="px-6 py-3.5 rounded-full border border-amber-500/60 bg-amber-950/50 hover:bg-amber-900/60 text-amber-200 font-semibold text-sm transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center gap-2 backdrop-blur-sm"
+              >
+                <QrCode className="w-4 h-4 text-[#E67E22]" />
+                <span>GI Craft Passport (QR & ಧ್ವನಿ)</span>
               </button>
             </div>
 
@@ -587,13 +598,21 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="pt-2">
+              <div className="pt-2 flex flex-wrap items-center gap-3">
                 <button
                   onClick={() => setActiveStoryProduct(ARTISAN_PRODUCTS[0])}
                   className="px-6 py-3 rounded-full border border-amber-500/60 bg-amber-950/40 hover:bg-amber-950/80 text-amber-200 font-bold text-xs transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center gap-2"
                 >
                   <Receipt className="w-4 h-4 text-[#E67E22]" />
                   <span>See Honest Cost & Wage Breakdown (ಬೆಲೆ ವಿವರ)</span>
+                </button>
+
+                <button
+                  onClick={() => setActivePassportProduct(ARTISAN_PRODUCTS[0])}
+                  className="px-6 py-3 rounded-full border border-amber-500/60 bg-amber-900/50 hover:bg-amber-800/60 text-amber-200 font-bold text-xs transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center gap-2"
+                >
+                  <QrCode className="w-4 h-4 text-[#E67E22]" />
+                  <span>GI Passport & Voice Blessing (ಪ್ರಮಾಣಪತ್ರ)</span>
                 </button>
               </div>
             </ScrollReveal>
@@ -694,6 +713,14 @@ export default function HomePage() {
 
                       <div className="flex items-center gap-1.5">
                         <button
+                          onClick={() => setActivePassportProduct(product)}
+                          title="GI Craft Passport & Scannable QR (ಪ್ರಮಾಣಪತ್ರ)"
+                          className="p-1.5 rounded-lg border border-amber-700/50 hover:bg-amber-900/40 text-amber-300 text-xs transition-colors hover:scale-105"
+                        >
+                          <QrCode className="w-3.5 h-3.5 text-amber-300" />
+                        </button>
+
+                        <button
                           onClick={() => setActiveStoryProduct(product)}
                           title="Why This Price?"
                           className="p-1.5 rounded-lg border border-amber-700/50 hover:bg-amber-900/40 text-amber-300 text-xs transition-colors hover:scale-105"
@@ -782,6 +809,12 @@ export default function HomePage() {
         product={activeCheckoutProduct}
         isOpen={Boolean(activeCheckoutProduct)}
         onClose={() => setActiveCheckoutProduct(null)}
+      />
+
+      <CraftPassportModal
+        product={activePassportProduct}
+        isOpen={Boolean(activePassportProduct)}
+        onClose={() => setActivePassportProduct(null)}
       />
     </div>
   );

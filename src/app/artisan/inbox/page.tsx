@@ -5,6 +5,8 @@ import Link from "next/link";
 import FolkArtBanner from "@/components/shared/FolkArtBanner";
 import FolkArtBorder from "@/components/shared/FolkArtBorder";
 import ScrollReveal from "@/components/shared/ScrollReveal";
+import { ARTISAN_PRODUCTS, ArtisanProduct } from "@/lib/db/products";
+import CraftPassportModal from "@/components/marketplace/CraftPassportModal";
 import {
   PackageCheck,
   Clock,
@@ -22,11 +24,14 @@ import {
   ChevronRight,
   Truck,
   Landmark,
-  Mic
+  Mic,
+  QrCode,
+  Printer
 } from "lucide-react";
 
 export default function ArtisanInboxPage() {
   const [language, setLanguage] = useState<"kn" | "en">("kn");
+  const [activePassportProduct, setActivePassportProduct] = useState<ArtisanProduct | null>(null);
 
   // Savita Naik's Active B2B Commitment State
   const [b2bCommitment, setB2bCommitment] = useState({
@@ -486,6 +491,20 @@ export default function ArtisanInboxPage() {
                 </span>
               </button>
 
+              {/* Print GI Hangtag & QR Passport Button */}
+              <button
+                type="button"
+                onClick={() => setActivePassportProduct(ARTISAN_PRODUCTS[0])}
+                className="py-3.5 px-5 rounded-2xl font-bold text-sm bg-amber-50 hover:bg-amber-100 border-2 border-amber-300 text-[#C85A32] transition-all flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95"
+                title="Print batch GI tags & preview QR passport"
+              >
+                <QrCode className="w-4 h-4 text-[#C85A32]" />
+                <span>
+                  {language === "kn"
+                    ? "ಪ್ರಮಾಣಪತ್ರ ಮುದ್ರಿಸಿ (Print Hangtags)"
+                    : "Print Batch GI Tags"}
+                </span>
+              </button>
             </div>
 
           </div>
@@ -578,18 +597,30 @@ export default function ArtisanInboxPage() {
                       : language === "kn" ? "ಪ್ಯಾಕ್ ಮಾಡಲು ಬಾಕಿ" : "Ready to Pack"}
                   </span>
 
-                  <button
-                    type="button"
-                    onClick={() => toggleRetailOrderPacked(order.id)}
-                    className="px-3.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-[#C85A32] text-xs font-bold transition-colors flex items-center gap-1.5"
-                  >
-                    <Truck className="w-3.5 h-3.5 text-[#C85A32]" />
-                    <span>
-                      {order.status === "PENDING"
-                        ? language === "kn" ? "ಪ್ಯಾಕಿಂಗ್ ಮಾಡಿ" : "Mark Packed"
-                        : language === "kn" ? "ರವಾನೆ ದೃಢೀಕರಿಸಿ" : "Confirm Dispatch"}
-                    </span>
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setActivePassportProduct(ARTISAN_PRODUCTS[0])}
+                      className="px-2.5 py-1.5 rounded-xl border border-amber-300 hover:bg-amber-100 text-[#C85A32] text-xs font-semibold flex items-center gap-1 transition-colors"
+                      title={language === "kn" ? "ಪ್ರಮಾಣಪತ್ರ ಮುದ್ರಿಸಿ" : "Print Hangtag"}
+                    >
+                      <Printer className="w-3.5 h-3.5" />
+                      <span className="hidden sm:inline">{language === "kn" ? "ಟ್ಯಾಗ್" : "Tag"}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => toggleRetailOrderPacked(order.id)}
+                      className="px-3.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-[#C85A32] text-xs font-bold transition-colors flex items-center gap-1.5"
+                    >
+                      <Truck className="w-3.5 h-3.5 text-[#C85A32]" />
+                      <span>
+                        {order.status === "PENDING"
+                          ? language === "kn" ? "ಪ್ಯಾಕಿಂಗ್ ಮಾಡಿ" : "Mark Packed"
+                          : language === "kn" ? "ರವಾನೆ ದೃಢೀಕರಿಸಿ" : "Confirm Dispatch"}
+                      </span>
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -643,6 +674,13 @@ export default function ArtisanInboxPage() {
 
       {/* Decorative Traditional Border above Footer */}
       <FolkArtBorder variant="gold" />
+
+      {/* Craft Passport Hangtag & Audio Greeting Modal */}
+      <CraftPassportModal
+        product={activePassportProduct}
+        isOpen={Boolean(activePassportProduct)}
+        onClose={() => setActivePassportProduct(null)}
+      />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { ARTISAN_PRODUCTS, ArtisanProduct } from "@/lib/db/products";
 import ProductCard from "@/components/marketplace/ProductCard";
 import WhyThisPriceModal from "@/components/marketplace/WhyThisPriceModal";
 import MockCheckoutModal from "@/components/marketplace/MockCheckoutModal";
+import CraftPassportModal from "@/components/marketplace/CraftPassportModal";
 import FolkArtBorder from "@/components/shared/FolkArtBorder";
 import FolkArtBanner from "@/components/shared/FolkArtBanner";
 import ScrollReveal from "@/components/shared/ScrollReveal";
@@ -18,7 +19,8 @@ import {
   Info,
   Receipt,
   MapPin,
-  Clock
+  Clock,
+  QrCode
 } from "lucide-react";
 import Link from "next/link";
 
@@ -30,6 +32,7 @@ export default function MarketplacePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeStoryProduct, setActiveStoryProduct] = useState<ArtisanProduct | null>(null);
   const [activeCheckoutProduct, setActiveCheckoutProduct] = useState<ArtisanProduct | null>(null);
+  const [activePassportProduct, setActivePassportProduct] = useState<ArtisanProduct | null>(null);
 
   // Fetch updated catalog from backend API
   React.useEffect(() => {
@@ -146,13 +149,24 @@ export default function MarketplacePage() {
                     <span className="text-base font-bold text-[#C85A32]">₹1,850</span>
                     <span className="ml-1 text-[11px] text-stone-400 line-through">₹2,400</span>
                   </div>
-                  <button
-                    onClick={() => setActiveStoryProduct(ARTISAN_PRODUCTS[0])}
-                    className="px-3.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-[#2A1810] text-xs font-semibold border border-amber-300 flex items-center gap-1.5 transition-all duration-200 hover:-translate-y-0.5"
-                  >
-                    <Receipt className="w-3.5 h-3.5 text-[#C85A32]" />
-                    <span>Cost Breakdown</span>
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setActivePassportProduct(ARTISAN_PRODUCTS[0])}
+                      className="px-3 py-1.5 rounded-lg bg-[#24130A] hover:bg-stone-900 text-amber-200 text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs"
+                      title="View GI Craft Passport & Voice Tag"
+                    >
+                      <Award className="w-3.5 h-3.5 text-amber-300" />
+                      <span>GI Passport (QR)</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveStoryProduct(ARTISAN_PRODUCTS[0])}
+                      className="px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-[#2A1810] text-xs font-semibold border border-amber-300 flex items-center gap-1.5 transition-all duration-200 hover:-translate-y-0.5"
+                    >
+                      <Receipt className="w-3.5 h-3.5 text-[#C85A32]" />
+                      <span>Cost Breakdown</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </ScrollReveal>
@@ -316,6 +330,7 @@ export default function MarketplacePage() {
                   product={product}
                   onOpenWhyThisPrice={(p) => setActiveStoryProduct(p)}
                   onOpenCheckout={(p) => setActiveCheckoutProduct(p)}
+                  onOpenPassport={(p) => setActivePassportProduct(p)}
                 />
               </ScrollReveal>
             ))}
@@ -344,6 +359,12 @@ export default function MarketplacePage() {
         product={activeCheckoutProduct}
         isOpen={Boolean(activeCheckoutProduct)}
         onClose={() => setActiveCheckoutProduct(null)}
+      />
+
+      <CraftPassportModal
+        product={activePassportProduct}
+        isOpen={Boolean(activePassportProduct)}
+        onClose={() => setActivePassportProduct(null)}
       />
     </div>
   );

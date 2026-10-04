@@ -2,18 +2,20 @@
 
 import React from "react";
 import { ArtisanProduct } from "@/lib/db/products";
-import { Info, MapPin, ShoppingBag, Clock } from "lucide-react";
+import { Info, MapPin, ShoppingBag, Clock, Award, QrCode } from "lucide-react";
 
 interface ProductCardProps {
   product: ArtisanProduct;
   onOpenWhyThisPrice: (product: ArtisanProduct) => void;
   onOpenCheckout: (product: ArtisanProduct) => void;
+  onOpenPassport?: (product: ArtisanProduct) => void;
 }
 
 export default function ProductCard({
   product,
   onOpenWhyThisPrice,
-  onOpenCheckout
+  onOpenCheckout,
+  onOpenPassport
 }: ProductCardProps) {
   return (
     <div className="group bg-[#FAF6F0] rounded-2xl overflow-hidden border border-amber-900/15 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col hover:-translate-y-1">
@@ -100,7 +102,18 @@ export default function ProductCard({
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 pt-1">
+          {onOpenPassport && (
+            <button
+              type="button"
+              onClick={() => onOpenPassport(product)}
+              className="w-full py-1.5 px-2.5 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-300 text-[#C85A32] text-xs font-bold flex items-center justify-center gap-1.5 transition-colors shadow-2xs"
+            >
+              <QrCode className="w-3.5 h-3.5 text-[#C85A32]" />
+              <span>GI Passport & Voice QR (ಪ್ರಮಾಣಪತ್ರ)</span>
+            </button>
+          )}
+
+          <div className="grid grid-cols-2 gap-2 pt-0.5">
             <button
               onClick={() => onOpenWhyThisPrice(product)}
               className="w-full px-2.5 py-2 rounded-lg border border-[#D9822B]/60 text-[#2A1810] hover:bg-amber-100/70 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
