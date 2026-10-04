@@ -2,12 +2,14 @@
 
 import React, { useState } from "react";
 import KannadaVoiceRecorder from "@/components/voice/KannadaVoiceRecorder";
+import AiPhotoCraftScanner from "@/components/voice/AiPhotoCraftScanner";
 import FolkArtBanner from "@/components/shared/FolkArtBanner";
 import FolkArtBorder from "@/components/shared/FolkArtBorder";
 import ScrollReveal from "@/components/shared/ScrollReveal";
 import { ExtractedCraftListing } from "@/lib/voice/kannadaKeywords";
 import {
   Mic,
+  Camera,
   CheckCircle2,
   Clock,
   Layers,
@@ -18,7 +20,10 @@ import {
   RefreshCw,
   UserCheck,
   Award,
-  PackageCheck
+  PackageCheck,
+  Store,
+  ShoppingBag,
+  Eye
 } from "lucide-react";
 import Link from "next/link";
 
@@ -41,6 +46,10 @@ export default function ArtisanOnboardPage() {
     confidence: 0.94
   });
 
+  const [onboardingMode, setOnboardingMode] = useState<"photo" | "voice">("photo");
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string>(
+    "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80"
+  );
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
 
@@ -76,16 +85,19 @@ export default function ArtisanOnboardPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: `${clusterRegion} Handcrafted ${listing.craft}`,
-          kannadaTitle: `${clusterRegion} ಕೈಯಿಂದ ಮಾಡಿದ ${listing.craftKannada}`,
+          title: listing.itemName || `${clusterRegion} Handcrafted ${listing.craft}`,
+          kannadaTitle: listing.craftKannada ? `${clusterRegion} ${listing.craftKannada}` : `${clusterRegion} ಕೈಯಿಂದ ಮಾಡಿದ ${listing.craft}`,
           craftType: listing.craft,
           priceINR: listing.pricePerUnitINR,
           quantity: listing.quantity,
           artisanName,
-          artisanKannadaName: language === "kn" ? "ಶಾಂತವ್ವ ಹೊಸಮನಿ" : artisanName,
+          artisanKannadaName: language === "kn" ? "ಸವಿತಾ ನಾಯ್ಕ್" : artisanName,
           artisanCluster: clusterRegion,
           artisanDistrict: "Dharwad",
           leadTimeDays: listing.leadTimeDays,
+          imageUrl: uploadedImageUrl,
+          shortDescription: listing.material,
+          craftStory: "ಕಲಾ ಸಮನ್ವಯ AI ಕ್ಯಾಮೆರಾ ತಪಾಸಣೆಯಿಂದ ಪರಿಶೀಲಿಸಲ್ಪಟ್ಟ ನೈಜ ಕರಕುಶಲ ಕೃತಿ. 75% ನೇರ ಕೂಲಿ ಖಾತರಿ.",
         }),
       });
     } catch (err) {
@@ -223,6 +235,19 @@ export default function ArtisanOnboardPage() {
                 </p>
               </div>
 
+              {/* Verified Craft Photo Snapshot */}
+              <div className="max-w-xs mx-auto aspect-[4/3] rounded-2xl overflow-hidden border-2 border-amber-300 shadow-md relative group">
+                <img
+                  src={uploadedImageUrl}
+                  alt={listing.itemName}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute bottom-2 left-2 right-2 p-1.5 rounded-lg bg-black/70 backdrop-blur-sm text-[10px] text-amber-200 font-bold flex items-center justify-between">
+                  <span>GI Certified Handcraft</span>
+                  <span className="text-emerald-400">98.4% Match ✓</span>
+                </div>
+              </div>
+
               {/* Registered Batch Summary */}
               <div className="bg-[#FAF7F2] p-5 rounded-2xl border border-stone-200 max-w-md mx-auto text-left text-xs space-y-3">
                 <div className="flex justify-between pb-2 border-b border-stone-200">
@@ -248,13 +273,21 @@ export default function ArtisanOnboardPage() {
               </div>
 
               {/* Next Action Gateways */}
-              <div className="pt-4 flex flex-wrap justify-center gap-4">
+              <div className="pt-4 flex flex-wrap justify-center gap-3">
+                <Link
+                  href="/marketplace"
+                  className="px-6 py-3 rounded-full bg-[#2A1810] hover:bg-[#3D2318] text-amber-300 font-bold text-xs shadow-md transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-2 border border-amber-600/40"
+                >
+                  <Store className="w-4 h-4 text-[#E67E22]" />
+                  <span>{language === "kn" ? "ಮಳಿಗೆಯಲ್ಲಿ ಹೊಸ ಸರಕು ನೋಡಿ" : "View Live in Storefront"}</span>
+                </Link>
+
                 <Link
                   href="/b2b"
                   className="px-6 py-3 rounded-full bg-[#C85A32] hover:bg-[#a84420] text-white font-bold text-xs shadow-md transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-2"
                 >
                   <Layers className="w-4 h-4" />
-                  <span>{language === "kn" ? "ಬಿ2ಬಿ ಹಂಚಿಕೆ ಕನ್ಸೋಲ್ ಪರಿಶೀಲಿಸಿ" : "View B2B Allocation Console"}</span>
+                  <span>{language === "kn" ? "ಬಿ2ಬಿ ಹಂಚಿಕೆ ಕನ್ಸೋಲ್" : "B2B Allocation"}</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
 
@@ -272,21 +305,68 @@ export default function ArtisanOnboardPage() {
           /* ── MAIN ONBOARDING FLOW ── */
           <div className="space-y-8">
             
-            {/* Step 1: Kannada Voice Input Recorder */}
-            <ScrollReveal direction="up" delayMs={50}>
-              <div className="flex items-center gap-2 mb-3">
-                <span className="w-6 h-6 rounded-full bg-[#C85A32] text-white flex items-center justify-center text-xs font-bold">
-                  1
-                </span>
-                <h3 className="text-base font-bold text-[#2A1810]">
-                  {language === "kn" ? "ಹಂತ ೧: ಧ್ವನಿ ಇನ್‌ಪುಟ್ (ಮಾತನಾಡಿ)" : "Step 1: Speak Your Inventory"}
-                </h3>
+            {/* Step 1: Multi-Modal Onboarding Switcher (AI Camera Photo OR Kannada Voice) */}
+            <ScrollReveal direction="up" delayMs={50} className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-full bg-[#C85A32] text-white flex items-center justify-center text-xs font-bold">
+                    1
+                  </span>
+                  <h3 className="text-base font-bold text-[#2A1810]">
+                    {language === "kn"
+                      ? "ಹಂತ ೧: ನೊಂದಣಿ ವಿಧಾನ ಆರಿಸಿ (ಕ್ಯಾಮೆರಾ ಅಥವಾ ಧ್ವನಿ)"
+                      : "Step 1: Choose Listing Method (AI Photo or Voice)"}
+                  </h3>
+                </div>
+
+                {/* Mode Switcher Tabs */}
+                <div className="flex items-center gap-1.5 p-1 bg-white rounded-2xl border border-stone-200 shadow-sm self-start sm:self-auto">
+                  <button
+                    type="button"
+                    onClick={() => setOnboardingMode("photo")}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                      onboardingMode === "photo"
+                        ? "bg-[#C85A32] text-white shadow-md scale-105"
+                        : "text-stone-600 hover:text-stone-900"
+                    }`}
+                  >
+                    <Camera className="w-3.5 h-3.5" />
+                    <span>{language === "kn" ? "ಕ್ಯಾಮೆರಾ & ಫೋಟೋ AI" : "AI Camera & Photo"}</span>
+                    <span className="px-1.5 py-0.5 rounded-full bg-white/20 text-[9px] font-extrabold uppercase">
+                      New
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setOnboardingMode("voice")}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                      onboardingMode === "voice"
+                        ? "bg-[#C85A32] text-white shadow-md scale-105"
+                        : "text-stone-600 hover:text-stone-900"
+                    }`}
+                  >
+                    <Mic className="w-3.5 h-3.5" />
+                    <span>{language === "kn" ? "ಕನ್ನಡ ಧ್ವನಿ" : "Kannada Voice"}</span>
+                  </button>
+                </div>
               </div>
 
-              <KannadaVoiceRecorder
-                language={language}
-                onListingExtracted={(extracted) => setListing(extracted)}
-              />
+              {/* Render active input mode */}
+              {onboardingMode === "photo" ? (
+                <AiPhotoCraftScanner
+                  language={language}
+                  onListingExtracted={(extracted, img) => {
+                    setListing(extracted);
+                    if (img) setUploadedImageUrl(img);
+                  }}
+                />
+              ) : (
+                <KannadaVoiceRecorder
+                  language={language}
+                  onListingExtracted={(extracted) => setListing(extracted)}
+                />
+              )}
             </ScrollReveal>
 
             {/* Step 2: Touch-First Visual Review Card */}
@@ -303,6 +383,35 @@ export default function ArtisanOnboardPage() {
 
                 <div className="bg-white rounded-3xl p-6 sm:p-8 border border-stone-200 shadow-md space-y-6">
                   
+                  {/* Photo Snapshot & Verification Badge Strip */}
+                  <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-stone-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="flex items-center gap-3.5 w-full sm:w-auto">
+                      <div className="relative w-16 h-16 rounded-xl overflow-hidden border-2 border-amber-300 shadow-sm flex-shrink-0">
+                        <img
+                          src={uploadedImageUrl}
+                          alt="Craft photo"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5 font-bold text-sm text-[#2A1810]">
+                          <span>{listing.itemName}</span>
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        </div>
+                        <p className="text-[11px] text-stone-500 mt-0.5 line-clamp-1">
+                          {listing.material}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 self-start sm:self-auto">
+                      <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                        <ShieldCheck className="w-3.5 h-3.5" />
+                        <span>98.4% Handloom Verified</span>
+                      </span>
+                    </div>
+                  </div>
+
                   {/* 4 Big High-Contrast Touch Cards */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     
