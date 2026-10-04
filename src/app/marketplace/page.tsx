@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-type CraftFilterType = "ALL" | "Kasuti" | "Beedu" | "Pottery" | "Bidriware";
+type CraftFilterType = "ALL" | "Kasuti" | "Beedu" | "Pottery" | "Bidriware" | "Woodcraft";
 
 export default function MarketplacePage() {
   const [productsList, setProductsList] = useState<ArtisanProduct[]>(ARTISAN_PRODUCTS);
@@ -303,7 +303,8 @@ export default function MarketplacePage() {
                 { id: "Kasuti", label: "Kasuti Embroidery (ಕಸೂತಿ)" },
                 { id: "Beedu", label: "Beedu Basketry (ಬೀಡು ಬುಟ್ಟಿ)" },
                 { id: "Pottery", label: "Coastal Pottery (ಕರಾವಳಿ ಮಡಿಕೆ)" },
-                { id: "Bidriware", label: "Bidri Metalcraft (ಬಿದ್ರಿ ಕಲೆ)" }
+                { id: "Bidriware", label: "Bidri Metalcraft (ಬಿದ್ರಿ ಕಲೆ)" },
+                { id: "Woodcraft", label: "Channapatna Woodcraft (ಚನ್ನಪಟ್ಟಣ ಮರ)" }
               ] as const
             ).map((cat) => (
               <button

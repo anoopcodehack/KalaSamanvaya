@@ -54,7 +54,7 @@ export const ARTISAN_PRODUCTS: ArtisanProduct[] = [
     artisanDistrict: "Dharwad",
     leadTimeDays: 7,
     stockAvailable: 24,
-    imageUrl: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80",
+    imageUrl: "/assets/craft-kasuti.jpg",
     shortDescription: "Hand-stitched counted-thread Kasuti with traditional Gopura & Chariot motifs on pure handloom silk-cotton.",
     craftStory: "Kasuti is an intricate 7th-century Chalukyan embroidery style from northern Karnataka. Each motif is created by hand without tracing, counting the warp and weft threads one by one. The Gavanti (double running) and Murgi (zig-zag) stitches make both sides of the fabric appear identical with zero knots visible.",
     breakdown: {
@@ -89,7 +89,7 @@ export const ARTISAN_PRODUCTS: ArtisanProduct[] = [
     artisanDistrict: "Udupi",
     leadTimeDays: 5,
     stockAvailable: 35,
-    imageUrl: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=800&q=80",
+    imageUrl: "/assets/craft-beedu.jpg",
     shortDescription: "Sustainably harvested coastal wildgrass, coiled and hand-plaited using traditional riverside methods.",
     craftStory: "Beedu basketry is an indigenous craft practiced by coastal artisans using riparian river grass. The wild stalks are sun-cured for three weeks and woven tightly into durable, moisture-resistant baskets without any synthetic binders or chemical coatings.",
     breakdown: {
@@ -124,7 +124,7 @@ export const ARTISAN_PRODUCTS: ArtisanProduct[] = [
     artisanDistrict: "Dakshina Kannada",
     leadTimeDays: 4,
     stockAvailable: 40,
-    imageUrl: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80",
+    imageUrl: "/assets/craft-pottery.jpg",
     shortDescription: "Wheel-thrown river silt terracotta with river stone burnishing for natural alkaline water cooling.",
     craftStory: "Crafted on a manual wooden potter's wheel using red clay harvested from the Netravati riverbed. The unique smooth sheen is achieved not by chemical glaze, but by painstakingly burnishing the surface with smooth coastal agate stones before wood-firing in an underground kiln.",
     breakdown: {
@@ -159,7 +159,7 @@ export const ARTISAN_PRODUCTS: ArtisanProduct[] = [
     artisanDistrict: "Dharwad",
     leadTimeDays: 10,
     stockAvailable: 15,
-    imageUrl: "https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&w=800&q=80",
+    imageUrl: "/assets/craft-kasuti.jpg",
     shortDescription: "Dense peacock (Mayura) embroidery featuring over 12,000 individual hand stitches on raw Tussar silk.",
     craftStory: "Embroidered by master artisan Renuka Badiger, featuring the iconic Navalgund Mayura design. Requires three full weeks of focused needlework where four separate embroidery stitches (Gavanti, Murgi, Neygi, Menthi) are combined to form a sacred geometric grid.",
     breakdown: {
@@ -194,7 +194,7 @@ export const ARTISAN_PRODUCTS: ArtisanProduct[] = [
     artisanDistrict: "Bidar",
     leadTimeDays: 6,
     stockAvailable: 20,
-    imageUrl: "https://images.unsplash.com/photo-1615529182904-14819c35db37?auto=format&fit=crop&w=800&q=80",
+    imageUrl: "/assets/craft-bidri.jpg",
     shortDescription: "Zinc-copper alloy blackened with historic Bidar fort soil, inlaid with pure 99.9% fine silver wires.",
     craftStory: "Bidriware is Karnataka's world-renowned 14th-century metal craft originating from the Bahmani Sultans. Pure silver sheet or wire is hand-chiseled into blackened zinc alloy. The jet-black patina is created using soil uniquely found inside the 500-year-old Bidar Fort grounds.",
     breakdown: {
@@ -229,7 +229,7 @@ export const ARTISAN_PRODUCTS: ArtisanProduct[] = [
     artisanDistrict: "Udupi",
     leadTimeDays: 5,
     stockAvailable: 28,
-    imageUrl: "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80",
+    imageUrl: "/assets/craft-pottery.jpg",
     shortDescription: "Unglazed breathable terracotta planter featuring hand-pressed coastal floral reliefs.",
     craftStory: "Hand-coiled using coastal laterite soil and tempered with fine river sand. The unglazed micro-porous walls allow plant roots to breathe and maintain natural thermal balance in high summer.",
     breakdown: {
@@ -246,5 +246,40 @@ export const ARTISAN_PRODUCTS: ArtisanProduct[] = [
       regionalHeritageNote: "Centuries-old coastal Karnataka home pottery tradition."
     },
     tags: ["Breathable Terracotta", "Eco-friendly", "Udupi Craft", "Handmade"]
+  },
+  {
+    id: "prod-wood-01",
+    title: "Channapatna Handcrafted Lacquer Wooden Rocking Horse & Tops",
+    kannadaTitle: "ಚನ್ನಪಟ್ಟಣ ನೈಸರ್ಗಿಕ ಬಣ್ಣದ ಮರದ ಆಟಿಕೆಗಳು",
+    craftType: "Woodcraft",
+    categoryLabel: "Channapatna Woodcraft",
+    priceINR: 1150,
+    compareAtPriceINR: 1500,
+    rating: 4.9,
+    reviewsCount: 48,
+    badge: "GI Tagged Heritage",
+    artisanName: "Subbanna Achar",
+    artisanKannadaName: "ಸುಬ್ಬಣ್ಣ ಆಚಾರ್",
+    artisanCluster: "Channapatna Toy Artisans Sangha",
+    artisanDistrict: "Ramanagara",
+    leadTimeDays: 5,
+    stockAvailable: 30,
+    imageUrl: "/assets/craft-channapatna.jpg",
+    shortDescription: "Non-toxic vegetable dyed Ivory-wood lacquerware hand-turned on traditional artisan lathe.",
+    craftStory: "Channapatna toys trace their royal legacy to Tipu Sultan who invited Persian artisans to train Karnataka woodturners. Crafted exclusively from Wrightia tinctoria (Aale mara / ivory wood) and polished using natural shellac infused with turmeric, indigo, and katha vegetable dyes.",
+    breakdown: {
+      handcraftHours: 16,
+      artisanDirectPayoutINR: 820,
+      rawMaterialsINR: 180,
+      clusterPackagingLogisticsINR: 80,
+      platformCoordinationFeeINR: 70,
+      powerloomMachinePrintCompareINR: 260,
+      powerloomMachineMinutes: 2,
+      artisanSharePercent: 71,
+      materialsUsed: "Locally sourced Ivory wood (Aale Mara), organic seedlac, turmeric & kumkum vegetable colors.",
+      techniqueName: "Traditional Lathe Turning & Friction Lacquer Polish",
+      regionalHeritageNote: "GI Tag No. 23 protected Karnataka craft, renowned worldwide as the Toy City heritage."
+    },
+    tags: ["GI Tagged", "Non-Toxic", "Channapatna", "Vegetable Dyes", "Kids Safe"]
   }
 ];

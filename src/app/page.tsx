@@ -364,8 +364,8 @@ export default function HomePage() {
             </p>
           </ScrollReveal>
 
-          {/* 4 Category Cards with Staggered Scroll Animation */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* 5 Authentic Karnataka Craft Cluster Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
             {/* Cluster 1: Dharwad Kasuti */}
             <ScrollReveal direction="up" delayMs={0}>
               <Link
@@ -374,8 +374,8 @@ export default function HomePage() {
               >
                 <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-900">
                   <img
-                    src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80"
-                    alt="Dharwad Kasuti Embroidery"
+                    src="/assets/craft-kasuti.jpg"
+                    alt="Dharwad Kasuti Embroidery Handloom"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-2 left-2">
@@ -406,15 +406,15 @@ export default function HomePage() {
             </ScrollReveal>
 
             {/* Cluster 2: Bidar Bidriware */}
-            <ScrollReveal direction="up" delayMs={100}>
+            <ScrollReveal direction="up" delayMs={80}>
               <Link
                 href="/marketplace?category=Bidriware"
                 className="group bg-[#24130A] rounded-2xl overflow-hidden border border-amber-900/50 shadow-lg hover:border-[#E67E22]/80 transition-all duration-300 hover:-translate-y-1.5 flex flex-col h-full"
               >
                 <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-900">
                   <img
-                    src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&w=600&q=80"
-                    alt="Bidar Bidriware Metalwork"
+                    src="/assets/craft-bidri.jpg"
+                    alt="Bidar Bidriware Pure Silver Inlay"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-2 left-2">
@@ -445,15 +445,15 @@ export default function HomePage() {
             </ScrollReveal>
 
             {/* Cluster 3: Khanapur Terracotta */}
-            <ScrollReveal direction="up" delayMs={200}>
+            <ScrollReveal direction="up" delayMs={160}>
               <Link
                 href="/marketplace?category=Pottery"
                 className="group bg-[#24130A] rounded-2xl overflow-hidden border border-amber-900/50 shadow-lg hover:border-[#E67E22]/80 transition-all duration-300 hover:-translate-y-1.5 flex flex-col h-full"
               >
                 <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-900">
                   <img
-                    src="https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80"
-                    alt="Khanapur Terracotta Pottery"
+                    src="/assets/craft-pottery.jpg"
+                    alt="Khanapur Terracotta River Clay Pottery"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-2 left-2">
@@ -484,14 +484,14 @@ export default function HomePage() {
             </ScrollReveal>
 
             {/* Cluster 4: Udupi Beedu Basketry */}
-            <ScrollReveal direction="up" delayMs={300}>
+            <ScrollReveal direction="up" delayMs={240}>
               <Link
                 href="/marketplace?category=Beedu"
                 className="group bg-[#24130A] rounded-2xl overflow-hidden border border-amber-900/50 shadow-lg hover:border-[#E67E22]/80 transition-all duration-300 hover:-translate-y-1.5 flex flex-col h-full"
               >
                 <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-900">
                   <img
-                    src="https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=600&q=80"
+                    src="/assets/craft-beedu.jpg"
                     alt="Udupi Beedu Wildgrass Baskets"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
@@ -516,6 +516,45 @@ export default function HomePage() {
                   </div>
                   <div className="pt-2 border-t border-amber-900/40 text-xs font-semibold text-[#E67E22] flex items-center justify-between">
                     <span>Explore Basketry</span>
+                    <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              </Link>
+            </ScrollReveal>
+
+            {/* Cluster 5: Channapatna Lacquer Woodcraft */}
+            <ScrollReveal direction="up" delayMs={320}>
+              <Link
+                href="/marketplace?category=Woodcraft"
+                className="group bg-[#24130A] rounded-2xl overflow-hidden border border-amber-900/50 shadow-lg hover:border-[#E67E22]/80 transition-all duration-300 hover:-translate-y-1.5 flex flex-col h-full"
+              >
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-900">
+                  <img
+                    src="/assets/craft-channapatna.jpg"
+                    alt="Channapatna Wooden Toys and Lacquerware"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-2 left-2">
+                    <span className="px-2.5 py-1 bg-[#E67E22] text-white text-[10px] font-bold rounded-md uppercase tracking-wider shadow">
+                      GI Tagged
+                    </span>
+                  </div>
+                </div>
+                <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                  <div>
+                    <div className="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                      <MapPin className="w-3 h-3 text-[#E67E22]" />
+                      <span>Ramanagara District</span>
+                    </div>
+                    <h3 className="text-base font-bold text-white mt-1 group-hover:text-[#E67E22] transition-colors">
+                      Channapatna Toys
+                    </h3>
+                    <p className="text-xs text-stone-300 mt-1 leading-relaxed">
+                      Non-toxic ivory wood lacquerware hand-turned with natural turmeric & kumkum vegetable dyes.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-amber-900/40 text-xs font-semibold text-[#E67E22] flex items-center justify-between">
+                    <span>Explore Woodcraft</span>
                     <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
