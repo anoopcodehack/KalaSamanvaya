@@ -309,12 +309,11 @@ export default function KannadaVoiceRecorder({
     }
   };
 
-  // Play audio sample using browser TTS and populate
+  // Play audio sample using browser TTS, animate text, and populate
   const simulateSample = (sample: typeof SAMPLE_KANNADA_PROMPTS[0]) => {
-    setTranscript(sample.transcript);
-    setInterimText("");
     setErrorMessage("");
-
+    setInterimText("");
+    
     // Read out loud with SpeechSynthesis
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       try {
@@ -326,7 +325,21 @@ export default function KannadaVoiceRecorder({
       } catch (_) {}
     }
 
-    sendForParsing(sample.transcript);
+    // Live typewriter simulation effect
+    let charIdx = 0;
+    const fullText = sample.transcript;
+    setTranscript("");
+
+    const interval = setInterval(() => {
+      charIdx += 2;
+      if (charIdx >= fullText.length) {
+        clearInterval(interval);
+        setTranscript(fullText);
+        sendForParsing(fullText);
+      } else {
+        setTranscript(fullText.slice(0, charIdx));
+      }
+    }, 35);
   };
 
   const handleManualSubmit = (e: React.FormEvent) => {
@@ -336,6 +349,8 @@ export default function KannadaVoiceRecorder({
     sendForParsing(manualInput);
     setManualInput("");
   };
+
+  const isEdgeBrowser = typeof window !== "undefined" && /Edg\//i.test(navigator.userAgent);
 
   return (
     <div className="bg-[#2A1810] text-[#FAF6F0] p-6 sm:p-8 rounded-3xl border border-amber-800/40 shadow-2xl space-y-6">
@@ -386,6 +401,25 @@ export default function KannadaVoiceRecorder({
             English / Kanglish (en-IN)
           </button>
         </div>
+
+        {/* Edge Browser Notice */}
+        {isEdgeBrowser && speechLang === "kn-IN" && (
+          <div className="p-2.5 bg-amber-950/80 border border-amber-600/50 rounded-xl text-xs text-amber-200 flex items-center justify-center gap-2 max-w-lg mx-auto">
+            <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0" />
+            <span>
+              {language === "kn"
+                ? "Edge ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಮೈಕ್ ಪರೀಕ್ಷಿಸಲು 'English (en-IN)' ಒತ್ತಿ ಮಾತನಾಡಿ ಅಥವಾ ಕೆಳಗಿನ ಸ್ಯಾಂಪಲ್ ಒತ್ತಿರಿ."
+                : "In Microsoft Edge, switch to 'English (en-IN)' to speak or test with 1-click presets below."}
+            </span>
+            <button
+              type="button"
+              onClick={() => setSpeechLang("en-IN")}
+              className="px-2 py-0.5 rounded bg-[#E67E22] text-white text-[10px] font-bold hover:bg-[#cf6d17]"
+            >
+              Switch en-IN
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Big Animated Microphone Button */}
