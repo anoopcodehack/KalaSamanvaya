@@ -756,40 +756,53 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 9. TRIBAL WARLI FOLK ART CELEBRATION STRIP ── */}
-      <FolkArtBanner variant="warli" />
+      {/* ── 9. TRADITIONAL FOLK ART CELEBRATION STRIP ── */}
+      <FolkArtBanner variant="madhubani" />
 
-      {/* ── 10. BESPOKE & CORPORATE BULK GIFTING (Scroll Reveal Animation) ── */}
-      <section className="bg-[#180E07] py-20 px-4 sm:px-6 lg:px-8 border-b border-amber-950">
-        <ScrollReveal direction="up" className="max-w-4xl mx-auto text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-950/80 border border-amber-600/50 text-amber-300 text-xs font-bold uppercase tracking-wider">
-            <Gift className="w-3.5 h-3.5 text-[#E67E22]" />
-            <span>ಸಾಂಸ್ಥಿಕ ಉಡುಗೊರೆಗಳು • Handcrafted Bulk Gifting</span>
-          </div>
+      {/* ── 10. BESPOKE & CORPORATE BULK GIFTING (Traditional Karnataka Handloom Backdrop) ── */}
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8 border-b border-amber-950 overflow-hidden bg-[#180E07]">
+        {/* Authentic Karnataka Handloom & Kasuti Heritage Background - Bright & Clearly Visible */}
+        <div
+          className="absolute inset-0 bg-cover bg-center brightness-100 contrast-105 transition-transform duration-1000"
+          style={{
+            backgroundImage: "url('/assets/karnataka-craft-bg.jpg')",
+            backgroundPosition: "center 45%",
+          }}
+        />
+        {/* Soft subtle tint so the gorgeous golden zari & terracotta silk are clearly visible */}
+        <div className="absolute inset-0 bg-black/35" />
 
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-wide">
-            Looking for Custom Handloom or Corporate Bulk Gifting?
-          </h2>
+        <ScrollReveal direction="up" className="relative z-10 max-w-4xl mx-auto">
+          <div className="bg-[#180E07]/85 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-amber-500/50 shadow-2xl text-center space-y-6">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-950/90 border border-amber-500/60 text-amber-300 text-xs font-bold uppercase tracking-wider shadow-lg">
+              <Gift className="w-3.5 h-3.5 text-[#E67E22]" />
+              <span>ಸಾಂಸ್ಥಿಕ ಉಡುಗೊರೆಗಳು • Handcrafted Bulk Gifting</span>
+            </div>
 
-          <p className="text-xs sm:text-sm text-stone-300 max-w-2xl mx-auto leading-relaxed">
-            Celebrate festive occasions, conferences, and milestone moments with authentic Karnataka handicraft hampers. We coordinate directly with rural women&apos;s self-help groups and artisan cooperatives across Karnataka to fulfill custom bulk orders with guaranteed delivery timelines and zero quality compromise.
-          </p>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-wide">
+              Looking for Custom Handloom or Corporate Bulk Gifting?
+            </h2>
 
-          <div className="pt-2 flex flex-wrap justify-center items-center gap-4">
-            <Link
-              href="/b2b"
-              className="px-8 py-3.5 rounded-full bg-[#E67E22] hover:bg-[#cf6d17] text-white font-bold text-sm shadow-xl transition-all duration-200 hover:-translate-y-0.5 hover:scale-105 inline-flex items-center gap-2"
-            >
-              <span>Inquire for Corporate Gifting</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+            <p className="text-xs sm:text-sm text-stone-200 max-w-2xl mx-auto leading-relaxed">
+              Celebrate festive occasions, conferences, and milestone moments with authentic Karnataka handicraft hampers. We coordinate directly with rural women&apos;s self-help groups and artisan cooperatives across Karnataka to fulfill custom bulk orders with guaranteed delivery timelines and zero quality compromise.
+            </p>
 
-            <Link
-              href="/marketplace"
-              className="px-6 py-3.5 rounded-full border border-amber-500/60 bg-white/5 hover:bg-white/10 text-amber-200 font-semibold text-sm transition-all duration-200 hover:-translate-y-0.5"
-            >
-              <span>Browse Catalog</span>
-            </Link>
+            <div className="pt-2 flex flex-wrap justify-center items-center gap-4">
+              <Link
+                href="/b2b"
+                className="px-8 py-3.5 rounded-full bg-[#E67E22] hover:bg-[#cf6d17] text-white font-bold text-sm shadow-xl shadow-amber-950/50 transition-all duration-200 hover:-translate-y-0.5 hover:scale-105 inline-flex items-center gap-2"
+              >
+                <span>Inquire for Corporate Gifting</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+
+              <Link
+                href="/marketplace"
+                className="px-6 py-3.5 rounded-full border border-amber-500/70 bg-black/40 hover:bg-black/60 text-amber-200 font-semibold text-sm transition-all duration-200 hover:-translate-y-0.5 backdrop-blur-sm shadow-md"
+              >
+                <span>Browse Catalog</span>
+              </Link>
+            </div>
           </div>
         </ScrollReveal>
       </section>
