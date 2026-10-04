@@ -17,7 +17,8 @@ import {
   PackageCheck,
   LogOut,
   RefreshCw,
-  ShieldCheck
+  ShieldCheck,
+  Scale
 } from "lucide-react";
 import { ARTISAN_PRODUCTS } from "@/lib/db/products";
 import MockCheckoutModal from "@/components/marketplace/MockCheckoutModal";
@@ -102,6 +103,13 @@ export default function Navbar() {
       href: "/artisan/inbox",
       isActive: pathname === "/artisan/inbox",
       icon: PackageCheck,
+    },
+    {
+      name: "Impact & 8% Model",
+      kannada: "ಪ್ರಭಾವ & ಮಾದರಿ",
+      href: "/impact",
+      isActive: pathname === "/impact",
+      icon: Scale,
     },
   ];
 

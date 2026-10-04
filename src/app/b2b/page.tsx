@@ -18,9 +18,11 @@ import {
   MapPin,
   PackageCheck,
   AlertTriangle,
-  FileCheck
+  FileCheck,
+  Scale
 } from "lucide-react";
 import Link from "next/link";
+import FairTradeSimulatorCard from "@/components/impact/FairTradeSimulatorCard";
 
 interface ClusterAllocation {
   id: string;
@@ -345,6 +347,11 @@ export default function B2BFulfillmentPage() {
               </div>
             </div>
           </div>
+        </ScrollReveal>
+
+        {/* ── FAIR-TRADE IMPACT & 8% SUSTAINABILITY SIMULATOR ── */}
+        <ScrollReveal direction="up" delayMs={50}>
+          <FairTradeSimulatorCard initialUnits={200} />
         </ScrollReveal>
 
         {/* Corporate Trust Pillars with Staggered Scroll Reveal */}

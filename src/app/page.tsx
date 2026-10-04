@@ -215,10 +215,10 @@ export default function HomePage() {
 
               <div className="pt-4 mt-4 border-t border-amber-900/30">
                 <Link
-                  href="/marketplace"
+                  href="/impact"
                   className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#E67E22] hover:text-amber-200 transition-colors"
                 >
-                  <span>See &apos;Why This Price?&apos; breakdown</span>
+                  <span>Simulate 75% Fair-Trade &amp; 8% Platform Model</span>
                   <ChevronRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
