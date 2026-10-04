@@ -19,7 +19,8 @@ import {
   PackageCheck,
   AlertTriangle,
   FileCheck,
-  Scale
+  Scale,
+  RefreshCw
 } from "lucide-react";
 import Link from "next/link";
 import FairTradeSimulatorCard from "@/components/impact/FairTradeSimulatorCard";
@@ -33,12 +34,13 @@ interface ClusterAllocation {
   score: number;
   initialUnits: number;
   simulatedUnits: number;
+  shortfallUnits: number;
   maxCapacity: number;
-  status: "primary" | "absorbed" | "standby-activated" | "reduced";
+  status: "primary" | "absorbed" | "standby-activated" | "reduced" | "shortfall-capped";
 }
 
 export default function B2BFulfillmentPage() {
-  const [isSimulated, setIsSimulated] = useState(false);
+  const [benchmarkMode, setBenchmarkMode] = useState<"primary" | "recovery" | "shortfall">("primary");
   const [isLoading, setIsLoading] = useState(false);
 
   const initialClusters: ClusterAllocation[] = [
@@ -51,6 +53,7 @@ export default function B2BFulfillmentPage() {
       score: 0.94,
       initialUnits: 80,
       simulatedUnits: 40,
+      shortfallUnits: 60,
       maxCapacity: 80,
       status: "reduced",
     },
@@ -63,6 +66,7 @@ export default function B2BFulfillmentPage() {
       score: 0.88,
       initialUnits: 70,
       simulatedUnits: 70,
+      shortfallUnits: 50,
       maxCapacity: 70,
       status: "primary",
     },
@@ -75,6 +79,7 @@ export default function B2BFulfillmentPage() {
       score: 0.81,
       initialUnits: 50,
       simulatedUnits: 60,
+      shortfallUnits: 50,
       maxCapacity: 60,
       status: "absorbed",
     },
@@ -87,30 +92,28 @@ export default function B2BFulfillmentPage() {
       score: 0.72,
       initialUnits: 0,
       simulatedUnits: 30,
+      shortfallUnits: 0,
       maxCapacity: 40,
       status: "standby-activated",
     },
   ];
 
-  const handleSimulate = () => {
+  const handleSetMode = (mode: "primary" | "recovery" | "shortfall") => {
     setIsLoading(true);
     setTimeout(() => {
-      setIsSimulated(true);
+      setBenchmarkMode(mode);
       setIsLoading(false);
-    }, 400);
+    }, 250);
   };
 
-  const handleReset = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsSimulated(false);
-      setIsLoading(false);
-    }, 200);
-  };
+  const totalUnits =
+    benchmarkMode === "recovery"
+      ? initialClusters.reduce((sum, c) => sum + c.simulatedUnits, 0)
+      : benchmarkMode === "shortfall"
+      ? initialClusters.reduce((sum, c) => sum + c.shortfallUnits, 0)
+      : initialClusters.reduce((sum, c) => sum + c.initialUnits, 0);
 
-  const totalUnits = isSimulated
-    ? initialClusters.reduce((sum, c) => sum + c.simulatedUnits, 0)
-    : initialClusters.reduce((sum, c) => sum + c.initialUnits, 0);
+  const shortfallAmount = Math.max(0, 200 - totalUnits);
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#2A1810]">
@@ -156,39 +159,70 @@ export default function B2BFulfillmentPage() {
         {/* Order Specification Card */}
         <ScrollReveal direction="up" delayMs={50}>
           <div className="bg-white rounded-2xl p-6 border border-stone-200 shadow-sm space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-stone-200">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-stone-200">
               <div>
                 <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider">
-                  Live Production Batch
+                  Live Production Batch • Evaluation Presets
                 </span>
-                <div className="text-lg font-bold text-[#2A1810] flex items-center gap-2">
+                <div className="text-lg font-bold text-[#2A1810] flex items-center gap-2 mt-0.5">
                   <span>Order #ORD-2026-KASUTI</span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300">
-                    Target: 200 Units
+                  <span
+                    className={`text-[10px] font-bold px-2.5 py-0.5 rounded border transition-colors ${
+                      shortfallAmount > 0
+                        ? "bg-red-100 text-red-800 border-red-300 animate-pulse"
+                        : "bg-emerald-100 text-emerald-800 border-emerald-300"
+                    }`}
+                  >
+                    {shortfallAmount > 0 ? `🚨 Shortfall: -${shortfallAmount} Units` : `Target: 200 Units (100% Fulfilled)`}
                   </span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                {!isSimulated ? (
-                  <button
-                    onClick={handleSimulate}
-                    disabled={isLoading}
-                    className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold text-xs shadow-sm flex items-center gap-1.5 transition-all duration-200 hover:scale-105"
-                  >
-                    <AlertTriangle className="w-3.5 h-3.5" />
-                    <span>Simulate Cluster Capacity Drop (-40 Units)</span>
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleReset}
-                    disabled={isLoading}
-                    className="px-4 py-2 rounded-xl border border-stone-300 bg-white hover:bg-stone-50 active:scale-95 text-stone-700 font-semibold text-xs shadow-sm flex items-center gap-1.5 transition-all duration-200"
-                  >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Reset Allocation</span>
-                  </button>
-                )}
+              {/* 3 Benchmark Scenarios Switcher (Matches Slide 5 of PPT) */}
+              <div className="flex flex-wrap items-center gap-1.5 p-1 bg-stone-100 rounded-xl border border-stone-200 self-start lg:self-auto">
+                <button
+                  type="button"
+                  onClick={() => handleSetMode("primary")}
+                  disabled={isLoading}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    benchmarkMode === "primary"
+                      ? "bg-white text-stone-900 shadow-xs border border-stone-300"
+                      : "text-stone-600 hover:text-stone-900"
+                  }`}
+                  title="Scenario 1: Initial 200-unit sequential allocation"
+                >
+                  1. Primary (200 Units)
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleSetMode("recovery")}
+                  disabled={isLoading}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                    benchmarkMode === "recovery"
+                      ? "bg-amber-600 text-white shadow-xs"
+                      : "text-amber-800 hover:text-amber-950"
+                  }`}
+                  title="Scenario 2: Artisan A drops 80 -> 40, standby recovers to 200"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>2. Recovery (A: 80➔40)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleSetMode("shortfall")}
+                  disabled={isLoading}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                    benchmarkMode === "shortfall"
+                      ? "bg-red-600 text-white shadow-xs"
+                      : "text-red-700 hover:text-red-900"
+                  }`}
+                  title="Scenario 3: Cluster capacity capped at 160 units, detects 40 shortfall (Slide 5)"
+                >
+                  <AlertTriangle className="w-3.5 h-3.5" />
+                  <span>3. Shortfall Test (160/200)</span>
+                </button>
               </div>
             </div>
 
@@ -203,7 +237,15 @@ export default function B2BFulfillmentPage() {
               <div className="p-3 bg-[#FAF7F2] rounded-xl border border-stone-200">
                 <span className="text-stone-500 text-[11px] block">Required Quantity</span>
                 <span className="font-bold text-[#2A1810] text-sm mt-0.5 block">200 Units</span>
-                <span className="text-[10px] text-emerald-700 font-semibold">100% Allocated ({totalUnits}/200)</span>
+                <span
+                  className={`text-[10px] font-semibold block ${
+                    shortfallAmount > 0 ? "text-red-600 font-bold" : "text-emerald-700"
+                  }`}
+                >
+                  {shortfallAmount > 0
+                    ? `⚠️ ${totalUnits}/200 Allocated (${shortfallAmount} Shortfall)`
+                    : `100% Allocated (${totalUnits}/200)`}
+                </span>
               </div>
 
               <div className="p-3 bg-[#FAF7F2] rounded-xl border border-stone-200">
@@ -215,7 +257,11 @@ export default function B2BFulfillmentPage() {
               <div className="p-3 bg-[#FAF7F2] rounded-xl border border-stone-200">
                 <span className="text-stone-500 text-[11px] block">Active Maker Groups</span>
                 <span className="font-bold text-[#2A1810] text-sm mt-0.5 block">
-                  {isSimulated ? "4 Craft Clusters" : "3 Craft Clusters"}
+                  {benchmarkMode === "recovery"
+                    ? "4 Craft Clusters"
+                    : benchmarkMode === "shortfall"
+                    ? "3 Clusters (Capped)"
+                    : "3 Craft Clusters"}
                 </span>
                 <span className="text-[10px] text-stone-500">Zero Middlemen Commission</span>
               </div>
@@ -223,18 +269,46 @@ export default function B2BFulfillmentPage() {
           </div>
         </ScrollReveal>
 
-        {/* Dynamic Recovery Simulation Alert Banner */}
-        {isSimulated && (
+        {/* Dynamic Recovery Simulation Alert Banner (Scenario 2) */}
+        {benchmarkMode === "recovery" && (
           <div className="bg-amber-50 border border-amber-300 rounded-2xl p-5 shadow-sm space-y-2 animate-fadeIn text-xs">
             <div className="flex items-center gap-2 text-amber-900 font-bold text-sm">
               <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
-              <span>Simulated Event: Artisan A (Savita Naik) capacity reduced from 80 to 40 units</span>
+              <span>Slide 5 Recovery Scenario: Artisan A (Savita Naik) capacity reduced from 80 to 40 units</span>
             </div>
             <p className="text-amber-800 leading-relaxed">
               <strong>Automated Reallocation Executed:</strong> Shortfall of 40 units was reallocated instantly.
               Cluster C (Girija Kulkarni) absorbed +10 units buffer (50 → 60), and verified Standby Cluster D (Renuka Badiger) was activated for the remaining 30 units (0 → 30).
               <strong> Order total preserved at 200/200 units with 0 days delivery delay.</strong>
             </p>
+          </div>
+        )}
+
+        {/* Shortfall Detection Alert Banner (Scenario 3 - Slide 5 PPT) */}
+        {benchmarkMode === "shortfall" && (
+          <div className="bg-red-50 border-2 border-red-400 rounded-2xl p-5 shadow-sm space-y-3 animate-fadeIn text-xs text-red-950">
+            <div className="flex items-center gap-2 text-red-900 font-bold text-sm">
+              <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 animate-bounce" />
+              <span>Slide 5 Shortfall Detection Test: Compatible Cluster Capacity Capped at 160 Units</span>
+            </div>
+            <p className="text-red-800 leading-relaxed">
+              <strong>🚨 40-Unit Shortfall Detected:</strong> Total compatible cluster capacity (160 units) is insufficient for order demand (200 units).
+              <strong> Rather than silently rejecting the order, the engine flags an instant institutional buyer alert:</strong>
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-[11px]">
+              <div className="p-3 bg-white/95 rounded-xl border border-red-200 space-y-1">
+                <strong className="block text-stone-800 font-bold">Recommendation 1: Delivery Extension</strong>
+                <span className="text-stone-600 leading-relaxed block">
+                  Extend delivery deadline by +7 calendar days to allow 2nd batch completion by Dharwad clusters.
+                </span>
+              </div>
+              <div className="p-3 bg-white/95 rounded-xl border border-red-200 space-y-1">
+                <strong className="block text-stone-800 font-bold">Recommendation 2: Auxiliary Cluster Sourcing</strong>
+                <span className="text-stone-600 leading-relaxed block">
+                  Auto-requisition remaining 40 units from North Karnataka auxiliary Bagalkot Craft Guild.
+                </span>
+              </div>
+            </div>
           </div>
         )}
 
@@ -255,17 +329,29 @@ export default function B2BFulfillmentPage() {
 
             <div className="divide-y divide-stone-200 text-xs">
               {initialClusters.map((cluster) => {
-                const currentUnits = isSimulated ? cluster.simulatedUnits : cluster.initialUnits;
+                const currentUnits =
+                  benchmarkMode === "recovery"
+                    ? cluster.simulatedUnits
+                    : benchmarkMode === "shortfall"
+                    ? cluster.shortfallUnits
+                    : cluster.initialUnits;
                 const percent = Math.round((currentUnits / 200) * 100);
+
+                const isRecoveryReduced = benchmarkMode === "recovery" && cluster.status === "reduced";
+                const isRecoveryAbsorbed = benchmarkMode === "recovery" && cluster.status === "absorbed";
+                const isRecoveryActivated = benchmarkMode === "recovery" && cluster.status === "standby-activated";
+                const isShortfallCapped = benchmarkMode === "shortfall" && currentUnits > 0;
 
                 return (
                   <div
                     key={cluster.id}
                     className={`p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors ${
-                      isSimulated && cluster.status === "standby-activated"
+                      isRecoveryActivated
                         ? "bg-emerald-50/50"
-                        : isSimulated && cluster.status === "reduced"
+                        : isRecoveryReduced
                         ? "bg-amber-50/40"
+                        : benchmarkMode === "shortfall" && currentUnits === 0
+                        ? "bg-stone-50/60 opacity-60"
                         : "hover:bg-stone-50"
                     }`}
                   >
@@ -296,10 +382,12 @@ export default function B2BFulfillmentPage() {
                           className={`h-full rounded-full transition-all duration-500 ${
                             currentUnits === 0
                               ? "bg-transparent"
-                              : isSimulated && cluster.status === "standby-activated"
+                              : isRecoveryActivated
                               ? "bg-emerald-500"
-                              : isSimulated && cluster.status === "reduced"
+                              : isRecoveryReduced
                               ? "bg-amber-500"
+                              : benchmarkMode === "shortfall"
+                              ? "bg-red-500/80"
                               : "bg-[#C85A32]"
                           }`}
                           style={{ width: `${(currentUnits / 80) * 100}%` }}
@@ -309,25 +397,35 @@ export default function B2BFulfillmentPage() {
 
                     {/* Status Badge */}
                     <div className="md:w-44 text-right">
-                      {currentUnits === 0 ? (
+                      {benchmarkMode === "shortfall" ? (
+                        currentUnits > 0 ? (
+                          <span className="inline-block px-2.5 py-1 rounded-full bg-red-100 text-red-800 border border-red-200 text-[11px] font-semibold">
+                            Capped: {currentUnits} units
+                          </span>
+                        ) : (
+                          <span className="inline-block px-2.5 py-1 rounded-full bg-stone-100 text-stone-500 border border-stone-200 text-[11px] font-medium">
+                            Auxiliary Standby (0)
+                          </span>
+                        )
+                      ) : currentUnits === 0 ? (
                         <span className="inline-block px-2.5 py-1 rounded-full bg-stone-100 text-stone-600 text-[11px] font-semibold">
-                          Standby Standby Pool
+                          Standby Pool (0)
                         </span>
-                      ) : isSimulated && cluster.status === "standby-activated" ? (
+                      ) : isRecoveryActivated ? (
                         <span className="inline-block px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[11px] font-bold">
                           Standby Activated (+30)
                         </span>
-                      ) : isSimulated && cluster.status === "reduced" ? (
+                      ) : isRecoveryReduced ? (
                         <span className="inline-block px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-300 text-[11px] font-bold">
                           Capacity Drop (80 → 40)
                         </span>
-                      ) : isSimulated && cluster.status === "absorbed" ? (
+                      ) : isRecoveryAbsorbed ? (
                         <span className="inline-block px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 border border-blue-300 text-[11px] font-bold">
                           Absorbed Buffer (50 → 60)
                         </span>
                       ) : (
                         <span className="inline-block px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold">
-                          Active Production (70)
+                          Active ({currentUnits} units)
                         </span>
                       )}
                     </div>
@@ -339,11 +437,26 @@ export default function B2BFulfillmentPage() {
             {/* Table Footer */}
             <div className="p-4 bg-[#FAF7F2] border-t border-stone-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
               <div className="flex items-center gap-2 text-stone-600">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>Full 200/200 units assigned with zero unfulfilled backlog.</span>
+                {shortfallAmount > 0 ? (
+                  <>
+                    <AlertTriangle className="w-4 h-4 text-red-600 shrink-0" />
+                    <span className="text-red-700 font-semibold">
+                      Shortfall Alert: {shortfallAmount} units unfulfilled due to cluster capacity caps.
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Full 200/200 units assigned with zero unfulfilled backlog.</span>
+                  </>
+                )}
               </div>
               <div className="font-bold text-[#2A1810]">
-                Total Production Payout: <span className="text-[#C85A32]">₹1,20,000</span> (75% to Artisans)
+                Total Production Payout:{" "}
+                <span className="text-[#C85A32]">
+                  ₹{(totalUnits * 600).toLocaleString("en-IN")}
+                </span>{" "}
+                (75% to Artisans)
               </div>
             </div>
           </div>
