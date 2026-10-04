@@ -109,8 +109,8 @@ export const ARTISAN_PRODUCTS: ArtisanProduct[] = [
   },
   {
     id: "prod-pottery-01",
-    title: "Coastal Burnished Terracotta Water Jug",
-    kannadaTitle: "ಕರಾವಳಿ ಹೊಳಪುಳ್ಳ ಜೇಡಿಮಣ್ಣಿನ ನೀರಿನ ಜಗ್ಗು",
+    title: "Khanapur Riverbed Terracotta Water Jug",
+    kannadaTitle: "ಖಾನಾಪುರ ಪಾರಂಪರಿಕ ಜೇಡಿಮಣ್ಣಿನ ನೀರಿನ ಜಗ್ಗು",
     craftType: "Pottery",
     categoryLabel: "Coastal Pottery",
     priceINR: 750,
@@ -118,15 +118,15 @@ export const ARTISAN_PRODUCTS: ArtisanProduct[] = [
     rating: 4.9,
     reviewsCount: 44,
     badge: "Cluster Classic",
-    artisanName: "Shankara Kumbhara",
-    artisanKannadaName: "ಶಂಕರ ಕುಂಬಾರ",
-    artisanCluster: "Gurupura Potter Colony",
-    artisanDistrict: "Dakshina Kannada",
+    artisanName: "Vitthala Kumbhara",
+    artisanKannadaName: "ವಿಟ್ಠಲ ಕುಂಬಾರ",
+    artisanCluster: "Khanapur Terracotta Guild",
+    artisanDistrict: "Belagavi",
     leadTimeDays: 4,
     stockAvailable: 40,
     imageUrl: "/assets/craft-pottery.jpg",
-    shortDescription: "Wheel-thrown river silt terracotta with river stone burnishing for natural alkaline water cooling.",
-    craftStory: "Crafted on a manual wooden potter's wheel using red clay harvested from the Netravati riverbed. The unique smooth sheen is achieved not by chemical glaze, but by painstakingly burnishing the surface with smooth coastal agate stones before wood-firing in an underground kiln.",
+    shortDescription: "Traditional wheel-thrown Belagavi red clay pottery crafted from Malaprabha riverbed silt with agate stone burnishing.",
+    craftStory: "Crafted on a manual wooden wheel by the traditional Kumbhara pottery collective of Khanapur, Belagavi. Sourced from the rich alluvial clay of the Malaprabha riverbed and burnished with smooth river stones before wood-firing in traditional earthen kilns.",
     breakdown: {
       handcraftHours: 10,
       artisanDirectPayoutINR: 560,
@@ -136,11 +136,11 @@ export const ARTISAN_PRODUCTS: ArtisanProduct[] = [
       powerloomMachinePrintCompareINR: 190,
       powerloomMachineMinutes: 2,
       artisanSharePercent: 75,
-      materialsUsed: "Netravati riverbed clay, fine beach sand, wood ash, untreated natural river stone polish.",
+      materialsUsed: "Malaprabha riverbed red clay, fine beach sand, wood ash, untreated natural river stone polish.",
       techniqueName: "Manual Wheel Throwing & Agate Stone Burnishing",
       regionalHeritageNote: "Natural pore architecture cools water naturally by up to 5°C without electricity."
     },
-    tags: ["Natural Cooling", "Non-Toxic", "Netravati Clay", "Artisan Wheel"]
+    tags: ["Belagavi Craft", "Natural Cooling", "Non-Toxic", "Khanapur Clay", "Artisan Wheel"]
   },
   {
     id: "prod-kasuti-02",

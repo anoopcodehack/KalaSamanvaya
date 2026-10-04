@@ -25,8 +25,7 @@ import {
   MicOff,
   SlidersHorizontal,
   RotateCcw,
-  X,
-  Sparkles
+  X
 } from "lucide-react";
 import Link from "next/link";
 
@@ -57,33 +56,49 @@ export default function MarketplacePage() {
       .catch((err) => console.error("Failed to load products from API", err));
   }, []);
 
-  // Voice Search (Kannada & English Speech-to-Text)
+  // Voice Search (Native Web Speech API kn-IN & fallback)
+  const recognitionRef = React.useRef<any>(null);
+
   const toggleVoiceSearch = () => {
     if (typeof window === "undefined") return;
     const SpeechRecognition =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      alert("Voice search is not supported by your browser. Please type in the search bar.");
+      alert("Voice search is supported on Chrome, Edge, and Safari browsers.");
       return;
     }
 
     if (isListening) {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch (err) {
+          // ignore stop error
+        }
+      }
       setIsListening(false);
       return;
     }
 
     try {
       const recognition = new SpeechRecognition();
+      recognitionRef.current = recognition;
       recognition.lang = "kn-IN"; // Native Kannada speech recognition
-      recognition.interimResults = false;
+      recognition.continuous = false;
+      recognition.interimResults = true;
       recognition.maxAlternatives = 1;
 
       recognition.onstart = () => setIsListening(true);
       recognition.onend = () => setIsListening(false);
-      recognition.onerror = () => setIsListening(false);
+      recognition.onerror = (e: any) => {
+        console.warn("Speech recognition error:", e);
+        setIsListening(false);
+      };
       recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
+        const transcript = Array.from(event.results)
+          .map((r: any) => r[0].transcript)
+          .join("");
         if (transcript) {
           setSearchQuery(transcript);
         }
@@ -91,7 +106,7 @@ export default function MarketplacePage() {
 
       recognition.start();
     } catch (e) {
-      console.error("Speech recognition error", e);
+      console.error("Speech recognition start failed", e);
       setIsListening(false);
     }
   };
@@ -361,7 +376,7 @@ export default function MarketplacePage() {
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-5 bg-white p-6 rounded-2xl border border-amber-900/15 shadow-sm">
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100/70 border border-amber-800/20 text-[#C85A32] text-[11px] font-bold uppercase tracking-wider">
-                <Sparkles className="w-3 h-3 text-[#C85A32]" />
+                <ShieldCheck className="w-3.5 h-3.5 text-[#C85A32]" />
                 <span>ಕರ್ನಾಟಕ ಕರಕುಶಲ ಭಂಡಾರ • Verified Heritage Clusters</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-[#2A1810] mt-2 tracking-tight">
@@ -379,7 +394,7 @@ export default function MarketplacePage() {
                 <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  placeholder="Search Kasuti, Bidri, Dharwad..."
+                  placeholder="Search Kasuti, Bidri, Belagavi..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-9 pr-16 py-2.5 bg-[#FAF7F2] rounded-xl border border-stone-300 text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-[#C85A32] focus:bg-white transition-all shadow-inner"
@@ -436,11 +451,46 @@ export default function MarketplacePage() {
             </div>
           </div>
 
-          {/* Voice Search Listening Toast Indicator */}
+          {/* Voice Search Listening Toast Indicator with Instant Quick Speak Test Chips */}
           {isListening && (
-            <div className="flex items-center gap-2 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold animate-pulse">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-ping" />
-              <span>ಕನ್ನಡದಲ್ಲಿ ಮಾತನಾಡಿ... (Listening in Kannada speech: try saying &quot;ಕಸೂತಿ ಶಾಲು&quot; or &quot;ಬಿದ್ರಿ&quot;)...</span>
+            <div className="p-3 rounded-xl bg-amber-50 border border-amber-300 text-[#2A1810] text-xs font-semibold space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-red-600">
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-ping" />
+                  <span className="font-bold">ಕನ್ನಡದಲ್ಲಿ ಮಾತನಾಡಿ... (Listening in Kannada speech):</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsListening(false)}
+                  className="text-stone-400 hover:text-stone-700 text-xs"
+                >
+                  ✕ Close
+                </button>
+              </div>
+              <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px]">
+                <span className="text-stone-500 font-normal">Or click spoken craft preset:</span>
+                <button
+                  type="button"
+                  onClick={() => { setSearchQuery("ಕಸೂತಿ"); setIsListening(false); }}
+                  className="px-2.5 py-1 rounded-md bg-white border border-amber-400 text-[#C85A32] hover:bg-amber-100 font-bold shadow-2xs"
+                >
+                  &quot;ಕಸೂತಿ ಶಾಲು&quot; (Kasuti)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setSearchQuery("ಬಿದ್ರಿ"); setIsListening(false); }}
+                  className="px-2.5 py-1 rounded-md bg-white border border-amber-400 text-[#C85A32] hover:bg-amber-100 font-bold shadow-2xs"
+                >
+                  &quot;ಬಿದ್ರಿ ಬೆಳ್ಳಿ&quot; (Bidriware)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setSearchQuery("ಖಾನಾಪುರ"); setIsListening(false); }}
+                  className="px-2.5 py-1 rounded-md bg-white border border-amber-400 text-[#C85A32] hover:bg-amber-100 font-bold shadow-2xs"
+                >
+                  &quot;ಖಾನಾಪುರ ಮಡಿಕೆ&quot; (Belagavi Pottery)
+                </button>
+              </div>
             </div>
           )}
 
@@ -498,7 +548,7 @@ export default function MarketplacePage() {
               }`}
             >
               <Award className={`w-3.5 h-3.5 ${giOnly ? "text-emerald-200" : "text-emerald-700"}`} />
-              <span>🏅 GI-Tagged Heritage Only</span>
+              <span>GI-Tagged Heritage Only</span>
             </button>
 
             <span className="text-stone-300">|</span>
