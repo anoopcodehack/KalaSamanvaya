@@ -102,13 +102,36 @@ export async function getAllProducts(): Promise<ArtisanProduct[]> {
     const mongo = await getMongoDb();
     if (mongo) {
       const collection = mongo.collection<ArtisanProduct>("products");
-      const count = await collection.countDocuments();
-      if (count === 0) {
-        // Seed initial heritage products to Mongo Atlas
-        await collection.insertMany(ARTISAN_PRODUCTS as any);
+      
+      // Upsert official curated artisan products with latest authentic images and prices
+      for (const p of ARTISAN_PRODUCTS) {
+        await collection.updateOne(
+          { id: p.id },
+          { $set: p },
+          { upsert: true }
+        );
       }
-      const mongoProducts = await collection.find({}).sort({ _id: -1 }).toArray();
+
+      // Purge any stale legacy test products from MongoDB
+      const validIds = ARTISAN_PRODUCTS.map((p) => p.id);
+      await collection.deleteMany({
+        $or: [
+          { imageUrl: { $regex: "images.unsplash.com" } },
+          { title: { $regex: "Mohammad Abdul Rauf|Container|Basavaraj Kumbhar" } },
+          { id: { $nin: validIds }, priceINR: { $in: [3400, 1200] } }
+        ]
+      });
+
+      const mongoProducts = await collection.find({}).toArray();
       if (mongoProducts.length > 0) {
+        // Canonical ordering: User uploaded listings first, followed by curated catalog in order
+        const officialMap = new Map(ARTISAN_PRODUCTS.map((p, idx) => [p.id, idx + 10]));
+        mongoProducts.sort((a, b) => {
+          const rankA = officialMap.get(a.id) ?? 0;
+          const rankB = officialMap.get(b.id) ?? 0;
+          return rankA - rankB;
+        });
+
         db.products = mongoProducts;
         return mongoProducts;
       }
