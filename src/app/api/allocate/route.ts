@@ -5,6 +5,18 @@ import { BulkOrderRequirement, CraftType } from "@/lib/engine/types";
 
 export const dynamic = "force-dynamic";
 
+export async function GET() {
+  const result = allocateBulkOrder(MOCK_ARTISANS, {
+    orderId: "ORD-200-KASUTI",
+    craft: "Kasuti",
+    requiredQuantity: 200,
+    deliveryDeadlineDays: 30,
+    destinationDistrict: "Bengaluru",
+    budgetPerUnitINR: 1600,
+  });
+  return NextResponse.json(result);
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();

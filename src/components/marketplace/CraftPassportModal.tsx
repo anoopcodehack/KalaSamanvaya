@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { ArtisanProduct } from "@/lib/db/products";
+import { playSpeech, stopSpeech } from "@/lib/voice/playSpeech";
 import {
   X,
   Award,
@@ -35,18 +36,11 @@ export default function CraftPassportModal({
 
   // Audio speech synthesis in native Kannada
   const playArtisanGreeting = () => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-      alert("Speech synthesis is not supported on this browser.");
-      return;
-    }
-
     if (isPlayingVoice) {
-      window.speechSynthesis.cancel();
+      stopSpeech();
       setIsPlayingVoice(false);
       return;
     }
-
-    window.speechSynthesis.cancel();
 
     const kannadaGreeting =
       product?.craftType === "Kasuti"
@@ -55,21 +49,18 @@ export default function CraftPassportModal({
         ? "ನಮಸ್ಕಾರ! ನನ್ನ ಹೆಸರು ಪಾರ್ವತಿ ಮಡಿವಾಳ. ಉಡುಪಿಯ ನದೀತೀರದ ಕಾಡುಹುಲ್ಲನ್ನು ಮೂರು ವಾರ ಬಿಸಿಲಿನಲ್ಲಿ ಒಣಗಿಸಿ, ಕೈಯಿಂದ ಹೆಣೆದು ಈ ಬುಟ್ಟಿಯನ್ನು ತಯಾರಿಸಿದ್ದೇನೆ. ನಮ್ಮ ಕರಾವಳಿ ಪರಂಪರೆ ಬೆಂಬಲಿಸಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದಗಳು."
         : "ನಮಸ್ಕಾರ! ಖಾನಾಪುರದ ಕೆಂಪು ಮಣ್ಣಿನಿಂದ ಚಕ್ರದ ಮೇಲೆ ಕೈಯಿಂದಲೇ ತಿರುಗಿಸಿ, ಸಾಂಪ್ರದಾಯಿಕ ಕಟ್ಟಿಗೆ ಭಟ್ಟಿಯಲ್ಲಿ ಬೇಯಿಸಿ ಈ ಕಲಾಕೃತಿ ರೂಪಿಸಿದ್ದೇನೆ. ಧನ್ಯವಾದಗಳು.";
 
-    const utterance = new SpeechSynthesisUtterance(kannadaGreeting);
-    utterance.lang = "kn-IN";
-    utterance.rate = 0.88;
-
-    utterance.onstart = () => setIsPlayingVoice(true);
-    utterance.onend = () => setIsPlayingVoice(false);
-    utterance.onerror = () => setIsPlayingVoice(false);
-
-    window.speechSynthesis.speak(utterance);
+    playSpeech(
+      kannadaGreeting,
+      "kn",
+      () => setIsPlayingVoice(true),
+      () => setIsPlayingVoice(false)
+    );
   };
 
   // Stop audio if modal closes
   useEffect(() => {
-    if (!isOpen && typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
+    if (!isOpen) {
+      stopSpeech();
       setIsPlayingVoice(false);
     }
   }, [isOpen]);

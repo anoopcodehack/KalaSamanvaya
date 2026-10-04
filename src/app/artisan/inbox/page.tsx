@@ -7,6 +7,7 @@ import FolkArtBorder from "@/components/shared/FolkArtBorder";
 import ScrollReveal from "@/components/shared/ScrollReveal";
 import { ARTISAN_PRODUCTS, ArtisanProduct } from "@/lib/db/products";
 import CraftPassportModal from "@/components/marketplace/CraftPassportModal";
+import { playSpeech, stopSpeech } from "@/lib/voice/playSpeech";
 import {
   PackageCheck,
   Clock,
@@ -82,19 +83,12 @@ export default function ArtisanInboxPage() {
   // Audio speech synthesis in Kannada/English
   const [isSpeaking, setIsSpeaking] = useState(false);
   const speakText = (text: string) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-      alert("Speech synthesis is not supported on this browser.");
-      return;
-    }
-
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = language === "kn" ? "kn-IN" : "en-IN";
-    utterance.rate = 0.9;
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-    window.speechSynthesis.speak(utterance);
+    playSpeech(
+      text,
+      language,
+      () => setIsSpeaking(true),
+      () => setIsSpeaking(false)
+    );
   };
 
   // One-tap Accept Handler
@@ -326,18 +320,35 @@ export default function ArtisanInboxPage() {
               {/* Kannada Read Aloud Mic Button */}
               <button
                 type="button"
-                onClick={() =>
+                onClick={() => {
+                  if (isSpeaking) {
+                    stopSpeech();
+                    setIsSpeaking(false);
+                    return;
+                  }
                   speakText(
                     language === "kn"
                       ? `${b2bCommitment.titleKn}. ನಿಮಗೆ 80 ಕಸೂತಿ ಶಾಲುಗಳ ಜವಾಬ್ದಾರಿ ಹಂಚಿಕೆಯಾಗಿದೆ. ಒಟ್ಟು ಆದಾಯ 48,000 ರೂಪಾಯಿಗಳು. ಗಡುವು 14 ದಿನಗಳು.`
                       : `${b2bCommitment.title}. You have an allocation of 80 Kasuti shawls. Total direct wage payout 48,000 rupees. Delivery deadline 14 days.`
-                  )
-                }
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-[#C85A32] text-xs font-bold border border-amber-300 transition-colors self-start sm:self-auto"
-                title="Read aloud in Kannada"
+                  );
+                }}
+                className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold border transition-colors self-start sm:self-auto ${
+                  isSpeaking
+                    ? "bg-red-50 text-red-700 border-red-300 animate-pulse"
+                    : "bg-amber-50 hover:bg-amber-100 text-[#C85A32] border-amber-300"
+                }`}
+                title={language === "kn" ? "ಕನ್ನಡದಲ್ಲಿ ಕೇಳಿ" : "Listen in Audio"}
               >
                 <Volume2 className={`w-4 h-4 ${isSpeaking ? "animate-bounce text-red-600" : ""}`} />
-                <span>{language === "kn" ? "ಧ್ವನಿಯಲ್ಲಿ ಕೇಳಿ" : "Listen in Kannada"}</span>
+                <span>
+                  {language === "kn"
+                    ? isSpeaking
+                      ? "ಧ್ವನಿ ನಿಲ್ಲಿಸಿ"
+                      : "ಧ್ವನಿಯಲ್ಲಿ ಕೇಳಿ"
+                    : isSpeaking
+                    ? "Stop Audio"
+                    : "Listen in Audio"}
+                </span>
               </button>
             </div>
 

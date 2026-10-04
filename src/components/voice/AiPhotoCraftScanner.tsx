@@ -16,6 +16,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { ExtractedCraftListing } from "@/lib/voice/kannadaKeywords";
+import { playSpeech, stopSpeech } from "@/lib/voice/playSpeech";
 
 interface AiPhotoCraftScannerProps {
   onListingExtracted: (listing: ExtractedCraftListing, imageUrl?: string) => void;
@@ -176,25 +177,18 @@ export default function AiPhotoCraftScanner({
 
   // Kannada Speech Synthesis
   const playKannadaAudio = (text: string) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-      alert("Speech synthesis is not supported on this device.");
-      return;
-    }
-
     if (isSpeaking) {
-      window.speechSynthesis.cancel();
+      stopSpeech();
       setIsSpeaking(false);
       return;
     }
 
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "kn-IN";
-    utterance.rate = 0.9;
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-    window.speechSynthesis.speak(utterance);
+    playSpeech(
+      text,
+      language,
+      () => setIsSpeaking(true),
+      () => setIsSpeaking(false)
+    );
   };
 
   return (

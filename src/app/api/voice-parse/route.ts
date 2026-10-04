@@ -3,6 +3,13 @@ import { parseKannadaTranscript } from "@/lib/voice/kannadaKeywords";
 
 export const dynamic = "force-dynamic";
 
+export async function GET() {
+  return NextResponse.json({
+    status: "online",
+    service: "KalaSamanvaya Voice Parsing Engine",
+  });
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();

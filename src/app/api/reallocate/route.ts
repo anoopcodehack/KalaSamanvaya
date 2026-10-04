@@ -5,6 +5,22 @@ import { BulkOrderRequirement, CraftType } from "@/lib/engine/types";
 
 export const dynamic = "force-dynamic";
 
+export async function GET() {
+  const result = recalculateAllocation(
+    MOCK_ARTISANS,
+    {
+      orderId: "ORD-200-KASUTI",
+      craft: "Kasuti",
+      requiredQuantity: 200,
+      deliveryDeadlineDays: 30,
+      destinationDistrict: "Bengaluru",
+      budgetPerUnitINR: 1600,
+    },
+    [{ artisanId: "art-kasuti-01", newCapacity: 40 }]
+  );
+  return NextResponse.json(result);
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();

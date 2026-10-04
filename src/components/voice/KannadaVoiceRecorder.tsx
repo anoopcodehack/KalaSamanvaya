@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Mic, MicOff, Volume2, AlertCircle, RefreshCw, Send, Radio } from "lucide-react";
 import { parseKannadaTranscript, ExtractedCraftListing } from "@/lib/voice/kannadaKeywords";
+import { playSpeech, stopSpeech } from "@/lib/voice/playSpeech";
 
 interface KannadaVoiceRecorderProps {
   onListingExtracted: (listing: ExtractedCraftListing) => void;
@@ -73,9 +74,7 @@ export default function KannadaVoiceRecorder({
     setTranscript("");
     setInterimText("");
     setErrorMessage("");
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-    }
+    stopSpeech();
   }, [language]);
 
   useEffect(() => {
@@ -156,6 +155,7 @@ export default function KannadaVoiceRecorder({
   };
 
   const startRecording = async () => {
+    stopSpeech();
     setErrorMessage("");
     setTranscript("");
     setInterimText("");
@@ -336,37 +336,7 @@ export default function KannadaVoiceRecorder({
     setErrorMessage("");
     setInterimText("");
 
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      try {
-        window.speechSynthesis.cancel();
-        const voices = window.speechSynthesis.getVoices();
-
-        if (language === "kn") {
-          // In Kannada mode, only speak if a genuine Kannada voice is available on this system
-          const kannadaVoice = voices.find(
-            (v) =>
-              v.lang.toLowerCase().startsWith("kn") ||
-              v.name.toLowerCase().includes("kannada") ||
-              v.lang.toLowerCase().includes("kn-in")
-          );
-          if (kannadaVoice) {
-            const utterance = new SpeechSynthesisUtterance(sample.transcript);
-            utterance.voice = kannadaVoice;
-            utterance.lang = "kn-IN";
-            utterance.rate = 0.9;
-            window.speechSynthesis.speak(utterance);
-          }
-        } else {
-          // In English mode, speak naturally with standard English voice
-          const utterance = new SpeechSynthesisUtterance(sample.transcript);
-          const englishVoice = voices.find((v) => v.lang.startsWith("en") || v.lang.includes("en-IN"));
-          if (englishVoice) utterance.voice = englishVoice;
-          utterance.lang = "en-IN";
-          utterance.rate = 0.95;
-          window.speechSynthesis.speak(utterance);
-        }
-      } catch (_) {}
-    }
+    playSpeech(sample.transcript, language);
 
     // Typewriter animation
     let charIdx = 0;
