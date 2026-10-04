@@ -105,33 +105,53 @@ The platform coordinates bulk enterprise orders through a 5-stage deterministic 
 ```
 
 ### 1. Hard Craft Filtering
+
 Artisans must strictly match the required craft category:
-$$\text{Eligible}(i) = \begin{cases} 1 & \text{if } \text{Craft}_i = \text{Craft}_{\text{Order}} \land c_i > 0 \\ 0 & \text{otherwise} \end{cases}$$
+
+```math
+\text{Eligible}(i) = \begin{cases} 1 & \text{if } \text{Craft}_i = \text{Craft}_{\text{Order}} \land c_i > 0 \\ 0 & \text{otherwise} \end{cases}
+```
 
 ### 2. Multi-Criteria Match Scoring
+
 For each eligible artisan $i$, a composite match score $S_i \in [0, 1]$ is computed:
 
-$$S_i = 0.45 \cdot (\text{Availability}) + 0.35 \cdot (\text{Turnaround}) + 0.20 \cdot (\text{Logistics})$$
+```math
+S_i = 0.45 \cdot (\text{Availability}) + 0.35 \cdot (\text{Turnaround}) + 0.20 \cdot (\text{Logistics})
+```
 
 * **Availability Score ($A_i$):** Ratio of current uncommitted capacity $c_i$ to overall monthly capacity $C_{\max, i}$:
-  $$A_i = \frac{c_i}{C_{\max, i}}$$
+```math
+A_i = \frac{c_i}{C_{\max, i}}
+```
 * **Turnaround Fit ($T_i$):** Buffer margin between maker lead time and buyer deadline:
-  $$T_i = \begin{cases} 0.60 + 0.40 \left(1 - \frac{\text{LeadTime}_i}{\text{Deadline} + 1}\right) & \text{if } \text{LeadTime}_i \le \text{Deadline} \\ \max\left(0.10, 0.50 - 0.10(\text{LeadTime}_i - \text{Deadline})\right) & \text{if } \text{LeadTime}_i > \text{Deadline} \end{cases}$$
+```math
+T_i = \begin{cases} 0.60 + 0.40 \left(1 - \frac{\text{LeadTime}_i}{\text{Deadline} + 1}\right) & \text{if } \text{LeadTime}_i \le \text{Deadline} \\ \max\left(0.10, 0.50 - 0.10(\text{LeadTime}_i - \text{Deadline})\right) & \text{if } \text{LeadTime}_i > \text{Deadline} \end{cases}
+```
 * **Logistics Fit ($L_i$):** Proximity to regional logistics consolidation center:
-  $$L_i = \max\left(0.20, 1 - \frac{\text{Distance}_i}{250\text{ km}}\right)$$
+```math
+L_i = \max\left(0.20, 1 - \frac{\text{Distance}_i}{250\text{ km}}\right)
+```
 
 ### 3. Sequential Greedy Allocation
+
 Artisans are sorted descending by $S_i$ (ties broken by higher remaining capacity). For an order demand $D$:
 
-$$a_i = \min(c_i, \text{Remaining Demand})$$
+```math
+a_i = \min(c_i, \text{Remaining Demand})
+```
 
 ### 4. Capacity-Update Rebalancing & Standby Buffers
+
 Unallocated capacity of partially utilized artisans and zero-allocated qualifying artisans are preserved as active standby reserves. When an artisan reports a capacity drop, the engine rebalances the deficit across available cluster buffers.
 
 ### 5. Shortfall Detection Alert
+
 If total cluster capacity is insufficient to satisfy the order quantity, the engine flags an explicit shortfall:
 
-$$\text{Shortfall} = \max\left(0, D - \sum_{i=1}^{n} a_i\right)$$
+```math
+\text{Shortfall} = \max\left(0, D - \sum_{i=1}^{n} a_i\right)
+```
 
 * **Shortfall Detection Test (If Total Capacity is Reduced to 160):**
   * **Result:** `160 / 200 Allocated; 40-Unit Shortfall Detected`
