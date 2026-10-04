@@ -17,8 +17,47 @@ export default function ProductCard({
   onOpenCheckout,
   onOpenPassport
 }: ProductCardProps) {
+  const cardRef = React.useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = React.useState({ x: 0, y: 0, active: false });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setTilt({
+      x: Number((y * -9).toFixed(2)), // rotateX: tilts up/down
+      y: Number((x * 9).toFixed(2)),  // rotateY: tilts left/right
+      active: true,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setTilt({ x: 0, y: 0, active: false });
+  };
+
   return (
-    <div className="group bg-[#FAF6F0] rounded-2xl overflow-hidden border border-amber-900/15 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col hover:-translate-y-1">
+    <div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        transform: tilt.active
+          ? `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateY(-5px)`
+          : "perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)",
+        transition: tilt.active ? "transform 0.08s ease-out" : "transform 0.45s cubic-bezier(0.16, 1, 0.3, 1)",
+      }}
+      className="group relative bg-[#FAF6F0] rounded-2xl overflow-hidden border border-amber-900/15 shadow-sm hover:shadow-2xl transition-shadow duration-300 flex flex-col will-change-transform"
+    >
+      {/* Subtle Handcrafted Light Sheen following cursor */}
+      {tilt.active && (
+        <div
+          className="pointer-events-none absolute inset-0 z-30 rounded-2xl transition-opacity duration-200"
+          style={{
+            background: `radial-gradient(circle at ${(tilt.y / 9 + 0.5) * 100}% ${(-tilt.x / 9 + 0.5) * 100}%, rgba(255, 255, 255, 0.18) 0%, transparent 60%)`,
+          }}
+        />
+      )}
       {/* Product Image Container */}
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-100">
         <img
