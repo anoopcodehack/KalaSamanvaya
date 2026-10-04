@@ -12,6 +12,7 @@ export interface ExtractedCraftListing {
 }
 
 export const KANNADA_CRAFT_DICTIONARY: Record<string, { craft: string; kannada: string; material: string }> = {
+  // Pure Kannada terms
   "ಕಸೂತಿ": { craft: "Kasuti", kannada: "ಕಸೂತಿ ಕಲೆ", material: "Pure Mulberry Silk Thread & Handloom Cotton" },
   "ಶಾಲು": { craft: "Kasuti", kannada: "ಕಸೂತಿ ಶಾಲು", material: "Pure Silk Cotton Base" },
   "ಸೀರೆ": { craft: "Kasuti", kannada: "ಕಸೂತಿ ಸೀರೆ", material: "Ilkal Handloom Silk" },
@@ -21,11 +22,41 @@ export const KANNADA_CRAFT_DICTIONARY: Record<string, { craft: string; kannada: 
   "ಜಗ್ಗು": { craft: "Pottery", kannada: "ನೀರಿನ ಜಗ್ಗು", material: "Terracotta Clay" },
   "ಕುಂಬಾರಿಕೆ": { craft: "Pottery", kannada: "ಕುಂಬಾರಿಕೆ ಕಲೆ", material: "Riverbed Terracotta" },
   "ಬಿದ್ರಿ": { craft: "Bidriware", kannada: "ಬಿದ್ರಿ ಕಲೆ", material: "Zinc-Copper Alloy with Pure Silver Wire" },
-  "ಬೆಳ್ಳಿ": { craft: "Bidriware", kannada: "ಬೆಳ್ಳಿ ಕೆತ್ತನೆ", material: "Pure 99.9% Silver Wire" }
+  "ಬೆಳ್ಳಿ": { craft: "Bidriware", kannada: "ಬೆಳ್ಳಿ ಕೆತ್ತನೆ", material: "Pure 99.9% Silver Wire" },
+  "ಚನ್ನಪಟ್ಟಣ": { craft: "Channapatna Toys", kannada: "ಚನ್ನಪಟ್ಟಣದ ಬಣ್ಣದ ಆಟಿಕೆ", material: "Natural Ivory Wood & Organic Vegetable Dyes" },
+  "ಆಟಿಕೆ": { craft: "Channapatna Toys", kannada: "ಚನ್ನಪಟ್ಟಣದ ಬಣ್ಣದ ಆಟಿಕೆ", material: "Natural Ivory Wood & Lacquer Polish" },
+
+  // English & Transliterated terms (for bilingual speech / Kanglish)
+  "kasuti": { craft: "Kasuti", kannada: "ಕಸೂತಿ ಕಲೆ", material: "Pure Mulberry Silk Thread & Handloom Cotton" },
+  "kasooti": { craft: "Kasuti", kannada: "ಕಸೂತಿ ಕಲೆ", material: "Pure Mulberry Silk Thread & Handloom Cotton" },
+  "shawl": { craft: "Kasuti", kannada: "ಕಸೂತಿ ಶಾಲು", material: "Pure Silk Cotton Base" },
+  "shawls": { craft: "Kasuti", kannada: "ಕಸೂತಿ ಶಾಲು", material: "Pure Silk Cotton Base" },
+  "saree": { craft: "Kasuti", kannada: "ಕಸೂತಿ ಸೀರೆ", material: "Ilkal Handloom Silk" },
+  "sari": { craft: "Kasuti", kannada: "ಕಸೂತಿ ಸೀರೆ", material: "Ilkal Handloom Silk" },
+  "saris": { craft: "Kasuti", kannada: "ಕಸೂತಿ ಸೀರೆ", material: "Ilkal Handloom Silk" },
+  "embroidery": { craft: "Kasuti", kannada: "ಕಸೂತಿ ಕಲೆ", material: "Pure Mulberry Silk Thread & Handloom Cotton" },
+  "beedu": { craft: "Beedu", kannada: "ಬೀಡು ಬುಟ್ಟಿ", material: "Sun-Cured Coastal Wildgrass & Raw Jute" },
+  "basket": { craft: "Beedu", kannada: "ಹುಲ್ಲಿನ ಬುಟ್ಟಿ", material: "Natural Wild Rivergrass" },
+  "baskets": { craft: "Beedu", kannada: "ಹುಲ್ಲಿನ ಬುಟ್ಟಿ", material: "Natural Wild Rivergrass" },
+  "cane": { craft: "Beedu", kannada: "ಬೀಡು ಬುಟ್ಟಿ", material: "Sun-Cured Coastal Wildgrass & Raw Jute" },
+  "grass": { craft: "Beedu", kannada: "ಹುಲ್ಲಿನ ಬುಟ್ಟಿ", material: "Natural Wild Rivergrass" },
+  "pottery": { craft: "Pottery", kannada: "ಜೇಡಿಮಣ್ಣಿನ ಮಡಿಕೆ", material: "Netravati Riverbed Silt & Stone Polish" },
+  "pot": { craft: "Pottery", kannada: "ಜೇಡಿಮಣ್ಣಿನ ಮಡಿಕೆ", material: "Netravati Riverbed Silt & Stone Polish" },
+  "pots": { craft: "Pottery", kannada: "ಜೇಡಿಮಣ್ಣಿನ ಮಡಿಕೆ", material: "Netravati Riverbed Silt & Stone Polish" },
+  "jug": { craft: "Pottery", kannada: "ನೀರಿನ ಜಗ್ಗು", material: "Terracotta Clay" },
+  "jugs": { craft: "Pottery", kannada: "ನೀರಿನ ಜಗ್ಗು", material: "Terracotta Clay" },
+  "terracotta": { craft: "Pottery", kannada: "ಕುಂಬಾರಿಕೆ ಕಲೆ", material: "Riverbed Terracotta" },
+  "clay": { craft: "Pottery", kannada: "ಕುಂಬಾರಿಕೆ ಕಲೆ", material: "Riverbed Terracotta" },
+  "bidri": { craft: "Bidriware", kannada: "ಬಿದ್ರಿ ಕಲೆ", material: "Zinc-Copper Alloy with Pure Silver Wire" },
+  "bidriware": { craft: "Bidriware", kannada: "ಬಿದ್ರಿ ಕಲೆ", material: "Zinc-Copper Alloy with Pure Silver Wire" },
+  "channapatna": { craft: "Channapatna Toys", kannada: "ಚನ್ನಪಟ್ಟಣದ ಬಣ್ಣದ ಆಟಿಕೆ", material: "Natural Ivory Wood & Lacquer Polish" },
+  "toy": { craft: "Channapatna Toys", kannada: "ಚನ್ನಪಟ್ಟಣದ ಬಣ್ಣದ ಆಟಿಕೆ", material: "Natural Ivory Wood & Lacquer Polish" },
+  "toys": { craft: "Channapatna Toys", kannada: "ಚನ್ನಪಟ್ಟಣದ ಬಣ್ಣದ ಆಟಿಕೆ", material: "Natural Ivory Wood & Lacquer Polish" }
 };
 
-// Kannada numeral words mapping to integer values
-const KANNADA_NUMERAL_WORDS: Record<string, number> = {
+// Kannada & English numeral words mapping to integer values
+const NUMERAL_WORDS: Record<string, number> = {
+  // Kannada
   "ಹತ್ತು": 10,
   "ಇಪ್ಪತ್ತು": 20,
   "ಮೂವತ್ತು": 30,
@@ -43,7 +74,27 @@ const KANNADA_NUMERAL_WORDS: Record<string, number> = {
   "ಐನೂರು": 500,
   "ಆರುನೂರು": 600,
   "ಎಂಟುನೂರು": 800,
-  "ಸಾವಿರ": 1000
+  "ಸಾವಿರ": 1000,
+
+  // English
+  "ten": 10,
+  "twenty": 20,
+  "thirty": 30,
+  "forty": 40,
+  "fifty": 50,
+  "sixty": 60,
+  "seventy": 70,
+  "eighty": 80,
+  "ninety": 90,
+  "hundred": 100,
+  "two hundred": 200,
+  "three hundred": 300,
+  "four hundred": 400,
+  "five hundred": 500,
+  "six hundred": 600,
+  "seven hundred": 700,
+  "eight hundred": 800,
+  "thousand": 1000
 };
 
 // Kannada digits to Latin digits
@@ -64,11 +115,11 @@ function normalizeKannadaNumbers(text: string): string {
 }
 
 /**
- * Intelligent Heuristic Extractor for Spoken Kannada
- * Parses native speech into structured craft inventory fields.
+ * Intelligent Heuristic Extractor for Spoken Kannada & Bilingual Indian Speech
+ * Parses native speech or mixed speech into structured craft inventory fields.
  */
 export function parseKannadaTranscript(transcript: string): ExtractedCraftListing {
-  const normalizedText = normalizeKannadaNumbers(transcript);
+  const normalizedText = normalizeKannadaNumbers(transcript).toLowerCase();
 
   // 1. Craft identification
   let detectedCraft = "Kasuti";
@@ -76,7 +127,7 @@ export function parseKannadaTranscript(transcript: string): ExtractedCraftListin
   let detectedMaterial = "Pure Mulberry Silk Thread & Handloom Cotton";
 
   for (const [kw, meta] of Object.entries(KANNADA_CRAFT_DICTIONARY)) {
-    if (normalizedText.includes(kw)) {
+    if (normalizedText.includes(kw.toLowerCase())) {
       detectedCraft = meta.craft;
       detectedKannada = meta.kannada;
       detectedMaterial = meta.material;
@@ -87,10 +138,10 @@ export function parseKannadaTranscript(transcript: string): ExtractedCraftListin
   // 2. Quantity & Price Extraction
   const digitsFound = normalizedText.match(/\d+/g)?.map(Number) || [];
   
-  // Also check for vernacular number words
+  // Also check for vernacular and English number words
   const wordsFound: number[] = [];
-  for (const [kWord, val] of Object.entries(KANNADA_NUMERAL_WORDS)) {
-    if (normalizedText.includes(kWord)) {
+  for (const [word, val] of Object.entries(NUMERAL_WORDS)) {
+    if (normalizedText.includes(word)) {
       wordsFound.push(val);
     }
   }
@@ -102,16 +153,13 @@ export function parseKannadaTranscript(transcript: string): ExtractedCraftListin
   let leadTime = 15;
 
   if (allNumbers.length === 1) {
-    // If only one number mentioned, decide if it is quantity or price
-    if (allNumbers[0] > 100) {
+    if (allNumbers[0] > 150) {
       price = allNumbers[0];
     } else {
       quantity = allNumbers[0];
     }
   } else if (allNumbers.length >= 2) {
-    // Smaller number is typically quantity, larger is typically price in INR
     const sorted = [...allNumbers].sort((a, b) => a - b);
-    // If there is a number below 200, it's quantity
     const smallNums = sorted.filter(n => n <= 250);
     const largeNums = sorted.filter(n => n > 250);
 
@@ -123,12 +171,12 @@ export function parseKannadaTranscript(transcript: string): ExtractedCraftListin
     } else if (sorted.length >= 2) {
       price = sorted[1];
     }
+  }
 
-    // Check for days (lead time)
-    const daysMatch = normalizedText.match(/(\d+)\s*(ದಿನ|day)/i);
-    if (daysMatch) {
-      leadTime = parseInt(daysMatch[1], 10);
-    }
+  // Check for days (lead time)
+  const daysMatch = normalizedText.match(/(\d+)\s*(ದಿನ|day|days)/i);
+  if (daysMatch) {
+    leadTime = parseInt(daysMatch[1], 10);
   }
 
   return {

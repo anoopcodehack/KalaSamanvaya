@@ -3,6 +3,8 @@ import { allocateBulkOrder } from "@/lib/engine/allocator";
 import { MOCK_ARTISANS } from "@/lib/db/mockData";
 import { BulkOrderRequirement, CraftType } from "@/lib/engine/types";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
