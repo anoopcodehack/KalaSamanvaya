@@ -159,7 +159,7 @@ export const ARTISAN_PRODUCTS: ArtisanProduct[] = [
     artisanDistrict: "Dharwad",
     leadTimeDays: 10,
     stockAvailable: 15,
-    imageUrl: "/assets/craft-kasuti.jpg",
+    imageUrl: "/assets/craft-kasuti-peacock.jpg",
     shortDescription: "Dense peacock (Mayura) embroidery featuring over 12,000 individual hand stitches on raw Tussar silk.",
     craftStory: "Embroidered by master artisan Renuka Badiger, featuring the iconic Navalgund Mayura design. Requires three full weeks of focused needlework where four separate embroidery stitches (Gavanti, Murgi, Neygi, Menthi) are combined to form a sacred geometric grid.",
     breakdown: {
@@ -229,7 +229,7 @@ export const ARTISAN_PRODUCTS: ArtisanProduct[] = [
     artisanDistrict: "Udupi",
     leadTimeDays: 5,
     stockAvailable: 28,
-    imageUrl: "/assets/craft-pottery.jpg",
+    imageUrl: "/assets/craft-pottery-urn.jpg",
     shortDescription: "Unglazed breathable terracotta planter featuring hand-pressed coastal floral reliefs.",
     craftStory: "Hand-coiled using coastal laterite soil and tempered with fine river sand. The unglazed micro-porous walls allow plant roots to breathe and maintain natural thermal balance in high summer.",
     breakdown: {

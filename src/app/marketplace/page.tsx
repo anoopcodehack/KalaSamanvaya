@@ -125,7 +125,7 @@ export default function MarketplacePage() {
               <div className="relative rounded-2xl overflow-hidden border border-amber-900/15 shadow-xl bg-white p-3.5">
                 <div className="relative aspect-[4/3] rounded-xl overflow-hidden">
                   <img
-                    src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80"
+                    src="/assets/craft-kasuti.jpg"
                     alt="Featured Kasuti Craft"
                     className="w-full h-full object-cover"
                   />

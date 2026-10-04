@@ -28,11 +28,11 @@ import {
 import Link from "next/link";
 
 const CRAFT_IMAGE_MAP: Record<string, string> = {
-  Kasuti: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80",
-  Pottery: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80",
-  Beedu: "https://images.unsplash.com/photo-1590736969955-71cc94801759?auto=format&fit=crop&w=800&q=80",
-  Bidriware: "https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&w=800&q=80",
-  "Channapatna Toys": "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=800&q=80",
+  Kasuti: "/assets/craft-kasuti.jpg",
+  Pottery: "/assets/craft-pottery.jpg",
+  Beedu: "/assets/craft-beedu.jpg",
+  Bidriware: "/assets/craft-bidri.jpg",
+  "Channapatna Toys": "/assets/craft-channapatna.jpg",
 };
 
 const CRAFT_CLUSTER_MAP: Record<string, { kn: string; en: string }> = {
@@ -64,7 +64,7 @@ export default function ArtisanOnboardPage() {
 
   const [onboardingMode, setOnboardingMode] = useState<"photo" | "voice">("photo");
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string>(
-    "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80"
+    "/assets/craft-kasuti.jpg"
   );
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);

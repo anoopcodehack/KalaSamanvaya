@@ -75,7 +75,7 @@ export async function POST(req: Request) {
       stockAvailable: Number(body.quantity) || 10,
       imageUrl:
         body.imageUrl ||
-        "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80",
+        "/assets/craft-kasuti.jpg",
       shortDescription:
         body.shortDescription ||
         `Directly handcrafted by ${body.artisanName || "local artisan"} with authentic rural techniques.`,
