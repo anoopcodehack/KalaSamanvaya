@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Mic, MicOff, Volume2, AlertCircle, RefreshCw, Sparkles, Send, Globe } from "lucide-react";
+import { Mic, MicOff, Volume2, AlertCircle, RefreshCw, Sparkles, Send, Globe, Radio } from "lucide-react";
 import { parseKannadaTranscript, ExtractedCraftListing } from "@/lib/voice/kannadaKeywords";
 
 interface KannadaVoiceRecorderProps {
@@ -39,195 +39,273 @@ export default function KannadaVoiceRecorder({
   const [transcript, setTranscript] = useState("");
   const [interimText, setInterimText] = useState("");
   const [speechLang, setSpeechLang] = useState<"kn-IN" | "en-IN">("kn-IN");
-  const [isSupported, setIsSupported] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [isParsing, setIsParsing] = useState(false);
+  const [audioLevel, setAudioLevel] = useState(0);
   const [manualInput, setManualInput] = useState("");
 
-  const recognitionInstanceRef = useRef<any>(null);
-  const latestInterimRef = useRef<string>("");
+  const recognitionRef = useRef<any>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const streamRef = useRef<MediaStream | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
+  const capturedTextRef = useRef<string>("");
 
   useEffect(() => {
-    // Check Web Speech API browser availability
-    const SpeechRecognition =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-
-    if (!SpeechRecognition) {
-      setIsSupported(false);
-    }
+    return () => {
+      // Cleanup on unmount
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+      }
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
   }, []);
 
-  // Process and extract listing details
-  const processTranscript = async (rawText: string) => {
-    if (!rawText || !rawText.trim()) return;
+  // Dispatch extracted data to parent
+  const handleExtractedResult = (extracted: ExtractedCraftListing) => {
+    if (extracted && extracted.craft) {
+      onListingExtracted(extracted);
+    }
+  };
 
+  // Process text or audio via backend API
+  const sendForParsing = async (text: string, audioBlob?: Blob) => {
     setIsParsing(true);
-    // Instant heuristic local fallback for 0ms lag
-    const localExtracted = parseKannadaTranscript(rawText);
-    onListingExtracted(localExtracted);
+    setErrorMessage("");
 
-    // Call server API for optional Gemini 1.5 Flash parsing
+    // Immediate local heuristic update for 0ms UI latency
+    if (text && text.trim()) {
+      const local = parseKannadaTranscript(text);
+      handleExtractedResult(local);
+    }
+
     try {
+      let audioBase64: string | undefined;
+      let mimeType: string | undefined;
+
+      if (audioBlob && audioBlob.size > 0) {
+        mimeType = audioBlob.type || "audio/webm";
+        const buffer = await audioBlob.arrayBuffer();
+        const bytes = new Uint8Array(buffer);
+        let binary = "";
+        for (let i = 0; i < bytes.byteLength; i++) {
+          binary += String.fromCharCode(bytes[i]);
+        }
+        audioBase64 = btoa(binary);
+      }
+
       const res = await fetch("/api/voice-parse", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ transcript: rawText })
+        body: JSON.stringify({
+          transcript: text,
+          audioBase64,
+          mimeType,
+        }),
       });
+
       if (res.ok) {
         const data = await res.json();
         if (data.extracted) {
-          onListingExtracted(data.extracted);
+          if (data.extracted.rawTranscript && !text) {
+            setTranscript(data.extracted.rawTranscript);
+          }
+          handleExtractedResult(data.extracted);
         }
       }
-    } catch (e) {
-      console.warn("Server voice-parse fallback to local heuristic", e);
+    } catch (err) {
+      console.warn("Server voice-parse error:", err);
     } finally {
       setIsParsing(false);
     }
   };
 
-  const startListening = () => {
+  const startRecording = async () => {
     setErrorMessage("");
     setTranscript("");
     setInterimText("");
-    latestInterimRef.current = "";
+    capturedTextRef.current = "";
+    audioChunksRef.current = [];
 
-    const SpeechRecognition =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-
-    if (!SpeechRecognition) {
-      setIsSupported(false);
+    // Step 1: Request hardware mic stream via getUserMedia (forces browser permission popup in Edge/Chrome)
+    let audioStream: MediaStream;
+    try {
+      audioStream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+        },
+      });
+      streamRef.current = audioStream;
+    } catch (micErr: any) {
+      console.error("Microphone permission failed:", micErr);
       setErrorMessage(
         language === "kn"
-          ? "ನಿಮ್ಮ ಬ್ರೌಸರ್ Web Speech API ಬೆಂಬಲಿಸುವುದಿಲ್ಲ. Google Chrome ಬಳಸಿ ಅಥವಾ ಕೆಳಗಿನ ಸ್ಯಾಂಪಲ್ ಒತ್ತಿರಿ."
-          : "Web Speech API is not supported in this browser. Please use Google Chrome or a 1-click sample below."
+          ? "ಮೈಕ್ರೊಫೋನ್ ಅನುಮತಿ ನಿರಾಕರಿಸಲಾಗಿದೆ. ಬ್ರೌಸರ್ ಅಡ್ರೆಸ್ ಬಾರ್‌ನಲ್ಲಿರುವ ಲಾಕ್/ಕ್ಯಾಮೆರಾ ಐಕಾನ್ ಕ್ಲಿಕ್ ಮಾಡಿ ಅನುಮತಿಸಿ."
+          : "Microphone permission denied. Please allow microphone access in your browser settings (look for the lock or mic icon near the address bar)."
       );
       return;
     }
 
+    // Step 2: Set up Audio Visualizer (Shows live audio volume)
     try {
-      // Create a FRESH recognition instance to avoid stale state bugs
-      if (recognitionInstanceRef.current) {
-        try {
-          recognitionInstanceRef.current.abort();
-        } catch (_) {}
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const analyser = audioContext.createAnalyser();
+      analyser.fftSize = 256;
+      const source = audioContext.createMediaStreamSource(audioStream);
+      source.connect(analyser);
+      const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+      const updateLevel = () => {
+        analyser.getByteFrequencyData(dataArray);
+        let sum = 0;
+        for (let i = 0; i < dataArray.length; i++) {
+          sum += dataArray[i];
+        }
+        const average = sum / dataArray.length;
+        setAudioLevel(Math.min(100, Math.round((average / 128) * 100)));
+        animationFrameRef.current = requestAnimationFrame(updateLevel);
+      };
+      updateLevel();
+    } catch (e) {
+      console.warn("AudioContext visualizer notice:", e);
+    }
+
+    // Step 3: Record raw audio via MediaRecorder (enables Gemini 1.5 Flash multimodal transcription)
+    try {
+      let options: MediaRecorderOptions = {};
+      if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
+        options = { mimeType: "audio/webm;codecs=opus" };
+      } else if (MediaRecorder.isTypeSupported("audio/webm")) {
+        options = { mimeType: "audio/webm" };
+      } else if (MediaRecorder.isTypeSupported("audio/mp4")) {
+        options = { mimeType: "audio/mp4" };
       }
 
-      const recognition = new SpeechRecognition();
-      recognition.lang = speechLang;
-      recognition.continuous = false;
-      recognition.interimResults = true;
-      recognition.maxAlternatives = 1;
-
-      recognition.onstart = () => {
-        setIsRecording(true);
-        setErrorMessage("");
-      };
-
-      recognition.onresult = (event: any) => {
-        let currentInterim = "";
-        let finalChunk = "";
-
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const item = event.results[i];
-          if (item.isFinal) {
-            finalChunk += item[0].transcript;
-          } else {
-            currentInterim += item[0].transcript;
-          }
-        }
-
-        if (currentInterim) {
-          setInterimText(currentInterim);
-          latestInterimRef.current = currentInterim;
-        }
-
-        if (finalChunk) {
-          setTranscript(finalChunk);
-          setInterimText("");
-          latestInterimRef.current = "";
-          processTranscript(finalChunk);
+      const recorder = new MediaRecorder(audioStream, options);
+      recorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
         }
       };
-
-      recognition.onerror = (event: any) => {
-        console.warn("Speech recognition error:", event.error);
-        setIsRecording(false);
-
-        if (event.error === "not-allowed" || event.error === "service-not-allowed") {
-          setErrorMessage(
-            language === "kn"
-              ? "ಮೈಕ್ರೊಫೋನ್ ಅನುಮತಿ ನಿರಾಕರಿಸಲಾಗಿದೆ. ಬ್ರೌಸರ್ ಅಡ್ರೆಸ್ ಬಾರ್‌ನಲ್ಲಿರುವ ಲಾಕ್/ಕ್ಯಾಮೆರಾ ಐಕಾನ್ ಕ್ಲಿಕ್ ಮಾಡಿ ಅನುಮತಿಸಿ."
-              : "Microphone permission denied. Click the lock/tune icon near your browser address bar to allow microphone."
-          );
-        } else if (event.error === "no-speech") {
-          // If we had interim text before no-speech, use it!
-          if (latestInterimRef.current) {
-            const captured = latestInterimRef.current;
-            setTranscript(captured);
-            setInterimText("");
-            processTranscript(captured);
-          } else {
-            setErrorMessage(
-              language === "kn"
-                ? "ಧ್ವನಿ ಕೇಳಿಸಲಿಲ್ಲ. ಮೈಕ್ ಹತ್ತಿರ ಸ್ವಲ್ಪ ಜೋರಾಗಿ ಮಾತನಾಡಿ ಅಥವಾ ಕೆಳಗಿನ ಸ್ಯಾಂಪಲ್ ಆಯ್ಕೆಮಾಡಿ."
-                : "No speech detected. Please speak closer to the mic or choose a 1-click preset below."
-            );
-          }
-        } else if (event.error === "network") {
-          setErrorMessage(
-            language === "kn"
-              ? "ನೆಟ್‌ವರ್ಕ್ ಅಥವಾ ಬ್ರೌಸರ್ ಸ್ಪೀಚ್ ಸರ್ವರ್ ಸಮಸ್ಯೆ. ಭಾಷೆಯನ್ನು 'English (en-IN)' ಗೆ ಬದಲಾಯಿಸಿ ಅಥವಾ Google Chrome ನಲ್ಲಿ ಪರೀಕ್ಷಿಸಿ."
-              : "Speech network issue in this browser. Try switching language to 'English (en-IN)' or use Google Chrome."
-          );
-        } else {
-          setErrorMessage(
-            language === "kn"
-              ? `ಧ್ವನಿ ದೋಷ (${event.error}). ಕೆಳಗಿನ ಸ್ಯಾಂಪಲ್ ವಾಕ್ಯವನ್ನು ಒತ್ತಿ ಪರೀಕ್ಷಿಸಿ.`
-              : `Microphone notice (${event.error}). You can use the 1-click presets or manual box below.`
-          );
-        }
-      };
-
-      recognition.onend = () => {
-        setIsRecording(false);
-        // Fallback: If onresult had interim text but was not marked isFinal before stopping
-        if (!transcript && latestInterimRef.current) {
-          const captured = latestInterimRef.current;
-          setTranscript(captured);
-          setInterimText("");
-          latestInterimRef.current = "";
-          processTranscript(captured);
-        }
-      };
-
-      recognitionInstanceRef.current = recognition;
-      recognition.start();
-    } catch (e) {
-      console.error("SpeechRecognition start failed:", e);
-      setIsRecording(false);
-      setErrorMessage(
-        language === "kn"
-          ? "ಮೈಕ್ ಪ್ರಾರಂಭಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಪುಟವನ್ನು ರಿಫ್ರೆಶ್ ಮಾಡಿ ಅಥವಾ ಸ್ಯಾಂಪಲ್ ಬಳಸಿ."
-          : "Could not initialize microphone. Please refresh or use the 1-click samples below."
-      );
+      recorder.start(250);
+      mediaRecorderRef.current = recorder;
+    } catch (recErr) {
+      console.warn("MediaRecorder could not start:", recErr);
     }
+
+    // Step 4: Web Speech API (runs concurrently for immediate live text preview)
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    if (SpeechRecognition) {
+      try {
+        const recognition = new SpeechRecognition();
+        recognition.lang = speechLang;
+        recognition.continuous = true;
+        recognition.interimResults = true;
+
+        recognition.onresult = (event: any) => {
+          let currentInterim = "";
+          let finalTotal = "";
+
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            const item = event.results[i];
+            if (item.isFinal) {
+              finalTotal += item[0].transcript + " ";
+            } else {
+              currentInterim += item[0].transcript;
+            }
+          }
+
+          if (currentInterim) {
+            setInterimText(currentInterim);
+          }
+
+          if (finalTotal.trim()) {
+            capturedTextRef.current = (capturedTextRef.current + " " + finalTotal).trim();
+            setTranscript(capturedTextRef.current);
+            setInterimText("");
+          }
+        };
+
+        recognition.onerror = (event: any) => {
+          console.warn("Web Speech API notice:", event.error);
+          if (event.error === "network") {
+            console.info("Speech recognition network notice; recording will be processed by backend engine.");
+          }
+        };
+
+        recognition.start();
+        recognitionRef.current = recognition;
+      } catch (e) {
+        console.warn("SpeechRecognition start exception:", e);
+      }
+    }
+
+    setIsRecording(true);
   };
 
-  const stopListening = () => {
-    if (recognitionInstanceRef.current) {
-      try {
-        recognitionInstanceRef.current.stop();
-      } catch (_) {}
-    }
+  const stopRecording = () => {
     setIsRecording(false);
+    setAudioLevel(0);
+
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+
+    // Stop Web Speech API
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (_) {}
+      recognitionRef.current = null;
+    }
+
+    // Stop MediaRecorder and package blob
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.onstop = () => {
+        const mimeType = mediaRecorderRef.current?.mimeType || "audio/webm";
+        const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
+
+        // Text captured from Web Speech API or interim
+        const textToSend = (capturedTextRef.current || interimText || transcript).trim();
+        if (textToSend) {
+          setTranscript(textToSend);
+          setInterimText("");
+        }
+
+        // Send to backend (passes both audio blob and text to API)
+        sendForParsing(textToSend, audioBlob);
+
+        // Turn off stream tracks
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach((track) => track.stop());
+          streamRef.current = null;
+        }
+      };
+
+      try {
+        mediaRecorderRef.current.stop();
+      } catch (_) {}
+    } else {
+      const textToSend = (capturedTextRef.current || interimText || transcript).trim();
+      sendForParsing(textToSend);
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+      }
+    }
   };
 
   const toggleRecording = () => {
     if (isRecording) {
-      stopListening();
+      stopRecording();
     } else {
-      startListening();
+      startRecording();
     }
   };
 
@@ -237,7 +315,7 @@ export default function KannadaVoiceRecorder({
     setInterimText("");
     setErrorMessage("");
 
-    // Read out loud with SpeechSynthesis if available
+    // Read out loud with SpeechSynthesis
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       try {
         window.speechSynthesis.cancel();
@@ -248,14 +326,14 @@ export default function KannadaVoiceRecorder({
       } catch (_) {}
     }
 
-    processTranscript(sample.transcript);
+    sendForParsing(sample.transcript);
   };
 
   const handleManualSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!manualInput.trim()) return;
     setTranscript(manualInput);
-    processTranscript(manualInput);
+    sendForParsing(manualInput);
     setManualInput("");
   };
 
@@ -348,8 +426,24 @@ export default function KannadaVoiceRecorder({
           </button>
         </div>
 
-        {/* Live Audio Status */}
-        <div className="mt-4 flex items-center gap-2 text-xs font-semibold">
+        {/* Live Audio Level Meter when Recording */}
+        {isRecording && (
+          <div className="mt-3 flex items-center gap-2">
+            <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+            <div className="w-32 sm:w-44 h-2 bg-stone-800 rounded-full overflow-hidden border border-amber-900/60">
+              <div
+                className="h-full bg-gradient-to-r from-emerald-500 via-amber-400 to-[#E67E22] transition-all duration-75"
+                style={{ width: `${Math.max(8, audioLevel)}%` }}
+              />
+            </div>
+            <span className="text-[10px] text-emerald-400 font-mono font-bold">
+              {audioLevel > 15 ? "Sound detected" : "Mic active"}
+            </span>
+          </div>
+        )}
+
+        {/* Status Text Indicator */}
+        <div className="mt-3 flex items-center gap-2 text-xs font-semibold">
           <span
             className={`w-2.5 h-2.5 rounded-full ${
               isRecording ? "bg-red-500 animate-ping" : "bg-emerald-500"
@@ -358,12 +452,12 @@ export default function KannadaVoiceRecorder({
           <span className="text-amber-100">
             {isRecording
               ? language === "kn"
-                ? `ಆಲಿಸಲಾಗುತ್ತಿದೆ (${speechLang})... ಈಗ ಮಾತನಾಡಿ`
-                : `Listening (${speechLang})... Speak clearly now`
+                ? `ಧ್ವನಿ ರೆಕಾರ್ಡ್ ಆಗುತ್ತಿದೆ (${speechLang})... ಮಾತನಾಡಿ "ನಿಲ್ಲಿಸಿ" ಒತ್ತಿ`
+                : `Recording audio (${speechLang})... Speak now, then click Stop`
               : isParsing
               ? language === "kn"
                 ? "AI ವಿಶ್ಲೇಷಣೆ ನಡೆಯುತ್ತಿದೆ..."
-                : "Extracting craft data with AI..."
+                : "Analyzing craft details with AI..."
               : language === "kn"
               ? "ಮೈಕ್ ಬಟನ್ ಒತ್ತಿ ಮಾತನಾಡಿ"
               : "Ready • Tap button above to speak"}
@@ -376,12 +470,12 @@ export default function KannadaVoiceRecorder({
         <div className="text-[11px] text-[#E67E22] font-semibold mb-1 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <Volume2 className="w-3.5 h-3.5" />
-            <span>{language === "kn" ? `ಧ್ವನಿ ಇನ್‌ಪುಟ್ (${speechLang}):` : `Spoken Voice Transcript (${speechLang}):`}</span>
+            <span>{language === "kn" ? `ಧ್ವನಿ ವಿವರ (${speechLang}):` : `Spoken Voice Output (${speechLang}):`}</span>
           </div>
           {isParsing && (
             <span className="text-[10px] text-amber-400 flex items-center gap-1 animate-pulse">
               <RefreshCw className="w-2.5 h-2.5 animate-spin" />
-              Parsing...
+              Parsing with AI...
             </span>
           )}
         </div>
@@ -407,8 +501,8 @@ export default function KannadaVoiceRecorder({
             <p className="font-semibold">{errorMessage}</p>
             <p className="text-[11px] text-stone-400">
               {language === "kn"
-                ? "ಸಲಹೆ: ಕೆಳಗಿನ 1-ಕ್ಲಿಕ್ ಮಾದರಿ ವಾಕ್ಯಗಳನ್ನು ಬಳಸಿ ಅಥವಾ ನೇರವಾಗಿ ವಾಕ್ಯವನ್ನು ಟೈಪ್ ಮಾಡಿ ಪರೀಕ್ಷಿಸಿ."
-                : "Tip: You can use the 1-click presets or manual test box below to verify."}
+                ? "ಸಲಹೆ: ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಮೈಕ್ ಅನುಮತಿ ನೀಡಲು ವಿಳಾಸ ಪಟ್ಟಿಯ ಲಾಕ್ ಐಕಾನ್ ಒತ್ತಿ ಅಥವಾ ಕೆಳಗಿನ ಸ್ಯಾಂಪಲ್ ಬಳಸಿ."
+                : "Tip: Make sure you clicked 'Allow' when the browser requested microphone access."}
             </p>
           </div>
         </div>
@@ -422,7 +516,7 @@ export default function KannadaVoiceRecorder({
           </span>
           <span className="text-[10px] text-emerald-400 flex items-center gap-1 font-semibold">
             <Sparkles className="w-3 h-3" />
-            Instant Voice TTS
+            Audio TTS Preview
           </span>
         </div>
 
@@ -446,7 +540,7 @@ export default function KannadaVoiceRecorder({
         </div>
       </div>
 
-      {/* Manual Quick-Test Input (Guaranteed Testing Safeguard) */}
+      {/* Manual Quick-Test Input */}
       <form onSubmit={handleManualSubmit} className="pt-2 border-t border-amber-900/40 flex items-center gap-2">
         <input
           type="text"
