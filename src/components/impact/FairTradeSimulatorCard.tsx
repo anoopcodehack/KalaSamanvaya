@@ -16,7 +16,7 @@ import {
   PieChart,
   RefreshCw,
   Scale,
-  Sparkles
+  ShoppingBag
 } from "lucide-react";
 
 export interface CraftPreset {
@@ -95,6 +95,36 @@ export default function FairTradeSimulatorCard({
 
   const craft = CRAFT_PRESETS.find((c) => c.id === selectedCraftId) || CRAFT_PRESETS[0];
 
+  const isRetail = buyerType === "retail";
+  const minUnits = isRetail ? 1 : 20;
+  const maxUnits = isRetail ? 50 : 1000;
+  const stepUnits = isRetail ? 1 : 10;
+
+  const handleBuyerTypeChange = (type: "b2b" | "retail") => {
+    setBuyerType(type);
+    if (type === "retail") {
+      setUnits(5); // Default retail gift batch
+    } else {
+      setUnits(200); // Default B2B corporate benchmark
+    }
+  };
+
+  const b2bPresets = [
+    { label: "50 Pilot Batch", val: 50 },
+    { label: "80 Cluster Quota", val: 80 },
+    { label: "200 Corporate Benchmark", val: 200 },
+    { label: "500 Mass Festive", val: 500 },
+  ];
+
+  const retailPresets = [
+    { label: "1 Single Masterpiece", val: 1 },
+    { label: "3 Gift Set", val: 3 },
+    { label: "5 Family Hamper", val: 5 },
+    { label: "15 Festive Favors", val: 15 },
+  ];
+
+  const activePresets = isRetail ? retailPresets : b2bPresets;
+
   // Financial Calculations
   const gmv = units * craft.unitPriceINR;
   
@@ -110,8 +140,10 @@ export default function FairTradeSimulatorCard({
 
   // Social Impact Metrics
   const totalHandcraftHours = units * craft.handcraftHours;
-  const livelihoodDaysCreated = Math.round(totalHandcraftHours / 8);
-  const artisanWomenSupported = Math.max(1, Math.ceil(units / 40)); // Approx 40-50 units per artisan per bulk cycle
+  const livelihoodDaysCreated = Math.max(1, Math.round(totalHandcraftHours / 8));
+  const artisanWomenSupported = isRetail
+    ? Math.max(1, Math.ceil(units / 5))
+    : Math.max(1, Math.ceil(units / 40));
   
   // Traditional Middleman Comparison
   const middlemanTotalPay = units * craft.traditionalMiddlemanPayINR;
@@ -133,36 +165,69 @@ export default function FairTradeSimulatorCard({
               Fair-Trade Impact &amp; 8% Platform Sustainability Simulator
             </h2>
             <p className="text-xs text-stone-300 mt-1 max-w-2xl">
-              Simulate order volumes to see how our economic architecture distributes gross order value directly to rural makers while remaining fully self-sustaining.
+              Simulate order volumes across retail or corporate channels to see how our economic architecture distributes gross order value directly to rural makers while remaining fully self-sustaining.
             </p>
           </div>
 
           <div className="flex items-center gap-2 bg-[#1A0C06] p-1.5 rounded-2xl border border-amber-900/50 self-start md:self-auto">
             <button
               type="button"
-              onClick={() => setBuyerType("b2b")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+              onClick={() => handleBuyerTypeChange("b2b")}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
                 buyerType === "b2b"
-                  ? "bg-[#C85A32] text-white shadow-md"
+                  ? "bg-[#C85A32] text-white shadow-md scale-105"
                   : "text-stone-400 hover:text-stone-200"
               }`}
             >
-              Enterprise B2B
+              <Building2 className="w-3.5 h-3.5" />
+              <span>Enterprise B2B</span>
             </button>
             <button
               type="button"
-              onClick={() => setBuyerType("retail")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+              onClick={() => handleBuyerTypeChange("retail")}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
                 buyerType === "retail"
-                  ? "bg-[#C85A32] text-white shadow-md"
+                  ? "bg-[#C85A32] text-white shadow-md scale-105"
                   : "text-stone-400 hover:text-stone-200"
               }`}
             >
-              Retail Storefront
+              <ShoppingBag className="w-3.5 h-3.5" />
+              <span>Retail Storefront</span>
             </button>
           </div>
         </div>
       )}
+
+      {/* ── CHANNEL CONTEXT NOTIFICATION BANNER ── */}
+      <div className={`p-4 rounded-2xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs ${
+        isRetail
+          ? "bg-amber-950/40 border-amber-500/40 text-amber-200"
+          : "bg-indigo-950/40 border-indigo-500/40 text-indigo-200"
+      }`}>
+        <div className="flex items-center gap-3">
+          <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${
+            isRetail ? "bg-[#C85A32]/20 text-[#E67E22]" : "bg-indigo-500/20 text-indigo-300"
+          }`}>
+            {isRetail ? <ShoppingBag className="w-4 h-4" /> : <Building2 className="w-4 h-4" />}
+          </div>
+          <div>
+            <strong className="block text-white text-xs">
+              {isRetail ? "Active Channel: Retail Storefront (Direct Patron Mode)" : "Active Channel: Enterprise B2B (Multi-Cluster Bulk Mode)"}
+            </strong>
+            <span className="text-[11px] opacity-85">
+              {isRetail
+                ? "Simulating individual purchases: 100% doorstep delivery, individual scannable QR hangtag, and direct Aadhaar DBT payout to the maker."
+                : "Simulating B2B bulk contracts: Coordinated multi-cluster fulfillment, automated standby rebalancing, GST billing, and batch dispatch."}
+            </span>
+          </div>
+        </div>
+
+        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex-shrink-0 self-start sm:self-auto ${
+          isRetail ? "bg-amber-900/60 text-amber-300 border border-amber-700/60" : "bg-indigo-900/60 text-indigo-300 border border-indigo-700/60"
+        }`}>
+          {isRetail ? "Direct Patron" : "Coordinated Multi-Cluster"}
+        </span>
+      </div>
 
       {/* ── 1. INTERACTIVE SIMULATION CONTROLS ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 bg-[#1A0C06] p-6 rounded-2xl border border-amber-900/40">
@@ -200,52 +265,47 @@ export default function FairTradeSimulatorCard({
           <div>
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-amber-200 uppercase tracking-wider">
-                Production Order Quantity:
+                {isRetail ? "Retail Purchase Units:" : "Production Order Quantity:"}
               </label>
               <div className="flex items-baseline gap-1">
                 <span className="text-2xl font-black text-[#E67E22]">{units}</span>
-                <span className="text-xs text-stone-400 font-semibold">Units</span>
+                <span className="text-xs text-stone-400 font-semibold">{units === 1 ? "Piece" : "Units"}</span>
               </div>
             </div>
 
             {/* Slider */}
             <input
               type="range"
-              min={10}
-              max={1000}
-              step={10}
+              min={minUnits}
+              max={maxUnits}
+              step={stepUnits}
               value={units}
               onChange={(e) => setUnits(Number(e.target.value))}
               className="w-full h-2.5 bg-stone-800 rounded-lg appearance-none cursor-pointer accent-[#E67E22] mt-3"
             />
 
             <div className="flex justify-between text-[10px] text-stone-500 font-mono mt-1">
-              <span>10 units (Batch)</span>
-              <span>200 (B2B Benchmark)</span>
-              <span>500</span>
-              <span>1,000 (State Order)</span>
+              <span>{isRetail ? "1 piece" : "20 units (Pilot)"}</span>
+              <span>{isRetail ? "15 (Favors)" : "200 (Benchmark)"}</span>
+              <span>{isRetail ? "30 (Batch)" : "500 (Festive)"}</span>
+              <span>{isRetail ? "50 max" : "1,000 (State)"}</span>
             </div>
           </div>
 
           {/* Quick Preset Buttons */}
           <div className="space-y-1.5">
             <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block">
-              Quick Benchmark Presets:
+              {isRetail ? "Retail Quick Presets:" : "B2B Benchmark Presets:"}
             </span>
             <div className="flex flex-wrap gap-2">
-              {[
-                { label: "25 Retail", val: 25 },
-                { label: "80 Cluster Quota", val: 80 },
-                { label: "200 Corporate Benchmark", val: 200 },
-                { label: "500 Mass Festive", val: 500 },
-              ].map((p) => (
+              {activePresets.map((p) => (
                 <button
                   key={p.val}
                   type="button"
                   onClick={() => setUnits(p.val)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
                     units === p.val
-                      ? "bg-amber-500/20 border-amber-400 text-amber-200 font-bold"
+                      ? "bg-amber-500/20 border-amber-400 text-amber-200 font-bold shadow-xs scale-105"
                       : "bg-[#24130A] border-amber-900/40 text-stone-400 hover:text-stone-200"
                   }`}
                 >
@@ -257,7 +317,9 @@ export default function FairTradeSimulatorCard({
 
           {/* Gross Order Summary */}
           <div className="p-3 bg-[#24130A] rounded-xl border border-amber-900/40 flex items-center justify-between text-xs">
-            <span className="text-stone-300">Total Order GMV ({units} × ₹{craft.unitPriceINR}):</span>
+            <span className="text-stone-300">
+              {isRetail ? "Customer Cart Value" : "Gross B2B Order Value"} ({units} × ₹{craft.unitPriceINR}):
+            </span>
             <span className="text-lg font-black text-white">
               ₹{gmv.toLocaleString("en-IN")}
             </span>
@@ -353,7 +415,9 @@ export default function FairTradeSimulatorCard({
               </div>
               <h4 className="text-xs font-bold text-white">Materials &amp; GI Tagging</h4>
               <p className="text-[11px] text-stone-300 leading-snug">
-                Pre-funded pure silk, vegetable dyes &amp; physical QR hangtags.
+                {isRetail
+                  ? "Archival craft box + verified physical GI QR hangtag."
+                  : "Pre-funded pure silk, vegetable dyes &amp; physical QR hangtags."}
               </p>
             </div>
             <div className="pt-2 border-t border-amber-900/40">
@@ -377,7 +441,9 @@ export default function FairTradeSimulatorCard({
               </div>
               <h4 className="text-xs font-bold text-white">SHG Quality Inspection</h4>
               <p className="text-[11px] text-stone-300 leading-snug">
-                Compensates cluster leads for thread counting &amp; packing.
+                {isRetail
+                  ? "Individual stitch inspection &amp; tamper-evident artisan seal."
+                  : "Compensates cluster leads for thread counting &amp; packing."}
               </p>
             </div>
             <div className="pt-2 border-t border-amber-900/40">
@@ -401,7 +467,9 @@ export default function FairTradeSimulatorCard({
               </div>
               <h4 className="text-xs font-bold text-white">Platform Sustainability</h4>
               <p className="text-[11px] text-stone-300 leading-snug">
-                Kannada Speech AI, server hosting &amp; cluster re-routing.
+                {isRetail
+                  ? "Web Speech voice portal &amp; direct consumer checkout."
+                  : "Kannada Speech AI, server hosting &amp; cluster re-routing."}
               </p>
             </div>
             <div className="pt-2 border-t border-amber-900/40">
@@ -511,18 +579,31 @@ export default function FairTradeSimulatorCard({
 
       {/* ── 5. ACTION LINKS ── */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 border-t border-amber-900/40 text-xs">
-        <span className="text-stone-400">
-          Need a formal bulk proposal with GST invoice and multi-cluster delivery schedule?
+        <span className="text-stone-300">
+          {isRetail
+            ? "Ready to explore authentic handcrafted treasures directly from verified Karnataka artisan clusters?"
+            : "Need a formal bulk proposal with GST invoice and multi-cluster delivery schedule?"}
         </span>
 
         <div className="flex items-center gap-3">
-          <Link
-            href="/b2b"
-            className="px-5 py-2.5 rounded-xl bg-[#C85A32] hover:bg-[#cf6d17] text-white font-bold transition-all flex items-center gap-1.5 shadow-md hover:scale-105"
-          >
-            <span>Open B2B Allocation Console</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          {isRetail ? (
+            <Link
+              href="/marketplace"
+              className="px-5 py-2.5 rounded-xl bg-[#C85A32] hover:bg-[#cf6d17] text-white font-bold transition-all flex items-center gap-1.5 shadow-md hover:scale-105"
+            >
+              <ShoppingBag className="w-3.5 h-3.5" />
+              <span>Browse Retail Storefront</span>
+            </Link>
+          ) : (
+            <Link
+              href="/b2b"
+              className="px-5 py-2.5 rounded-xl bg-[#C85A32] hover:bg-[#cf6d17] text-white font-bold transition-all flex items-center gap-1.5 shadow-md hover:scale-105"
+            >
+              <Building2 className="w-3.5 h-3.5" />
+              <span>Open B2B Allocation Console</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          )}
         </div>
       </div>
 
