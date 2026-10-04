@@ -344,7 +344,7 @@ export default function ArtisanOnboardPage() {
                   <h3 className="text-base font-bold text-[#2A1810]">
                     {language === "kn"
                       ? "ಹಂತ ೧: ನೊಂದಣಿ ವಿಧಾನ ಆರಿಸಿ (ಕ್ಯಾಮೆರಾ ಅಥವಾ ಧ್ವನಿ)"
-                      : "Step 1: Choose Listing Method (AI Photo or Voice)"}
+                      : "Step 1: Choose Listing Method (Craft Photo or Spoken Voice)"}
                   </h3>
                 </div>
 
@@ -360,7 +360,7 @@ export default function ArtisanOnboardPage() {
                     }`}
                   >
                     <Camera className="w-3.5 h-3.5" />
-                    <span>{language === "kn" ? "ಕ್ಯಾಮೆರಾ & ಫೋಟೋ AI" : "AI Camera & Photo"}</span>
+                    <span>{language === "kn" ? "ಕ್ಯಾಮೆರಾ ಫೋಟೋ ತಪಾಸಣೆ" : "Craft Photo Scanner"}</span>
                     <span className="px-1.5 py-0.5 rounded-full bg-white/20 text-[9px] font-extrabold uppercase">
                       New
                     </span>
@@ -376,7 +376,7 @@ export default function ArtisanOnboardPage() {
                     }`}
                   >
                     <Mic className="w-3.5 h-3.5" />
-                    <span>{language === "kn" ? "ಕನ್ನಡ ಧ್ವನಿ" : "Kannada Voice"}</span>
+                    <span>{language === "kn" ? "ಧ್ವನಿ ಮೂಲಕ ನೊಂದಣಿ" : "Voice Listing"}</span>
                   </button>
                 </div>
               </div>

@@ -22,7 +22,6 @@ import {
   PieChart,
   Award,
   Clock,
-  Sparkles,
   HelpCircle,
   Globe
 } from "lucide-react";

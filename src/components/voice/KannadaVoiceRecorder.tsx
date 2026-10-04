@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Mic, MicOff, Volume2, AlertCircle, RefreshCw, Sparkles, Send, Globe, Radio } from "lucide-react";
+import { Mic, MicOff, Volume2, AlertCircle, RefreshCw, Send, Radio } from "lucide-react";
 import { parseKannadaTranscript, ExtractedCraftListing } from "@/lib/voice/kannadaKeywords";
 
 interface KannadaVoiceRecorderProps {
@@ -9,27 +9,43 @@ interface KannadaVoiceRecorderProps {
   language: "kn" | "en";
 }
 
-// Sample authentic rural Kannada voice prompts for live testing & demonstrations
-const SAMPLE_KANNADA_PROMPTS = [
-  {
-    label: "Kasuti Shawls (80 Units)",
-    kannadaLabel: "೮೦ ಕಸೂತಿ ಶಾಲುಗಳು",
-    transcript: "ನನ್ನ ಬಳಿ 80 ಕಸೂತಿ ಶಾಲುಗಳಿವೆ, ಒಂದಕ್ಕೆ 600 ರೂಪಾಯಿ, 15 ದಿನಗಳಲ್ಲಿ ನೀಡುತ್ತೇನೆ",
-    craft: "Kasuti"
-  },
-  {
-    label: "Beedu Grass Baskets (50 Units)",
-    kannadaLabel: "೫೦ ಬೀಡು ಹುಲ್ಲಿನ ಬುಟ್ಟಿಗಳು",
-    transcript: "ನಮ್ಮ ಸಂಘದಲ್ಲಿ 50 ಬೀಡು ಹುಲ್ಲಿನ ಬುಟ್ಟಿಗಳಿವೆ, ಬೆಲೆ 450 ರೂಪಾಯಿ, 10 ದಿನಗಳಲ್ಲಿ ತಯಾರಿಸುತ್ತೇವೆ",
-    craft: "Beedu"
-  },
-  {
-    label: "Terracotta Water Jugs (40 Units)",
-    kannadaLabel: "೪೦ ಜೇಡಿಮಣ್ಣಿನ ಮಡಿಕೆಗಳು",
-    transcript: "ನನ್ನ ಬಳಿ 40 ಮಡಿಕೆ ಜಗ್ಗುಗಳಿವೆ, ಒಂದಕ್ಕೆ 350 ರೂಪಾಯಿ, 7 ದಿನಗಳಲ್ಲಿ ಕೊಡಬಹುದು",
-    craft: "Pottery"
-  }
-];
+// Authentic bilingual presets matching the top language toggle
+const DEMO_PRESETS = {
+  kn: [
+    {
+      label: "೮೦ ಕಸೂತಿ ಶಾಲುಗಳು",
+      transcript: "ನನ್ನ ಬಳಿ 80 ಕಸೂತಿ ಶಾಲುಗಳಿವೆ, ಒಂದಕ್ಕೆ 600 ರೂಪಾಯಿ, 15 ದಿನಗಳಲ್ಲಿ ನೀಡುತ್ತೇನೆ",
+      craft: "Kasuti"
+    },
+    {
+      label: "೫೦ ಬೀಡು ಹುಲ್ಲಿನ ಬುಟ್ಟಿಗಳು",
+      transcript: "ನಮ್ಮ ಸಂಘದಲ್ಲಿ 50 ಬೀಡು ಹುಲ್ಲಿನ ಬುಟ್ಟಿಗಳಿವೆ, ಬೆಲೆ 450 ರೂಪಾಯಿ, 10 ದಿನಗಳಲ್ಲಿ ತಯಾರಿಸುತ್ತೇವೆ",
+      craft: "Beedu"
+    },
+    {
+      label: "೪೦ ಜೇಡಿಮಣ್ಣಿನ ಮಡಿಕೆಗಳು",
+      transcript: "ನನ್ನ ಬಳಿ 40 ಮಡಿಕೆ ಜಗ್ಗುಗಳಿವೆ, ಒಂದಕ್ಕೆ 350 ರೂಪಾಯಿ, 7 ದಿನಗಳಲ್ಲಿ ಕೊಡಬಹುದು",
+      craft: "Pottery"
+    }
+  ],
+  en: [
+    {
+      label: "80 Kasuti Silk Shawls",
+      transcript: "I have 80 Kasuti silk shawls, 600 rupees each, delivery in 15 days",
+      craft: "Kasuti"
+    },
+    {
+      label: "50 Beedu Grass Baskets",
+      transcript: "Our cluster has 50 Beedu grass baskets, price 450 rupees, 10 days",
+      craft: "Beedu"
+    },
+    {
+      label: "40 Terracotta Water Jugs",
+      transcript: "I have 40 terracotta water jugs, 350 rupees each, delivery in 7 days",
+      craft: "Pottery"
+    }
+  ]
+};
 
 export default function KannadaVoiceRecorder({
   onListingExtracted,
@@ -38,11 +54,12 @@ export default function KannadaVoiceRecorder({
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [interimText, setInterimText] = useState("");
-  const [speechLang, setSpeechLang] = useState<"kn-IN" | "en-IN">("kn-IN");
   const [errorMessage, setErrorMessage] = useState("");
   const [isParsing, setIsParsing] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0);
   const [manualInput, setManualInput] = useState("");
+
+  const speechLang = language === "kn" ? "kn-IN" : "en-IN";
 
   const recognitionRef = useRef<any>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -52,8 +69,17 @@ export default function KannadaVoiceRecorder({
   const capturedTextRef = useRef<string>("");
 
   useEffect(() => {
+    // Reset any ongoing speech or text when user switches top language toggle
+    setTranscript("");
+    setInterimText("");
+    setErrorMessage("");
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+  }, [language]);
+
+  useEffect(() => {
     return () => {
-      // Cleanup on unmount
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop());
       }
@@ -63,19 +89,26 @@ export default function KannadaVoiceRecorder({
     };
   }, []);
 
-  // Dispatch extracted data to parent
   const handleExtractedResult = (extracted: ExtractedCraftListing) => {
     if (extracted && extracted.craft) {
       onListingExtracted(extracted);
     }
   };
 
-  // Process text or audio via backend API
   const sendForParsing = async (text: string, audioBlob?: Blob) => {
+    if (!text && (!audioBlob || audioBlob.size === 0)) {
+      setErrorMessage(
+        language === "kn"
+          ? "ಧ್ವನಿ ಕೇಳಿಸಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮೈಕ್ ಹತ್ತಿರ ಮತ್ತೊಮ್ಮೆ ಮಾತನಾಡಿ ಅಥವಾ ಕೆಳಗಿನ ಸ್ಯಾಂಪಲ್ ಒತ್ತಿ."
+          : "No speech detected. Please speak closer to the mic or click a preset below."
+      );
+      return;
+    }
+
     setIsParsing(true);
     setErrorMessage("");
 
-    // Immediate local heuristic update for 0ms UI latency
+    // Immediate local heuristic update for 0ms lag
     if (text && text.trim()) {
       const local = parseKannadaTranscript(text);
       handleExtractedResult(local);
@@ -129,7 +162,6 @@ export default function KannadaVoiceRecorder({
     capturedTextRef.current = "";
     audioChunksRef.current = [];
 
-    // Step 1: Request hardware mic stream via getUserMedia (forces browser permission popup in Edge/Chrome)
     let audioStream: MediaStream;
     try {
       audioStream = await navigator.mediaDevices.getUserMedia({
@@ -143,13 +175,13 @@ export default function KannadaVoiceRecorder({
       console.error("Microphone permission failed:", micErr);
       setErrorMessage(
         language === "kn"
-          ? "ಮೈಕ್ರೊಫೋನ್ ಅನುಮತಿ ನಿರಾಕರಿಸಲಾಗಿದೆ. ಬ್ರೌಸರ್ ಅಡ್ರೆಸ್ ಬಾರ್‌ನಲ್ಲಿರುವ ಲಾಕ್/ಕ್ಯಾಮೆರಾ ಐಕಾನ್ ಕ್ಲಿಕ್ ಮಾಡಿ ಅನುಮತಿಸಿ."
-          : "Microphone permission denied. Please allow microphone access in your browser settings (look for the lock or mic icon near the address bar)."
+          ? "ಮೈಕ್ರೊಫೋನ್ ಅನುಮತಿ ನಿರಾಕರಿಸಲಾಗಿದೆ. ಬ್ರೌಸರ್ ಅಡ್ರೆಸ್ ಬಾರ್‌ನಲ್ಲಿರುವ ಲಾಕ್ ಐಕಾನ್ ಕ್ಲಿಕ್ ಮಾಡಿ ಅನುಮತಿಸಿ."
+          : "Microphone permission denied. Please allow microphone access in your browser settings."
       );
       return;
     }
 
-    // Step 2: Set up Audio Visualizer (Shows live audio volume)
+    // Audio Visualizer
     try {
       const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       const analyser = audioContext.createAnalyser();
@@ -170,18 +202,16 @@ export default function KannadaVoiceRecorder({
       };
       updateLevel();
     } catch (e) {
-      console.warn("AudioContext visualizer notice:", e);
+      console.warn("Audio visualizer notice:", e);
     }
 
-    // Step 3: Record raw audio via MediaRecorder (enables Gemini 1.5 Flash multimodal transcription)
+    // MediaRecorder for raw audio blob
     try {
       let options: MediaRecorderOptions = {};
       if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
         options = { mimeType: "audio/webm;codecs=opus" };
       } else if (MediaRecorder.isTypeSupported("audio/webm")) {
         options = { mimeType: "audio/webm" };
-      } else if (MediaRecorder.isTypeSupported("audio/mp4")) {
-        options = { mimeType: "audio/mp4" };
       }
 
       const recorder = new MediaRecorder(audioStream, options);
@@ -193,10 +223,10 @@ export default function KannadaVoiceRecorder({
       recorder.start(250);
       mediaRecorderRef.current = recorder;
     } catch (recErr) {
-      console.warn("MediaRecorder could not start:", recErr);
+      console.warn("MediaRecorder start notice:", recErr);
     }
 
-    // Step 4: Web Speech API (runs concurrently for immediate live text preview)
+    // Web Speech API
     const SpeechRecognition =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
@@ -233,15 +263,12 @@ export default function KannadaVoiceRecorder({
 
         recognition.onerror = (event: any) => {
           console.warn("Web Speech API notice:", event.error);
-          if (event.error === "network") {
-            console.info("Speech recognition network notice; recording will be processed by backend engine.");
-          }
         };
 
         recognition.start();
         recognitionRef.current = recognition;
       } catch (e) {
-        console.warn("SpeechRecognition start exception:", e);
+        console.warn("SpeechRecognition start notice:", e);
       }
     }
 
@@ -257,7 +284,6 @@ export default function KannadaVoiceRecorder({
       animationFrameRef.current = null;
     }
 
-    // Stop Web Speech API
     if (recognitionRef.current) {
       try {
         recognitionRef.current.stop();
@@ -265,23 +291,19 @@ export default function KannadaVoiceRecorder({
       recognitionRef.current = null;
     }
 
-    // Stop MediaRecorder and package blob
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
       mediaRecorderRef.current.onstop = () => {
         const mimeType = mediaRecorderRef.current?.mimeType || "audio/webm";
         const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
 
-        // Text captured from Web Speech API or interim
         const textToSend = (capturedTextRef.current || interimText || transcript).trim();
         if (textToSend) {
           setTranscript(textToSend);
           setInterimText("");
         }
 
-        // Send to backend (passes both audio blob and text to API)
         sendForParsing(textToSend, audioBlob);
 
-        // Turn off stream tracks
         if (streamRef.current) {
           streamRef.current.getTracks().forEach((track) => track.stop());
           streamRef.current = null;
@@ -309,23 +331,44 @@ export default function KannadaVoiceRecorder({
     }
   };
 
-  // Play audio sample using browser TTS, animate text, and populate
-  const simulateSample = (sample: typeof SAMPLE_KANNADA_PROMPTS[0]) => {
+  // Play audio sample strictly in the selected language
+  const simulateSample = (sample: (typeof DEMO_PRESETS.kn)[0]) => {
     setErrorMessage("");
     setInterimText("");
-    
-    // Read out loud with SpeechSynthesis
+
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       try {
         window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(sample.transcript);
-        utterance.lang = "kn-IN";
-        utterance.rate = 0.9;
-        window.speechSynthesis.speak(utterance);
+        const voices = window.speechSynthesis.getVoices();
+
+        if (language === "kn") {
+          // In Kannada mode, only speak if a genuine Kannada voice is available on this system
+          const kannadaVoice = voices.find(
+            (v) =>
+              v.lang.toLowerCase().startsWith("kn") ||
+              v.name.toLowerCase().includes("kannada") ||
+              v.lang.toLowerCase().includes("kn-in")
+          );
+          if (kannadaVoice) {
+            const utterance = new SpeechSynthesisUtterance(sample.transcript);
+            utterance.voice = kannadaVoice;
+            utterance.lang = "kn-IN";
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+          }
+        } else {
+          // In English mode, speak naturally with standard English voice
+          const utterance = new SpeechSynthesisUtterance(sample.transcript);
+          const englishVoice = voices.find((v) => v.lang.startsWith("en") || v.lang.includes("en-IN"));
+          if (englishVoice) utterance.voice = englishVoice;
+          utterance.lang = "en-IN";
+          utterance.rate = 0.95;
+          window.speechSynthesis.speak(utterance);
+        }
       } catch (_) {}
     }
 
-    // Live typewriter simulation effect
+    // Typewriter animation
     let charIdx = 0;
     const fullText = sample.transcript;
     setTranscript("");
@@ -339,7 +382,7 @@ export default function KannadaVoiceRecorder({
       } else {
         setTranscript(fullText.slice(0, charIdx));
       }
-    }, 35);
+    }, 25);
   };
 
   const handleManualSubmit = (e: React.FormEvent) => {
@@ -350,76 +393,27 @@ export default function KannadaVoiceRecorder({
     setManualInput("");
   };
 
-  const isEdgeBrowser = typeof window !== "undefined" && /Edg\//i.test(navigator.userAgent);
+  const currentPresets = language === "kn" ? DEMO_PRESETS.kn : DEMO_PRESETS.en;
 
   return (
     <div className="bg-[#2A1810] text-[#FAF6F0] p-6 sm:p-8 rounded-3xl border border-amber-800/40 shadow-2xl space-y-6">
-      {/* Header & Language Selection */}
-      <div className="text-center space-y-3">
+      {/* Header */}
+      <div className="text-center space-y-2.5">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E67E22]/20 border border-[#E67E22]/40 text-[#E67E22] text-xs font-bold uppercase tracking-wider">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>{language === "kn" ? "ಧ್ವನಿ ಆಧಾರಿತ ನೊಂದಣಿ" : "Multimodal Voice Recognition"}</span>
+          <Radio className="w-3.5 h-3.5" />
+          <span>{language === "kn" ? "ಧ್ವನಿ ಮೂಲಕ ನೇರ ನೊಂದಣಿ" : "Voice-Assisted Craft Listing"}</span>
         </div>
 
         <h3 className="text-xl sm:text-2xl font-bold text-white">
           {language === "kn"
-            ? "ಕನ್ನಡ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಮಾತನಾಡಿ ನಿಮ್ಮ ಸರಕನ್ನು ನೊಂದಾಯಿಸಿ"
-            : "Speak in Kannada or English to List Your Craft Inventory"}
+            ? "ಕನ್ನಡದಲ್ಲಿ ಮಾತನಾಡಿ ನಿಮ್ಮ ಸರಕನ್ನು ನೊಂದಾಯಿಸಿ"
+            : "Speak to List Your Craft Inventory"}
         </h3>
         <p className="text-xs text-amber-200/80 max-w-md mx-auto leading-relaxed">
           {language === "kn"
             ? "ಕರಕುಶಲ ಪ್ರಕಾರ, ಪ್ರಮಾಣ (ಸಂಖ್ಯೆ) ಮತ್ತು ಪ್ರತಿ ಯೂನಿಟ್ ಬೆಲೆಯನ್ನು ಸರಳವಾಗಿ ಹೇಳಿ."
-            : "Simply mention your craft type, quantity (e.g., 80 shawls), and price in INR."}
+            : "Simply mention your craft type, quantity (e.g., 40 water jugs), and price in INR."}
         </p>
-
-        {/* Acoustic Speech Model Selector */}
-        <div className="flex items-center justify-center gap-2 pt-1">
-          <span className="text-[11px] text-stone-400 font-semibold flex items-center gap-1">
-            <Globe className="w-3 h-3 text-[#E67E22]" />
-            {language === "kn" ? "ಧ್ವನಿ ಭಾಷೆ:" : "Speech Language:"}
-          </span>
-          <button
-            type="button"
-            onClick={() => setSpeechLang("kn-IN")}
-            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-              speechLang === "kn-IN"
-                ? "bg-[#E67E22] text-white shadow-sm"
-                : "bg-white/10 text-stone-300 hover:text-white hover:bg-white/20"
-            }`}
-          >
-            ಕನ್ನಡ (kn-IN)
-          </button>
-          <button
-            type="button"
-            onClick={() => setSpeechLang("en-IN")}
-            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-              speechLang === "en-IN"
-                ? "bg-[#E67E22] text-white shadow-sm"
-                : "bg-white/10 text-stone-300 hover:text-white hover:bg-white/20"
-            }`}
-          >
-            English / Kanglish (en-IN)
-          </button>
-        </div>
-
-        {/* Edge Browser Notice */}
-        {isEdgeBrowser && speechLang === "kn-IN" && (
-          <div className="p-2.5 bg-amber-950/80 border border-amber-600/50 rounded-xl text-xs text-amber-200 flex items-center justify-center gap-2 max-w-lg mx-auto">
-            <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0" />
-            <span>
-              {language === "kn"
-                ? "Edge ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಮೈಕ್ ಪರೀಕ್ಷಿಸಲು 'English (en-IN)' ಒತ್ತಿ ಮಾತನಾಡಿ ಅಥವಾ ಕೆಳಗಿನ ಸ್ಯಾಂಪಲ್ ಒತ್ತಿರಿ."
-                : "In Microsoft Edge, switch to 'English (en-IN)' to speak or test with 1-click presets below."}
-            </span>
-            <button
-              type="button"
-              onClick={() => setSpeechLang("en-IN")}
-              className="px-2 py-0.5 rounded bg-[#E67E22] text-white text-[10px] font-bold hover:bg-[#cf6d17]"
-            >
-              Switch en-IN
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Big Animated Microphone Button */}
@@ -471,7 +465,7 @@ export default function KannadaVoiceRecorder({
               />
             </div>
             <span className="text-[10px] text-emerald-400 font-mono font-bold">
-              {audioLevel > 15 ? "Sound detected" : "Mic active"}
+              {audioLevel > 15 ? (language === "kn" ? "ಧ್ವನಿ ಗ್ರಹಿಸಲಾಗಿದೆ" : "Voice detected") : (language === "kn" ? "ಮೈಕ್ ಸಕ್ರಿಯ" : "Mic listening")}
             </span>
           </div>
         )}
@@ -486,12 +480,12 @@ export default function KannadaVoiceRecorder({
           <span className="text-amber-100">
             {isRecording
               ? language === "kn"
-                ? `ಧ್ವನಿ ರೆಕಾರ್ಡ್ ಆಗುತ್ತಿದೆ (${speechLang})... ಮಾತನಾಡಿ "ನಿಲ್ಲಿಸಿ" ಒತ್ತಿ`
-                : `Recording audio (${speechLang})... Speak now, then click Stop`
+                ? "ಆಲಿಸಲಾಗುತ್ತಿದೆ... ಮಾತನಾಡಿ 'ನಿಲ್ಲಿಸಿ' ಒತ್ತಿ"
+                : "Listening to your voice... Speak now, then click Stop"
               : isParsing
               ? language === "kn"
-                ? "AI ವಿಶ್ಲೇಷಣೆ ನಡೆಯುತ್ತಿದೆ..."
-                : "Analyzing craft details with AI..."
+                ? "ಕರಕುಶಲ ವಿವರ ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ..."
+                : "Processing craft details..."
               : language === "kn"
               ? "ಮೈಕ್ ಬಟನ್ ಒತ್ತಿ ಮಾತನಾಡಿ"
               : "Ready • Tap button above to speak"}
@@ -504,12 +498,12 @@ export default function KannadaVoiceRecorder({
         <div className="text-[11px] text-[#E67E22] font-semibold mb-1 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <Volume2 className="w-3.5 h-3.5" />
-            <span>{language === "kn" ? `ಧ್ವನಿ ವಿವರ (${speechLang}):` : `Spoken Voice Output (${speechLang}):`}</span>
+            <span>{language === "kn" ? "ಧ್ವನಿ ವಿವರ:" : "Spoken Voice Transcript:"}</span>
           </div>
           {isParsing && (
             <span className="text-[10px] text-amber-400 flex items-center gap-1 animate-pulse">
               <RefreshCw className="w-2.5 h-2.5 animate-spin" />
-              Parsing with AI...
+              {language === "kn" ? "ವಿಶ್ಲೇಷಣೆ..." : "Extracting..."}
             </span>
           )}
         </div>
@@ -521,8 +515,8 @@ export default function KannadaVoiceRecorder({
         ) : (
           <p className="text-xs text-stone-500 italic">
             {language === "kn"
-              ? "ಉದಾಹರಣೆಗೆ: 'ನನ್ನ ಬಳಿ 80 ಕಸೂತಿ ಶಾಲುಗಳಿವೆ, ಒಂದಕ್ಕೆ 600 ರೂಪಾಯಿ, 15 ದಿನಗಳಲ್ಲಿ ನೀಡುತ್ತೇನೆ...'"
-              : "Example: 'I have 80 kasuti shawls, 600 rupees each, delivery in 15 days...'"}
+              ? "ಉದಾಹರಣೆಗೆ: 'ನನ್ನ ಬಳಿ 40 ಮಡಿಕೆ ಜಗ್ಗುಗಳಿವೆ, ಒಂದಕ್ಕೆ 350 ರೂಪಾಯಿ, 7 ದಿನಗಳಲ್ಲಿ ನೀಡುತ್ತೇನೆ...'"
+              : "Example: 'I have 40 terracotta water jugs, 350 rupees each, delivery in 7 days...'"}
           </p>
         )}
       </div>
@@ -535,27 +529,27 @@ export default function KannadaVoiceRecorder({
             <p className="font-semibold">{errorMessage}</p>
             <p className="text-[11px] text-stone-400">
               {language === "kn"
-                ? "ಸಲಹೆ: ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಮೈಕ್ ಅನುಮತಿ ನೀಡಲು ವಿಳಾಸ ಪಟ್ಟಿಯ ಲಾಕ್ ಐಕಾನ್ ಒತ್ತಿ ಅಥವಾ ಕೆಳಗಿನ ಸ್ಯಾಂಪಲ್ ಬಳಸಿ."
-                : "Tip: Make sure you clicked 'Allow' when the browser requested microphone access."}
+                ? "ಸಲಹೆ: ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಮೈಕ್ ಅನುಮತಿಸಲು ವಿಳಾಸ ಪಟ್ಟಿಯ ಲಾಕ್ ಐಕಾನ್ ಒತ್ತಿ ಅಥವಾ ಕೆಳಗಿನ ೧-ಕ್ಲಿಕ್ ಮಾದರಿ ಬಳಸಿ."
+                : "Tip: Make sure you allowed microphone access or click one of the 1-click presets below."}
             </p>
           </div>
         </div>
       )}
 
-      {/* 1-Click Demo Voice Presets */}
+      {/* 1-Click Demo Voice Presets (Strictly in the active language!) */}
       <div className="pt-2 border-t border-amber-900/40 space-y-2.5">
         <div className="flex items-center justify-between text-xs text-stone-400">
           <span className="font-semibold text-amber-300">
-            {language === "kn" ? "ತ್ವರಿತ ಮಾದರಿ ಧ್ವನಿಗಳು (1-ಕ್ಲಿಕ್ ಪರೀಕ್ಷೆ):" : "Demo Speech Presets (1-Click Test & Audio):"}
+            {language === "kn" ? "ತ್ವರಿತ ಮಾದರಿ ಧ್ವನಿಗಳು (೧-ಕ್ಲಿಕ್ ಪರೀಕ್ಷೆ):" : "Demo Speech Presets (1-Click Test & Audio):"}
           </span>
-          <span className="text-[10px] text-emerald-400 flex items-center gap-1 font-semibold">
-            <Sparkles className="w-3 h-3" />
-            Audio TTS Preview
+          <span className="text-[10px] text-amber-300/80 flex items-center gap-1 font-semibold">
+            <Volume2 className="w-3.5 h-3.5 text-[#E67E22]" />
+            {language === "kn" ? "ಧ್ವನಿ ಮಾದರಿ" : "Spoken Audio Samples"}
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-          {SAMPLE_KANNADA_PROMPTS.map((sample, idx) => (
+          {currentPresets.map((sample, idx) => (
             <button
               key={idx}
               type="button"
@@ -563,7 +557,7 @@ export default function KannadaVoiceRecorder({
               className="p-3 bg-[#1F130B] hover:bg-[#351D0F] rounded-xl border border-amber-900/50 text-left transition-all hover:scale-[1.02] group"
             >
               <div className="text-xs font-bold text-amber-200 group-hover:text-white flex items-center justify-between">
-                <span>{language === "kn" ? sample.kannadaLabel : sample.label}</span>
+                <span>{sample.label}</span>
                 <Volume2 className="w-3.5 h-3.5 text-[#E67E22] group-hover:scale-110 transition-transform" />
               </div>
               <p className="text-[10px] text-stone-400 line-clamp-1 mt-1 font-serif">
@@ -582,8 +576,8 @@ export default function KannadaVoiceRecorder({
           onChange={(e) => setManualInput(e.target.value)}
           placeholder={
             language === "kn"
-              ? "ಅಥವಾ ವಾಕ್ಯವನ್ನು ಇಲ್ಲಿ ಟೈಪ್ ಮಾಡಿ ಪರೀಕ್ಷಿಸಿ (ಉದಾ: 80 ಕಸೂತಿ ಶಾಲು 600 ರೂ)..."
-              : "Or test by typing here (e.g., 80 kasuti shawls 600 rs 15 days)..."
+              ? "ಅಥವಾ ವಾಕ್ಯವನ್ನು ಇಲ್ಲಿ ಟೈಪ್ ಮಾಡಿ ಪರೀಕ್ಷಿಸಿ (ಉದಾ: 40 ಮಡಿಕೆ ಜಗ್ಗು 350 ರೂ)..."
+              : "Or test by typing here (e.g., 40 water jugs 350 rs 7 days)..."
           }
           className="flex-1 bg-[#1A0E07] text-white text-xs px-3.5 py-2.5 rounded-xl border border-amber-900/60 focus:outline-hidden focus:border-[#E67E22] placeholder:text-stone-500"
         />
