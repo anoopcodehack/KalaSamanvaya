@@ -131,8 +131,14 @@ Extract into pure JSON without code fences:
     }
 
     // SCENARIO 3: Rule-Based Bilingual Heuristic Fallback
-    const effectiveText = transcript || "80 ಕಸೂತಿ ಶಾಲುಗಳು 600 ರೂಪಾಯಿ 15 ದಿನಗಳು";
-    const extracted = parseKannadaTranscript(effectiveText);
+    if (!transcript || !transcript.trim()) {
+      return NextResponse.json(
+        { error: "No speech recognized. Please speak closer to the mic or select a 1-click preset." },
+        { status: 400 }
+      );
+    }
+
+    const extracted = parseKannadaTranscript(transcript);
 
     return NextResponse.json({
       success: true,

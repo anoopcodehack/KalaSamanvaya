@@ -27,6 +27,22 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+const CRAFT_IMAGE_MAP: Record<string, string> = {
+  Kasuti: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80",
+  Pottery: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80",
+  Beedu: "https://images.unsplash.com/photo-1590736969955-71cc94801759?auto=format&fit=crop&w=800&q=80",
+  Bidriware: "https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&w=800&q=80",
+  "Channapatna Toys": "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=800&q=80",
+};
+
+const CRAFT_CLUSTER_MAP: Record<string, { kn: string; en: string }> = {
+  Kasuti: { kn: "ಧಾರವಾಡ ಕಸೂತಿ ಸಂಘ (Dharwad Cluster)", en: "Dharwad Kasuti Craft Guild" },
+  Pottery: { kn: "ದಕ್ಷಿಣ ಕನ್ನಡ ಕುಂಬಾರಿಕೆ ಕ್ಲಸ್ಟರ್ (Coastal Pottery)", en: "Dakshina Kannada Pottery Cluster" },
+  Beedu: { kn: "ಉಡುಪಿ ಬೀಡು ಕರಕುಶಲ ಸಂಘ (Udupi Beedu)", en: "Udupi Beedu Craft Society" },
+  Bidriware: { kn: "ಬೀದರ್ ಬಿದ್ರಿ ಕಲೆ ಒಕ್ಕೂಟ (Bidar Cluster)", en: "Bidar Bidriware Guild" },
+  "Channapatna Toys": { kn: "ರಾಮನಗರ ಚನ್ನಪಟ್ಟಣ ಆಟಿಕೆ ಸಂಘ", en: "Channapatna Toy Artisans" },
+};
+
 export default function ArtisanOnboardPage() {
   const [language, setLanguage] = useState<"kn" | "en">("kn");
   const [artisanName, setArtisanName] = useState("ಸವಿತಾ ನಾಯ್ಕ್ (Savita Naik)");
@@ -52,6 +68,19 @@ export default function ArtisanOnboardPage() {
   );
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
+
+  // Sync listing and update matching craft photo & cluster details
+  const handleListingExtracted = (extracted: ExtractedCraftListing, img?: string) => {
+    setListing(extracted);
+    if (img) {
+      setUploadedImageUrl(img);
+    } else if (CRAFT_IMAGE_MAP[extracted.craft]) {
+      setUploadedImageUrl(CRAFT_IMAGE_MAP[extracted.craft]);
+    }
+    if (CRAFT_CLUSTER_MAP[extracted.craft]) {
+      setClusterRegion(language === "kn" ? CRAFT_CLUSTER_MAP[extracted.craft].kn : CRAFT_CLUSTER_MAP[extracted.craft].en);
+    }
+  };
 
   // Touch adjustment handlers (Zero typing needed!)
   const updateQuantity = (delta: number) => {
@@ -356,15 +385,12 @@ export default function ArtisanOnboardPage() {
               {onboardingMode === "photo" ? (
                 <AiPhotoCraftScanner
                   language={language}
-                  onListingExtracted={(extracted, img) => {
-                    setListing(extracted);
-                    if (img) setUploadedImageUrl(img);
-                  }}
+                  onListingExtracted={(extracted, img) => handleListingExtracted(extracted, img)}
                 />
               ) : (
                 <KannadaVoiceRecorder
                   language={language}
-                  onListingExtracted={(extracted) => setListing(extracted)}
+                  onListingExtracted={(extracted) => handleListingExtracted(extracted)}
                 />
               )}
             </ScrollReveal>
