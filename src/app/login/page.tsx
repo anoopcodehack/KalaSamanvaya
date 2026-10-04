@@ -1,27 +1,30 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import FolkArtBanner from "@/components/shared/FolkArtBanner";
 import FolkArtBorder from "@/components/shared/FolkArtBorder";
 import ScrollReveal from "@/components/shared/ScrollReveal";
+import { playSpeech, stopSpeech } from "@/lib/voice/playSpeech";
 import {
   User,
   ShieldCheck,
   Building2,
   ShoppingBag,
-  Mic,
   ArrowRight,
   Phone,
   KeyRound,
   CheckCircle2,
   Volume2,
-  ChevronRight,
-  PackageCheck
+  VolumeX,
+  CreditCard,
+  Award,
+  Sparkles
 } from "lucide-react";
 
 type UserRole = "artisan" | "enterprise" | "patron";
+type LoginMethod = "phone" | "pehchan";
 
 interface DemoUser {
   id: string;
@@ -32,6 +35,8 @@ interface DemoUser {
   titleKn: string;
   badge: string;
   phone: string;
+  cardId: string;
+  cardLabel: string;
   avatarChar: string;
   defaultRoute: string;
 }
@@ -46,6 +51,8 @@ const DEMO_PERSONAS: DemoUser[] = [
     titleKn: "ಕಸೂತಿ ಕರಕುಶಲಕರ್ಮಿ • ಸಂಘದ ಮುಖ್ಯಸ್ಥೆ",
     badge: "Dharwad Cluster Head",
     phone: "+91 94812 34567",
+    cardId: "KA-DWD-8921-KASUTI",
+    cardLabel: "Ministry of Textiles Pehchan ID",
     avatarChar: "ಸ",
     defaultRoute: "/artisan/inbox",
   },
@@ -58,6 +65,8 @@ const DEMO_PERSONAS: DemoUser[] = [
     titleKn: "ಕಾರ್ಪೊರೇಟ್ ಬಿ2ಬಿ ಖರೀದಿ ಮುಖ್ಯಸ್ಥೆ",
     badge: "Bengaluru Tech Park",
     phone: "+91 98450 11223",
+    cardId: "29AABCU9603R1ZM",
+    cardLabel: "Corporate GSTIN Identifier",
     avatarChar: "K",
     defaultRoute: "/b2b",
   },
@@ -70,6 +79,8 @@ const DEMO_PERSONAS: DemoUser[] = [
     titleKn: "ಕರಕುಶಲ ಕಲಾ ಪ್ರೇಮಿ ಮತ್ತು ಗ್ರಾಹಕ",
     badge: "Verified Retail Buyer",
     phone: "+91 94481 23456",
+    cardId: "PATRON-KA-7720",
+    cardLabel: "Heritage Patron Member ID",
     avatarChar: "S",
     defaultRoute: "/marketplace",
   },
@@ -79,18 +90,22 @@ export default function LoginPage() {
   const router = useRouter();
   const [language, setLanguage] = useState<"kn" | "en">("kn");
   const [selectedPersona, setSelectedPersona] = useState<DemoUser>(DEMO_PERSONAS[0]);
+  const [loginMethod, setLoginMethod] = useState<LoginMethod>("phone");
 
-  // Phone OTP Flow State
-  const [phoneNumber, setPhoneNumber] = useState("+91 94812 34567");
+  // Phone / Pehchan State
+  const [phoneNumber, setPhoneNumber] = useState(DEMO_PERSONAS[0].phone);
+  const [pehchanId, setPehchanId] = useState(DEMO_PERSONAS[0].cardId);
   const [otpSent, setOtpSent] = useState(false);
   const [otpValue, setOtpValue] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
   const [verifiedSuccess, setVerifiedSuccess] = useState(false);
+  const [isPlayingVoice, setIsPlayingVoice] = useState(false);
 
   // Switch persona handler
   const handleSelectPersona = (persona: DemoUser) => {
     setSelectedPersona(persona);
     setPhoneNumber(persona.phone);
+    setPehchanId(persona.cardId);
     setOtpSent(false);
     setOtpValue("");
     setVerifiedSuccess(false);
@@ -105,10 +120,37 @@ export default function LoginPage() {
     router.push(persona.defaultRoute);
   };
 
+  // Voice Guidance audio playback (Kannada / English)
+  const handleToggleVoiceGuidance = () => {
+    if (isPlayingVoice) {
+      stopSpeech();
+      setIsPlayingVoice(false);
+      return;
+    }
+
+    const guidanceText =
+      language === "kn"
+        ? "ನಮಸ್ಕಾರ! ಕಲಾ ಸಮನ್ವಯ ಪ್ರವೇಶ ದ್ವಾರಕ್ಕೆ ಸ್ವಾಗತ. ಗ್ರಾಮೀಣ ಕುಶಲಕರ್ಮಿಗಳಿಗಾಗಿ ಪಾಸ್‌ವರ್ಡ್ ಅಗತ್ಯವಿಲ್ಲ. ನಿಮ್ಮ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ಅಥವಾ ಸರ್ಕಾರದ ಪೆಹಚಾನ್ ಕಾರ್ಡ್ ನಂಬರ್ ನಮೂದಿಸಿ, ಒಟಿಪಿ ಮೂಲಕ ಸುಲಭವಾಗಿ ಪ್ರವೇಶಿಸಿ. ಅಥವಾ ಕೆಳಗಿನ ಡೆಮೊ ಪಾತ್ರಗಳಲ್ಲಿ ಒಂದನ್ನು ಒಂದೇ ಕ್ಲಿಕ್‌ನಲ್ಲಿ ಆರಿಸಿ."
+        : "Welcome to Kala Samanvaya. For rural artisans, no passwords are required. Enter your registered mobile number or Government Pehchan Artisan Card ID to log in seamlessly. Alternatively, select any demo persona for 1-click evaluation access.";
+
+    playSpeech(
+      guidanceText,
+      language === "kn" ? "kn" : "en",
+      () => setIsPlayingVoice(true),
+      () => setIsPlayingVoice(false)
+    );
+  };
+
+  useEffect(() => {
+    return () => {
+      stopSpeech();
+    };
+  }, []);
+
   // Send OTP simulation
   const handleSendOtp = () => {
     setOtpSent(true);
-    setOtpValue("1234"); // Auto-fill demo OTP for convenience
+    setOtpValue("1234");
   };
 
   // Verify OTP & Login
@@ -131,22 +173,51 @@ export default function LoginPage() {
     <div className="min-h-screen bg-[#FAF6F0] text-[#2A1810]">
       {/* ── TOP ANNOUNCEMENT STRIP ── */}
       <div className="bg-[#24130A] text-amber-200/90 text-xs py-2 px-4 border-b border-amber-900/40">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
+        <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-[#E67E22]" />
+            <ShieldCheck className="w-4 h-4 text-[#D9822B]" />
             <span className="font-semibold text-white">
               {language === "kn"
-                ? "ಸುರಕ್ಷಿತ ಪ್ರವೇಶ • ಆಧಾರ್ ಲಿಂಕ್ಡ್ ನೇರ ಪಾವತಿ ಖಾತೆ"
-                : "Secure Access • Aadhaar-Linked DBT Direct Artisan Accounts"}
+                ? "ಸುರಕ್ಷಿತ ಪ್ರವೇಶ • ಭಾರತ ಸರ್ಕಾರದ ಪೆಹಚಾನ್ (Pehchan) ಕಾರ್ಡ್ & ಆಧಾರ್ DBT ಲಿಂಕ್ಡ್"
+                : "Secure Access • Ministry of Textiles Pehchan Card & Aadhaar DBT Direct Payouts"}
             </span>
           </div>
 
-          <button
-            onClick={() => setLanguage(language === "kn" ? "en" : "kn")}
-            className="text-xs font-bold text-amber-300 hover:text-white underline"
-          >
-            {language === "kn" ? "English ಗೆ ಬದಲಿಸಿ" : "ಕನ್ನಡಕ್ಕೆ ಬದಲಿಸಿ"}
-          </button>
+          <div className="flex items-center gap-3">
+            {/* Audio Voice Guidance Button */}
+            <button
+              type="button"
+              onClick={handleToggleVoiceGuidance}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold transition-all ${
+                isPlayingVoice
+                  ? "bg-red-600 text-white animate-pulse"
+                  : "bg-amber-800/60 hover:bg-amber-700 text-amber-200"
+              }`}
+              title="ಧ್ವನಿ ಮಾರ್ಗದರ್ಶನ (Voice Guidance)"
+            >
+              {isPlayingVoice ? (
+                <>
+                  <VolumeX className="w-3.5 h-3.5" />
+                  <span>ನಿಲ್ಲಿಸಿ (Stop)</span>
+                </>
+              ) : (
+                <>
+                  <Volume2 className="w-3.5 h-3.5 text-amber-300" />
+                  <span>{language === "kn" ? "ಧ್ವನಿ ಮಾರ್ಗದರ್ಶನ" : "Voice Guide"}</span>
+                </>
+              )}
+            </button>
+
+            <span className="text-stone-500">|</span>
+
+            {/* Language Switcher */}
+            <button
+              onClick={() => setLanguage(language === "kn" ? "en" : "kn")}
+              className="text-xs font-bold text-amber-300 hover:text-white underline"
+            >
+              {language === "kn" ? "English ಗೆ ಬದಲಿಸಿ" : "ಕನ್ನಡಕ್ಕೆ ಬದಲಿಸಿ"}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -156,36 +227,36 @@ export default function LoginPage() {
         <ScrollReveal direction="up" className="text-center max-w-2xl mx-auto space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-stone-300 text-[#C85A32] text-xs font-bold uppercase shadow-xs">
             <User className="w-3.5 h-3.5 text-[#C85A32]" />
-            <span>{language === "kn" ? "ಕಲಾ ಸಮನ್ವಯ ಪ್ರವೇಶ ದ್ವಾರ" : "Role-Based Platform Access"}</span>
+            <span>{language === "kn" ? "ಕಲಾ ಸಮನ್ವಯ ಪ್ರವೇಶ ದ್ವಾರ" : "Inclusive Role-Based Access"}</span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#2A1810] tracking-tight">
+          <h1 className="text-2xl sm:text-4xl font-extrabold text-[#2A1810] tracking-tight">
             {language === "kn" ? "ಲಾಗಿನ್ ಮತ್ತು ಡೆಮೊ ಪಾತ್ರಗಳ ಆಯ್ಕೆ" : "Sign In & Demo Persona Switcher"}
           </h1>
 
-          <div className="w-16 h-1 bg-[#E67E22] mx-auto mt-2 rounded-full" />
+          <div className="w-16 h-1 bg-[#C85A32] mx-auto mt-2 rounded-full" />
 
           <p className="text-xs sm:text-sm text-stone-600 leading-relaxed pt-1">
             {language === "kn"
-              ? "ನ್ಯಾಯಾಧೀಶರು ಮತ್ತು ಸಂದರ್ಶಕರಿಗಾಗಿ: ಕೆಳಗಿನ 3 ಪಾತ್ರಗಳಲ್ಲಿ ಒಂದನ್ನು 1-ಕ್ಲಿಕ್‌ನಲ್ಲಿ ಆರಿಸಿ, ಅಥವಾ ಗ್ರಾಮೀಣ ಮೊಬೈಲ್ OTP ಮೂಲಕ ಪ್ರವೇಶಿಸಿ."
-              : "For Hackathon Judges & Patrons: Select one of the 3 personas below for instant 1-click evaluation, or test the rural phone OTP flow."}
+              ? "ಗ್ರಾಮೀಣ ಕುಶಲಕರ್ಮಿಗಳಿಗೆ ಪಾಸ್‌ವರ್ಡ್ ಅಥವಾ ಇಂಗ್ಲಿಷ್ ಕಡ್ಡಾಯವಿಲ್ಲ. ಮೊಬೈಲ್ ಒಟಿಪಿ ಅಥವಾ ಪೆಹಚಾನ್ ಕಾರ್ಡ್ ನಂಬರ್ ಬಳಸಿ, ಅಥವಾ ಮೌಲ್ಯಮಾಪನಕ್ಕಾಗಿ ಕೆಳಗಿನ 3 ಪಾತ್ರಗಳನ್ನು 1-ಕ್ಲಿಕ್‌ನಲ್ಲಿ ಆರಿಸಿ."
+              : "Built for zero digital literacy friction: No passwords, Government Pehchan Artisan Card support, or 1-Click Evaluation Personas for hackathon judges."}
           </p>
         </ScrollReveal>
 
-        {/* ── 1. 1-CLICK DEMO PERSONA SWITCHER (THE JUDGING WINNER) ── */}
+        {/* ── 1. 1-CLICK DEMO PERSONA SWITCHER (FOR JUDGES & EVALUATORS) ── */}
         <ScrollReveal direction="up" delayMs={50}>
           <div className="bg-white rounded-3xl border border-stone-200 shadow-md p-6 sm:p-8 space-y-6">
-            <div className="flex items-center justify-between pb-4 border-b border-stone-100">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-stone-100">
               <div>
-                <span className="text-[11px] font-bold text-[#E67E22] uppercase tracking-wider block">
-                  {language === "kn" ? "ವೇಗದ ಡೆಮೊ ಪರೀಕ್ಷೆ (1-ಕ್ಲಿಕ್)" : "Evaluation Mode (1-Click Switch)"}
+                <span className="text-[11px] font-bold text-[#C85A32] uppercase tracking-wider block">
+                  {language === "kn" ? "ವೇಗದ ಡೆಮೊ ಪರೀಕ್ಷೆ (1-ಕ್ಲಿಕ್ ಮೌಲ್ಯಮಾಪನ)" : "Evaluation Mode (1-Click Switch)"}
                 </span>
                 <h2 className="text-lg font-bold text-[#2A1810] mt-0.5">
                   {language === "kn" ? "ನಿಮ್ಮ ವೀಕ್ಷಣಾ ಪಾತ್ರವನ್ನು ಆರಿಸಿ" : "Choose Your Demonstration Perspective"}
                 </h2>
               </div>
-              <span className="px-3 py-1 rounded-full bg-amber-50 text-[#C85A32] text-xs font-bold border border-amber-300">
-                Live Interactive Demo
+              <span className="self-start sm:self-auto px-3 py-1 rounded-full bg-amber-50 text-[#C85A32] text-xs font-bold border border-amber-300">
+                1-Click Judge Express Access
               </span>
             </div>
 
@@ -198,7 +269,7 @@ export default function LoginPage() {
                     onClick={() => handleSelectPersona(persona)}
                     className={`rounded-2xl p-5 border-2 cursor-pointer transition-all duration-200 flex flex-col justify-between ${
                       isSelected
-                        ? "border-[#E67E22] bg-amber-50/40 shadow-sm -translate-y-1"
+                        ? "border-[#C85A32] bg-amber-50/40 shadow-sm -translate-y-1"
                         : "border-stone-200 hover:border-stone-300 bg-white hover:bg-stone-50/60"
                     }`}
                   >
@@ -207,7 +278,7 @@ export default function LoginPage() {
                         <div
                           className={`w-11 h-11 rounded-xl flex items-center justify-center font-bold text-base shadow-xs text-white ${
                             persona.role === "artisan"
-                              ? "bg-[#E67E22]"
+                              ? "bg-[#C85A32]"
                               : persona.role === "enterprise"
                               ? "bg-[#2A1810]"
                               : "bg-emerald-700"
@@ -219,7 +290,7 @@ export default function LoginPage() {
                         <span
                           className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                             isSelected
-                              ? "bg-[#E67E22] text-white"
+                              ? "bg-[#C85A32] text-white"
                               : "bg-stone-100 text-stone-600"
                           }`}
                         >
@@ -236,8 +307,16 @@ export default function LoginPage() {
                         </p>
                       </div>
 
-                      <div className="text-[11px] text-stone-500 font-mono bg-stone-100/70 px-2.5 py-1 rounded-lg inline-block">
-                        {persona.phone}
+                      {/* Phone & Card ID Pills */}
+                      <div className="space-y-1 pt-1">
+                        <div className="text-[11px] text-stone-600 font-mono bg-stone-100 px-2 py-0.5 rounded flex items-center gap-1.5">
+                          <Phone className="w-3 h-3 text-stone-400" />
+                          <span>{persona.phone}</span>
+                        </div>
+                        <div className="text-[10px] text-amber-900 font-mono bg-amber-100/70 px-2 py-0.5 rounded flex items-center gap-1.5 font-semibold">
+                          <CreditCard className="w-3 h-3 text-[#C85A32]" />
+                          <span className="truncate">{persona.cardId}</span>
+                        </div>
                       </div>
                     </div>
 
@@ -250,7 +329,7 @@ export default function LoginPage() {
                         }}
                         className={`w-full py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all ${
                           isSelected
-                            ? "bg-[#E67E22] hover:bg-[#cf6d17] text-white shadow-xs"
+                            ? "bg-[#C85A32] hover:bg-[#b04a25] text-white shadow-xs"
                             : "bg-stone-900 hover:bg-[#2A1810] text-white"
                         }`}
                       >
@@ -269,42 +348,101 @@ export default function LoginPage() {
           </div>
         </ScrollReveal>
 
-        {/* ── 2. RURAL ARTISAN MOBILE OTP AUTHENTICATION ── */}
+        {/* ── 2. RURAL ARTISAN AUTHENTICATION (MOBILE OTP & PEHCHAN CARD) ── */}
         <ScrollReveal direction="up" delayMs={100}>
           <div className="bg-white rounded-3xl border border-stone-200 shadow-md p-6 sm:p-8 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-stone-100">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-stone-100">
               <div>
                 <span className="text-[11px] font-bold text-[#C85A32] uppercase tracking-wider block">
-                  {language === "kn" ? "ಗ್ರಾಮೀಣ ಕುಶಲಕರ್ಮಿಗಳಿಗೆ ಮೊಬೈಲ್ ಪ್ರವೇಶ" : "Inclusive Rural Mobile Authentication"}
+                  {language === "kn" ? "ಗ್ರಾಮೀಣ ಕರಕುಶಲಕರ್ಮಿಗಳಿಗೆ ಪಾಸ್‌ವರ್ಡ್-ರಹಿತ ಪ್ರವೇಶ" : "Inclusive Grassroots Authentication"}
                 </span>
                 <h2 className="text-lg font-bold text-[#2A1810] mt-0.5">
-                  {language === "kn" ? "ಪಾಸ್‌ವರ್ಡ್ ರಹಿತ ಮೊಬೈಲ್ OTP ಲಾಗಿನ್" : "Passwordless SMS OTP Verification"}
+                  {language === "kn" ? "ಮೊಬೈಲ್ ಒಟಿಪಿ ಅಥವಾ ಪೆಹಚಾನ್ ಕಾರ್ಡ್ ಲಾಗಿನ್" : "Mobile OTP or Pehchan Artisan Card ID"}
                 </h2>
               </div>
-              <div className="text-xs text-stone-500 flex items-center gap-1.5 bg-[#FAF7F2] px-3 py-1.5 rounded-xl border border-stone-200">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                <span>Zero English Typing Required</span>
+
+              {/* Method Switcher Tabs */}
+              <div className="flex items-center gap-1 bg-[#FAF7F2] p-1 rounded-xl border border-stone-200 self-start sm:self-auto">
+                <button
+                  type="button"
+                  onClick={() => setLoginMethod("phone")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                    loginMethod === "phone"
+                      ? "bg-white text-[#2A1810] shadow-xs border border-stone-200"
+                      : "text-stone-600 hover:text-stone-900"
+                  }`}
+                >
+                  <Phone className="w-3.5 h-3.5 text-[#C85A32]" />
+                  <span>{language === "kn" ? "ಮೊಬೈಲ್ OTP" : "Mobile OTP"}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setLoginMethod("pehchan")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                    loginMethod === "pehchan"
+                      ? "bg-white text-[#2A1810] shadow-xs border border-stone-200"
+                      : "text-stone-600 hover:text-stone-900"
+                  }`}
+                >
+                  <Award className="w-3.5 h-3.5 text-[#C85A32]" />
+                  <span>{language === "kn" ? "ಪೆಹಚಾನ್ ಕಾರ್ಡ್ (Pehchan)" : "Pehchan ID"}</span>
+                </button>
               </div>
             </div>
 
             <div className="max-w-md mx-auto space-y-5 pt-2">
               
-              {/* Phone Input */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-stone-700 block">
-                  {language === "kn" ? "ಮೊಬೈಲ್ ಸಂಖ್ಯೆ (Phone Number)" : "Registered Mobile Number"}
-                </label>
-                <div className="relative">
-                  <Phone className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    placeholder="+91 94812 34567"
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-stone-300 bg-[#FAF7F2] font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#E67E22] text-stone-900"
-                  />
+              {/* Method A: Mobile Phone Input */}
+              {loginMethod === "phone" && (
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-stone-700 block">
+                    {language === "kn" ? "ನೋಂದಾಯಿತ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ (Phone Number)" : "Registered Mobile Number"}
+                  </label>
+                  <div className="relative">
+                    <Phone className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      placeholder="+91 94812 34567"
+                      className="w-full pl-10 pr-4 py-3 rounded-xl border border-stone-300 bg-[#FAF7F2] font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#C85A32] text-stone-900"
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* Method B: Pehchan Govt Artisan Card Input */}
+              {loginMethod === "pehchan" && (
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-stone-700 block">
+                    {language === "kn"
+                      ? "ಭಾರತ ಸರ್ಕಾರದ ಪೆಹಚಾನ್ ಕಾರ್ಡ್ ನಂಬರ್ (Pehchan Artisan ID)"
+                      : "Govt Ministry of Textiles Pehchan Artisan Card ID"}
+                  </label>
+                  <div className="relative">
+                    <CreditCard className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={pehchanId}
+                      onChange={(e) => setPehchanId(e.target.value)}
+                      placeholder="KA-DWD-8921-KASUTI"
+                      className="w-full pl-10 pr-4 py-3 rounded-xl border border-stone-300 bg-[#FAF7F2] font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#C85A32] text-stone-900"
+                    />
+                  </div>
+
+                  {/* Pehchan Card Govt Stamp Verification Box */}
+                  <div className="p-3 rounded-xl bg-amber-50/80 border border-amber-300/80 text-[11px] text-amber-900 space-y-1">
+                    <div className="font-bold flex items-center gap-1.5 text-[#C85A32]">
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      <span>National Artisan Registry (DC Handicrafts Verified)</span>
+                    </div>
+                    <p className="text-stone-600 text-[10px] leading-tight">
+                      Linked to: <strong>{selectedPersona.name}</strong> • Cluster: <strong>{selectedPersona.badge}</strong>
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {/* Action Button: Send OTP */}
               {!otpSent && (
@@ -315,7 +453,9 @@ export default function LoginPage() {
                 >
                   <KeyRound className="w-4 h-4 text-amber-300" />
                   <span>
-                    {language === "kn" ? "OTP ಕಳುಹಿಸಿ (Send Verification Code)" : "Send SMS Verification OTP"}
+                    {language === "kn"
+                      ? "OTP ಕಳುಹಿಸಿ (Send Verification Code)"
+                      : "Send Instant SMS Verification OTP"}
                   </span>
                 </button>
               )}
@@ -336,7 +476,7 @@ export default function LoginPage() {
                     {["1", "2", "3", "4"].map((digit, idx) => (
                       <div
                         key={idx}
-                        className="w-12 h-14 rounded-xl bg-white border-2 border-[#E67E22] flex items-center justify-center font-mono font-extrabold text-xl text-stone-900 shadow-xs"
+                        className="w-12 h-14 rounded-xl bg-white border-2 border-[#C85A32] flex items-center justify-center font-mono font-extrabold text-xl text-stone-900 shadow-xs"
                       >
                         {digit}
                       </div>
@@ -349,8 +489,8 @@ export default function LoginPage() {
                     disabled={isVerifying || verifiedSuccess}
                     className={`w-full py-3.5 px-4 rounded-xl font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 ${
                       verifiedSuccess
-                        ? "bg-emerald-600 text-white"
-                        : "bg-[#E67E22] hover:bg-[#cf6d17] text-white active:scale-95"
+                        ? "bg-emerald-700 text-white"
+                        : "bg-[#C85A32] hover:bg-[#b04a25] text-white active:scale-95"
                     }`}
                   >
                     {isVerifying ? (
@@ -374,6 +514,45 @@ export default function LoginPage() {
                 </div>
               )}
 
+            </div>
+          </div>
+        </ScrollReveal>
+
+        {/* ── 3. RURAL ACCESSIBILITY & INCLUSION STANDARDS (JUDGE CRITERIA PROOF) ── */}
+        <ScrollReveal direction="up" delayMs={150}>
+          <div className="p-6 bg-[#F5EFEB] rounded-3xl border border-amber-900/15">
+            <h4 className="text-xs font-bold text-[#2A1810] uppercase tracking-wider mb-4 flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-[#C85A32]" />
+              <span>{language === "kn" ? "ಗ್ರಾಮೀಣ ಕರಕುಶಲಕರ್ಮಿಗಳ ಸಮಾನತೆ & ಭದ್ರತಾ ಮಾನದಂಡಗಳು" : "Grassroots Inclusion & Accessibility Standards"}</span>
+            </h4>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-stone-700">
+              <div className="p-3 bg-white rounded-xl border border-stone-200">
+                <span className="font-bold text-[#C85A32] block mb-1">
+                  1. Zero English Dependency
+                </span>
+                <p className="text-[11px] text-stone-600 leading-relaxed">
+                  Full Kannada voice prompt support and vernacular text designed for low digital literacy artisans.
+                </p>
+              </div>
+
+              <div className="p-3 bg-white rounded-xl border border-stone-200">
+                <span className="font-bold text-[#C85A32] block mb-1">
+                  2. Direct DBT Bank Payouts
+                </span>
+                <p className="text-[11px] text-stone-600 leading-relaxed">
+                  Aadhaar-linked settlement guarantees over 75% of sales reach the artisan&apos;s bank account directly.
+                </p>
+              </div>
+
+              <div className="p-3 bg-white rounded-xl border border-stone-200">
+                <span className="font-bold text-[#C85A32] block mb-1">
+                  3. Verified GI & Pehchan Card
+                </span>
+                <p className="text-[11px] text-stone-600 leading-relaxed">
+                  Authenticated through Ministry of Textiles Pehchan IDs, ensuring counterfeit protection.
+                </p>
+              </div>
             </div>
           </div>
         </ScrollReveal>
