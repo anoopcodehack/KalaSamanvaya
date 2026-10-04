@@ -45,9 +45,13 @@ export default function CraftPassportModal({
     const kannadaGreeting =
       product?.craftType === "Kasuti"
         ? "ನಮಸ್ಕಾರ! ನನ್ನ ಹೆಸರು ಸವಿತಾ ನಾಯಕ್. ಧಾರವಾಡದ ನಮ್ಮ ಕಸೂತಿ ಸಂಘದಿಂದ 38 ಗಂಟೆಗಳ ಕಾಲ ಸೂಕ್ಷ್ಮವಾಗಿ ಕೈಯಿಂದಲೇ ಹೊಲಿದು ಈ ರೇಷ್ಮೆ ಶಾಲನ್ನು ಸಿದ್ಧಪಡಿಸಿದ್ದೇನೆ. ನಮ್ಮ ಕಲಾ ಪರಂಪರೆ ಗೌರವಿಸಿ ಖರೀದಿಸಿದ್ದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು."
+        : product?.craftType === "Handloom"
+        ? "ನಮಸ್ಕಾರ! ನನ್ನ ಹೆಸರು ಮೋಹಿನಿ ಶೆಟ್ಟಿಗಾರ್. ಉಡುಪಿಯ ತಾಳಿಪಾಡಿ ನೇಕಾರರ ಸಂಘದಿಂದ ಸಾಂಪ್ರದಾಯಿಕ ಮಲಬಾರ್ ಕೈಮಗ್ಗದಲ್ಲಿ ಈ ಶುದ್ಧ ಹತ್ತಿ ಸೀರೆಯನ್ನು ನೇಯ್ದಿದ್ದೇನೆ. ಕರಾವಳಿ ಕೈಮಗ್ಗ ಬೆಂಬಲಿಸಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದಗಳು."
+        : product?.craftType === "Yakshagana"
+        ? "ನಮಸ್ಕಾರ! ನನ್ನ ಹೆಸರು ಗಣೇಶ್ ಆಚಾರ್ಯ. ಕರಾವಳಿಯ 800 ವರ್ಷಗಳ ಯಕ್ಷಗಾನ ರಂಗ ಕಲೆಗಾಗಿ ಹೊನ್ನೆ ಮರದಲ್ಲಿ ಕೆತ್ತಿ, ಚಿನ್ನದ ಹಾಳೆ ಜಡಿದು ಈ ಪಾರಂಪರಿಕ ಕಿರೀಟವನ್ನು ರೂಪಿಸಿದ್ದೇನೆ. ಧನ್ಯವಾದಗಳು."
         : product?.craftType === "Beedu"
-        ? "ನಮಸ್ಕಾರ! ನನ್ನ ಹೆಸರು ಪಾರ್ವತಿ ಮಡಿವಾಳ. ಉಡುಪಿಯ ನದೀತೀರದ ಕಾಡುಹುಲ್ಲನ್ನು ಮೂರು ವಾರ ಬಿಸಿಲಿನಲ್ಲಿ ಒಣಗಿಸಿ, ಕೈಯಿಂದ ಹೆಣೆದು ಈ ಬುಟ್ಟಿಯನ್ನು ತಯಾರಿಸಿದ್ದೇನೆ. ನಮ್ಮ ಕರಾವಳಿ ಪರಂಪರೆ ಬೆಂಬಲಿಸಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದಗಳು."
-        : "ನಮಸ್ಕಾರ! ಖಾನಾಪುರದ ಕೆಂಪು ಮಣ್ಣಿನಿಂದ ಚಕ್ರದ ಮೇಲೆ ಕೈಯಿಂದಲೇ ತಿರುಗಿಸಿ, ಸಾಂಪ್ರದಾಯಿಕ ಕಟ್ಟಿಗೆ ಭಟ್ಟಿಯಲ್ಲಿ ಬೇಯಿಸಿ ಈ ಕಲಾಕೃತಿ ರೂಪಿಸಿದ್ದೇನೆ. ಧನ್ಯವಾದಗಳು.";
+        ? "ನಮಸ್ಕಾರ! ನನ್ನ ಹೆಸರು ಜಾನಕಿ ಪೂಜಾರಿ. ಉಡುಪಿಯ ನದೀತೀರದ ಕಾಡುಹುಲ್ಲನ್ನು ಮೂರು ವಾರ ಬಿಸಿಲಿನಲ್ಲಿ ಒಣಗಿಸಿ, ಕೈಯಿಂದ ಹೆಣೆದು ಈ ಬುಟ್ಟಿಯನ್ನು ತಯಾರಿಸಿದ್ದೇನೆ. ನಮ್ಮ ಕರಾವಳಿ ಪರಂಪರೆ ಬೆಂಬಲಿಸಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದಗಳು."
+        : "ನಮಸ್ಕಾರ! ಸಾಂಪ್ರದಾಯಿಕ ವಿಧಾನದಲ್ಲಿ ಕೈಯಿಂದಲೇ ರೂಪಿಸಿದ ಕಲಾಕೃತಿ ಇದು. ನಮ್ಮ ಗ್ರಾಮೀಣ ಕರಕುಶಲ ಕಲೆ ಬೆಂಬಲಿಸಿದ್ದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು.";
 
     playSpeech(
       kannadaGreeting,
@@ -71,6 +75,14 @@ export default function CraftPassportModal({
   const giNumber =
     product.craftType === "Kasuti"
       ? "GI-AP-KASUTI-2006-089"
+      : product.craftType === "Handloom"
+      ? "GI-UDUPI-SAREE-2016-433"
+      : product.craftType === "Yakshagana"
+      ? "HERITAGE-YAKSHA-REGALIA-1988"
+      : product.craftType === "Bidriware"
+      ? "GI-BIDAR-TARKASHI-2006-042"
+      : product.craftType === "Woodcraft"
+      ? "GI-CHANNAPATNA-TOYS-2006-023"
       : product.craftType === "Beedu"
       ? "GI-UDUPI-BEEDU-2018-142"
       : "GI-BELAGAVI-POTTERY-2012-074";
@@ -78,8 +90,14 @@ export default function CraftPassportModal({
   const coordinates =
     product.craftType === "Kasuti"
       ? "15.4589° N, 75.0078° E (Hubballi-Dharwad)"
-      : product.craftType === "Beedu"
+      : product.craftType === "Handloom" || product.craftType === "Beedu"
       ? "13.3409° N, 74.7421° E (Udupi Coastal)"
+      : product.craftType === "Yakshagana"
+      ? "14.2810° N, 74.4538° E (Honnavar & Udupi)"
+      : product.craftType === "Bidriware"
+      ? "17.9104° N, 77.5199° E (Bidar Historic Fort)"
+      : product.craftType === "Woodcraft"
+      ? "12.6518° N, 77.2089° E (Channapatna Craft Town)"
       : "15.6322° N, 74.5147° E (Khanapur Belt)";
 
   const handlePrint = () => {

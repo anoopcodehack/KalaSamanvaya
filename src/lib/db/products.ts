@@ -16,13 +16,13 @@ export interface ArtisanProduct {
   id: string;
   title: string;
   kannadaTitle: string;
-  craftType: "Kasuti" | "Beedu" | "Pottery" | "Bidriware" | "Woodcraft";
+  craftType: "Kasuti" | "Beedu" | "Pottery" | "Bidriware" | "Woodcraft" | "Handloom" | "Yakshagana";
   categoryLabel: string;
   priceINR: number;
   compareAtPriceINR: number;
   rating: number;
   reviewsCount: number;
-  badge: "GI Tagged Heritage" | "Exclusive Handloom" | "Cluster Classic" | "Limited Artisan Batch";
+  badge: "GI Tagged Heritage" | "Exclusive Handloom" | "Cluster Classic" | "Limited Artisan Batch" | "Folk Theatre Masterpiece";
   artisanName: string;
   artisanKannadaName: string;
   artisanCluster: string;
@@ -281,5 +281,75 @@ export const ARTISAN_PRODUCTS: ArtisanProduct[] = [
       regionalHeritageNote: "GI Tag No. 23 protected Karnataka craft, renowned worldwide as the Toy City heritage."
     },
     tags: ["GI Tagged", "Non-Toxic", "Channapatna", "Vegetable Dyes", "Kids Safe"]
+  },
+  {
+    id: "prod-udupi-saree-01",
+    title: "Udupi GI Heritage Handloom Cotton Saree",
+    kannadaTitle: "ಉಡುಪಿ ಜಿಐ ಮಾನ್ಯತೆಯ ಕೈಮಗ್ಗ ಹತ್ತಿ ಸೀರೆ",
+    craftType: "Handloom",
+    categoryLabel: "Udupi Handloom",
+    priceINR: 2350,
+    compareAtPriceINR: 3200,
+    rating: 4.9,
+    reviewsCount: 36,
+    badge: "GI Tagged Heritage",
+    artisanName: "Mohini Shettigar",
+    artisanKannadaName: "ಮೋಹಿನಿ ಶೆಟ್ಟಿಗಾರ್",
+    artisanCluster: "Talipady Weavers Cooperative Society",
+    artisanDistrict: "Udupi",
+    leadTimeDays: 8,
+    stockAvailable: 22,
+    imageUrl: "/assets/craft-udupi-saree.jpg",
+    shortDescription: "Authentic 80-count combed cotton saree woven on traditional coastal Malabar frame looms with natural dyes.",
+    craftStory: "Practiced for over 150 years in coastal Karnataka, Udupi sarees are woven by the Shettigar community on Malabar frame looms using combed fine cotton. The fabric is starched with boiled tapioca and treated with natural vegetable dyes, making it exceptionally breathable in coastal humidity and softer with every wash.",
+    breakdown: {
+      handcraftHours: 24,
+      artisanDirectPayoutINR: 1780,
+      rawMaterialsINR: 370,
+      clusterPackagingLogisticsINR: 110,
+      platformCoordinationFeeINR: 90,
+      powerloomMachinePrintCompareINR: 450,
+      powerloomMachineMinutes: 4,
+      artisanSharePercent: 76,
+      materialsUsed: "Combed 80s count organic cotton yarn, natural vegetable dye, organic tapioca sizing.",
+      techniqueName: "Malabar Frame Loom Hand-Weaving with Shuttle Shuttle Technique",
+      regionalHeritageNote: "GI Application No. 433 certified coastal Karnataka handloom heritage."
+    },
+    tags: ["GI Tagged", "Coastal Handloom", "100% Cotton", "Udupi Weavers", "Eco-friendly", "Direct Payout"]
+  },
+  {
+    id: "prod-yakshagana-01",
+    title: "Yakshagana Handcrafted Kireeta & Folk Regalia",
+    kannadaTitle: "ಕರಾವಳಿ ಯಕ್ಷಗಾನ ಪಾರಂಪರಿಕ ಕಿರೀಟ ಮತ್ತು ರಂಗ ಪರಿಕರ",
+    craftType: "Yakshagana",
+    categoryLabel: "Yakshagana Regalia",
+    priceINR: 3450,
+    compareAtPriceINR: 4800,
+    rating: 5.0,
+    reviewsCount: 19,
+    badge: "Folk Theatre Masterpiece",
+    artisanName: "Ganesh Acharya",
+    artisanKannadaName: "ಗಣೇಶ್ ಆಚಾರ್ಯ",
+    artisanCluster: "Honnavar Yakshagana Shilpa Guild",
+    artisanDistrict: "Uttara Kannada",
+    leadTimeDays: 14,
+    stockAvailable: 12,
+    imageUrl: "/assets/craft-yakshagana.jpg",
+    shortDescription: "Ceremonial coastal folk dance headgear hand-sculpted from light Honne wood with golden foil embossing and mirror inlays.",
+    craftStory: "Yakshagana is coastal Karnataka's 800-year-old traditional folk dance-theatre. Each Kireeta (ceremonial crown) is carved by master wood sculptors in Honnavar and Kundapur from lightweight local wood, hand-embossed with gold and brass foils, and adorned with intricate mirror and bead inlays to reflect temple stage torchlight.",
+    breakdown: {
+      handcraftHours: 42,
+      artisanDirectPayoutINR: 2650,
+      rawMaterialsINR: 520,
+      clusterPackagingLogisticsINR: 150,
+      platformCoordinationFeeINR: 130,
+      powerloomMachinePrintCompareINR: 650,
+      powerloomMachineMinutes: 8,
+      artisanSharePercent: 77,
+      materialsUsed: "Light Honne & Balsa seasoned wood, embossed gold-lacquered brass foil, imported convex mirror inlays.",
+      techniqueName: "Manual Relief Woodcarving, Brass Repoussé & Mirror Setting",
+      regionalHeritageNote: "Coastal Tulunadu and Uttara Kannada centuries-old temple theatre tradition."
+    },
+    tags: ["Coastal Karnataka", "Yakshagana", "Masterpiece", "Woodcarving", "Mirror Work", "Honnavar", "Udupi"]
   }
 ];

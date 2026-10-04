@@ -29,7 +29,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-type CraftFilterType = "ALL" | "Kasuti" | "Beedu" | "Pottery" | "Bidriware" | "Woodcraft";
+type CraftFilterType = "ALL" | "Kasuti" | "Beedu" | "Pottery" | "Bidriware" | "Woodcraft" | "Handloom" | "Yakshagana";
 type SortOption = "featured" | "hours-high" | "payout-high" | "price-low" | "price-high";
 
 export default function MarketplacePage() {
@@ -236,7 +236,9 @@ export default function MarketplacePage() {
         ((q.includes("ಕಸೂತಿ") || q.includes("ಶಾಲು") || q.includes("ಸೀರೆ") || q.includes("shawl") || q.includes("sari")) && product.craftType === "Kasuti") ||
         ((q.includes("ಬುಟ್ಟಿ") || q.includes("ಬೀಡು") || q.includes("ಹುಲ್ಲು") || q.includes("basket")) && product.craftType === "Beedu") ||
         ((q.includes("ಬಿದ್ರಿ") || q.includes("ಬೆಳ್ಳಿ") || q.includes("silver") || q.includes("vase")) && product.craftType === "Bidriware") ||
-        ((q.includes("ಆಟಿಕೆ") || q.includes("ಮರ") || q.includes("toy") || q.includes("horse")) && product.craftType === "Woodcraft");
+        ((q.includes("ಆಟಿಕೆ") || q.includes("ಮರ") || q.includes("toy") || q.includes("horse")) && product.craftType === "Woodcraft") ||
+        ((q.includes("ಸೀರೆ") || q.includes("ಕೈಮಗ್ಗ") || q.includes("ಹತ್ತಿ") || q.includes("saree") || q.includes("sari") || q.includes("handloom")) && product.craftType === "Handloom") ||
+        ((q.includes("ಯಕ್ಷಗಾನ") || q.includes("ಕಿರೀಟ") || q.includes("ರಂಗ") || q.includes("crown") || q.includes("yakshagana") || q.includes("regalia")) && product.craftType === "Yakshagana");
 
       return matchesCategory && matchesDistrict && matchesGI && matchesSearch;
     });
@@ -589,6 +591,8 @@ export default function MarketplacePage() {
               <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-amber-800/50 text-[11px]">
                 <span className="text-amber-200/80 font-normal">Or click test phrase:</span>
                 {[
+                  { label: "🥻 'Udupi Saree'", query: "Udupi Saree" },
+                  { label: "🎭 'Yakshagana'", query: "Yakshagana" },
                   { label: "🏺 'Khanapur Terracotta'", query: "Khanapur Terracotta" },
                   { label: "🧵 'Kasuti Silk Shawl'", query: "Kasuti Silk Shawl" },
                   { label: "✨ 'Bidriware'", query: "Bidri" },
@@ -637,7 +641,9 @@ export default function MarketplacePage() {
               [
                 { id: "ALL", label: "All Crafts (ಎಲ್ಲಾ)" },
                 { id: "Kasuti", label: "Kasuti Embroidery (ಕಸೂತಿ)" },
+                { id: "Handloom", label: "Udupi Handloom (ಕೈಮಗ್ಗ ಸೀರೆ)" },
                 { id: "Beedu", label: "Beedu Basketry (ಬೀಡು ಬುಟ್ಟಿ)" },
+                { id: "Yakshagana", label: "Yakshagana Regalia (ಯಕ್ಷಗಾನ ಕಲೆ)" },
                 { id: "Pottery", label: "Terracotta & Pottery (ಮಣ್ಣಿನ ಕಲೆ)" },
                 { id: "Bidriware", label: "Bidri Metalcraft (ಬಿದ್ರಿ ಕಲೆ)" },
                 { id: "Woodcraft", label: "Channapatna Woodcraft (ಚನ್ನಪಟ್ಟಣ ಮರ)" }
@@ -694,9 +700,10 @@ export default function MarketplacePage() {
               [
                 { id: "ALL", label: "All Districts" },
                 { id: "Dharwad", label: "Dharwad" },
-                { id: "Bidar", label: "Bidar" },
-                { id: "Belagavi", label: "Belagavi" },
                 { id: "Udupi", label: "Udupi" },
+                { id: "Uttara Kannada", label: "Uttara Kannada" },
+                { id: "Belagavi", label: "Belagavi" },
+                { id: "Bidar", label: "Bidar" },
                 { id: "Ramanagara", label: "Ramanagara" }
               ] as const
             ).map((dist) => (

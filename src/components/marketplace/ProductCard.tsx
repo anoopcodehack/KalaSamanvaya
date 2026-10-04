@@ -99,6 +99,10 @@ export default function ProductCard({
               ? "Silver Inlay"
               : product.craftType === "Woodcraft"
               ? "Lacquer Turning"
+              : product.craftType === "Handloom"
+              ? "Loom Weaving"
+              : product.craftType === "Yakshagana"
+              ? "Wood & Regalia Craft"
               : "Handcrafting"}
           </span>
         </div>
