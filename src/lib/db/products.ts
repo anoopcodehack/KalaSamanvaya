@@ -112,7 +112,7 @@ export const ARTISAN_PRODUCTS: ArtisanProduct[] = [
     title: "Khanapur Riverbed Terracotta Water Jug",
     kannadaTitle: "ಖಾನಾಪುರ ಪಾರಂಪರಿಕ ಜೇಡಿಮಣ್ಣಿನ ನೀರಿನ ಜಗ್ಗು",
     craftType: "Pottery",
-    categoryLabel: "Coastal Pottery",
+    categoryLabel: "Khanapur Terracotta",
     priceINR: 750,
     compareAtPriceINR: 980,
     rating: 4.9,
@@ -124,7 +124,7 @@ export const ARTISAN_PRODUCTS: ArtisanProduct[] = [
     artisanDistrict: "Belagavi",
     leadTimeDays: 4,
     stockAvailable: 40,
-    imageUrl: "/assets/craft-pottery.jpg",
+    imageUrl: "/assets/craft-belagavi-terracotta.jpg",
     shortDescription: "Traditional wheel-thrown Belagavi red clay pottery crafted from Malaprabha riverbed silt with agate stone burnishing.",
     craftStory: "Crafted on a manual wooden wheel by the traditional Kumbhara pottery collective of Khanapur, Belagavi. Sourced from the rich alluvial clay of the Malaprabha riverbed and burnished with smooth river stones before wood-firing in traditional earthen kilns.",
     breakdown: {
@@ -136,11 +136,11 @@ export const ARTISAN_PRODUCTS: ArtisanProduct[] = [
       powerloomMachinePrintCompareINR: 190,
       powerloomMachineMinutes: 2,
       artisanSharePercent: 75,
-      materialsUsed: "Malaprabha riverbed red clay, fine beach sand, wood ash, untreated natural river stone polish.",
+      materialsUsed: "Malaprabha riverbed red clay, fine river sand, wood ash, untreated natural river stone polish.",
       techniqueName: "Manual Wheel Throwing & Agate Stone Burnishing",
       regionalHeritageNote: "Natural pore architecture cools water naturally by up to 5°C without electricity."
     },
-    tags: ["Belagavi Craft", "Natural Cooling", "Non-Toxic", "Khanapur Clay", "Artisan Wheel"]
+    tags: ["Belagavi Craft", "Natural Cooling", "Non-Toxic", "Khanapur Clay", "Artisan Wheel", "Terracotta", "Pottery"]
   },
   {
     id: "prod-kasuti-02",
@@ -217,7 +217,7 @@ export const ARTISAN_PRODUCTS: ArtisanProduct[] = [
     title: "Udupi Hand-Coiled Terracotta Plant Urn",
     kannadaTitle: "ಉಡುಪಿ ಕೈಯಿಂದ ರೂಪಿಸಿದ ಜೇಡಿಮಣ್ಣಿನ ಗಿಡದ ಮಡಿಕೆ",
     craftType: "Pottery",
-    categoryLabel: "Coastal Pottery",
+    categoryLabel: "Udupi Terracotta",
     priceINR: 890,
     compareAtPriceINR: 1150,
     rating: 4.7,
@@ -245,7 +245,7 @@ export const ARTISAN_PRODUCTS: ArtisanProduct[] = [
       techniqueName: "Pinch & Coil Clay Sculpting with Wood-Pit Firing",
       regionalHeritageNote: "Centuries-old coastal Karnataka home pottery tradition."
     },
-    tags: ["Breathable Terracotta", "Eco-friendly", "Udupi Craft", "Handmade"]
+    tags: ["Breathable Terracotta", "Eco-friendly", "Udupi Craft", "Handmade", "Pottery", "Terracotta"]
   },
   {
     id: "prod-wood-01",

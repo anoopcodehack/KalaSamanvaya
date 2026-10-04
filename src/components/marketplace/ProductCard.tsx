@@ -85,9 +85,22 @@ export default function ProductCard({
         </div>
 
         {/* Lead time pill on bottom right of image */}
-        <div className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-sm text-white text-[10px] flex items-center gap-1">
+        <div className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-sm text-white text-[10px] flex items-center gap-1 font-medium">
           <Clock className="w-3 h-3 text-amber-300" />
-          <span>{product.breakdown.handcraftHours}h Needlework</span>
+          <span>
+            {product.breakdown.handcraftHours}h{" "}
+            {product.craftType === "Pottery"
+              ? "Wheelwork"
+              : product.craftType === "Kasuti"
+              ? "Needlework"
+              : product.craftType === "Beedu"
+              ? "Weaving"
+              : product.craftType === "Bidriware"
+              ? "Silver Inlay"
+              : product.craftType === "Woodcraft"
+              ? "Lacquer Turning"
+              : "Handcrafting"}
+          </span>
         </div>
       </div>
 

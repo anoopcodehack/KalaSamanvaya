@@ -29,7 +29,7 @@ import Link from "next/link";
 
 const CRAFT_IMAGE_MAP: Record<string, string> = {
   Kasuti: "/assets/craft-kasuti.jpg",
-  Pottery: "/assets/craft-pottery.jpg",
+  Pottery: "/assets/craft-belagavi-terracotta.jpg",
   Beedu: "/assets/craft-beedu.jpg",
   Bidriware: "/assets/craft-bidri.jpg",
   "Channapatna Toys": "/assets/craft-channapatna.jpg",
@@ -37,7 +37,7 @@ const CRAFT_IMAGE_MAP: Record<string, string> = {
 
 const CRAFT_CLUSTER_MAP: Record<string, { kn: string; en: string }> = {
   Kasuti: { kn: "ಧಾರವಾಡ ಕಸೂತಿ ಸಂಘ (Dharwad Cluster)", en: "Dharwad Kasuti Craft Guild" },
-  Pottery: { kn: "ದಕ್ಷಿಣ ಕನ್ನಡ ಕುಂಬಾರಿಕೆ ಕ್ಲಸ್ಟರ್ (Coastal Pottery)", en: "Dakshina Kannada Pottery Cluster" },
+  Pottery: { kn: "ಖಾನಾಪುರ / ಬೆಳಗಾವಿ ಕುಂಬಾರಿಕೆ ಕ್ಲಸ್ಟರ್ (Khanapur Terracotta)", en: "Khanapur Belagavi Terracotta Guild" },
   Beedu: { kn: "ಉಡುಪಿ ಬೀಡು ಕರಕುಶಲ ಸಂಘ (Udupi Beedu)", en: "Udupi Beedu Craft Society" },
   Bidriware: { kn: "ಬೀದರ್ ಬಿದ್ರಿ ಕಲೆ ಒಕ್ಕೂಟ (Bidar Cluster)", en: "Bidar Bidriware Guild" },
   "Channapatna Toys": { kn: "ರಾಮನಗರ ಚನ್ನಪಟ್ಟಣ ಆಟಿಕೆ ಸಂಘ", en: "Channapatna Toy Artisans" },

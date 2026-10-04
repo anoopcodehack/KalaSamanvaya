@@ -40,9 +40,15 @@ export default function MarketplacePage() {
   const [sortBy, setSortBy] = useState<SortOption>("featured");
   const [searchQuery, setSearchQuery] = useState("");
   const [isListening, setIsListening] = useState(false);
+  const [voiceLang, setVoiceLang] = useState<"en-IN" | "kn-IN">("en-IN");
+  const [interimTranscript, setInterimTranscript] = useState("");
+  const [voiceNotice, setVoiceNotice] = useState<string | null>(null);
   const [activeStoryProduct, setActiveStoryProduct] = useState<ArtisanProduct | null>(null);
   const [activeCheckoutProduct, setActiveCheckoutProduct] = useState<ArtisanProduct | null>(null);
   const [activePassportProduct, setActivePassportProduct] = useState<ArtisanProduct | null>(null);
+
+  const recognitionRef = React.useRef<any>(null);
+  const mediaStreamRef = React.useRef<MediaStream | null>(null);
 
   // Fetch updated catalog from backend API
   React.useEffect(() => {
@@ -56,58 +62,120 @@ export default function MarketplacePage() {
       .catch((err) => console.error("Failed to load products from API", err));
   }, []);
 
-  // Voice Search (Native Web Speech API kn-IN & fallback)
-  const recognitionRef = React.useRef<any>(null);
+  // Voice Search (Native Web Speech API with bilingual en-IN / kn-IN support)
+  const stopListening = () => {
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.abort();
+      } catch {}
+      recognitionRef.current = null;
+    }
+    if (mediaStreamRef.current) {
+      mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+      mediaStreamRef.current = null;
+    }
+    setIsListening(false);
+    setInterimTranscript("");
+  };
 
-  const toggleVoiceSearch = () => {
+  const startListening = async (lang: "en-IN" | "kn-IN" = voiceLang) => {
     if (typeof window === "undefined") return;
     const SpeechRecognition =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      alert("Voice search is supported on Chrome, Edge, and Safari browsers.");
+      setVoiceNotice("Voice search requires a Web Speech API browser (Chrome, Edge, or Safari).");
       return;
     }
 
-    if (isListening) {
-      if (recognitionRef.current) {
-        try {
-          recognitionRef.current.stop();
-        } catch (err) {
-          // ignore stop error
-        }
+    setVoiceNotice(null);
+    setInterimTranscript("");
+
+    // Request microphone access to guarantee active stream & permission
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaStreamRef.current = stream;
       }
-      setIsListening(false);
-      return;
+    } catch (permErr: any) {
+      console.warn("Microphone access notice:", permErr);
+      if (permErr.name === "NotAllowedError" || permErr.name === "PermissionDeniedError") {
+        setVoiceNotice("Microphone permission denied. Please allow microphone access in your browser settings.");
+        return;
+      }
     }
 
     try {
+      if (recognitionRef.current) {
+        try { recognitionRef.current.abort(); } catch {}
+      }
+
       const recognition = new SpeechRecognition();
       recognitionRef.current = recognition;
-      recognition.lang = "kn-IN"; // Native Kannada speech recognition
+      recognition.lang = lang;
       recognition.continuous = false;
       recognition.interimResults = true;
       recognition.maxAlternatives = 1;
 
-      recognition.onstart = () => setIsListening(true);
-      recognition.onend = () => setIsListening(false);
+      recognition.onstart = () => {
+        setIsListening(true);
+        setVoiceNotice(null);
+      };
+
+      recognition.onresult = (event: any) => {
+        let interim = "";
+        let final = "";
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const text = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            final += text;
+          } else {
+            interim += text;
+          }
+        }
+        if (interim) {
+          setInterimTranscript(interim);
+        }
+        if (final) {
+          const cleaned = final.trim().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "");
+          setSearchQuery(cleaned);
+          setInterimTranscript("");
+        }
+      };
+
       recognition.onerror = (e: any) => {
-        console.warn("Speech recognition error:", e);
+        console.warn("Speech recognition notice:", e.error);
+        if (e.error === "no-speech") {
+          setVoiceNotice("No voice detected. Please speak clearly into your microphone.");
+        } else if (e.error === "not-allowed") {
+          setVoiceNotice("Microphone access was denied. Please allow microphone access.");
+        } else if (e.error !== "aborted") {
+          setVoiceNotice(`Speech notice: ${e.error}. Type or click a suggestion below.`);
+        }
         setIsListening(false);
       };
-      recognition.onresult = (event: any) => {
-        const transcript = Array.from(event.results)
-          .map((r: any) => r[0].transcript)
-          .join("");
-        if (transcript) {
-          setSearchQuery(transcript);
+
+      recognition.onend = () => {
+        setIsListening(false);
+        if (mediaStreamRef.current) {
+          mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+          mediaStreamRef.current = null;
         }
       };
 
       recognition.start();
-    } catch (e) {
+    } catch (e: any) {
       console.error("Speech recognition start failed", e);
+      setVoiceNotice("Could not start voice search. Please click a suggestion below or type.");
       setIsListening(false);
+    }
+  };
+
+  const toggleVoiceSearch = () => {
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening(voiceLang);
     }
   };
 
@@ -127,6 +195,7 @@ export default function MarketplacePage() {
     setGiOnly(false);
     setSearchQuery("");
     setSortBy("featured");
+    setVoiceNotice(null);
   };
 
   const hasActiveFilters =
@@ -145,13 +214,29 @@ export default function MarketplacePage() {
         selectedDistrict === "ALL" || product.artisanDistrict === selectedDistrict;
       const matchesGI = !giOnly || product.badge === "GI Tagged Heritage";
       const q = searchQuery.toLowerCase().trim();
+
+      if (!q) {
+        return matchesCategory && matchesDistrict && matchesGI;
+      }
+
+      // Comprehensive multi-field and bilingual matching
       const matchesSearch =
-        q === "" ||
         product.title.toLowerCase().includes(q) ||
-        product.kannadaTitle.includes(q) ||
+        product.kannadaTitle.toLowerCase().includes(q) ||
         product.artisanName.toLowerCase().includes(q) ||
+        (product.artisanKannadaName && product.artisanKannadaName.toLowerCase().includes(q)) ||
         product.artisanCluster.toLowerCase().includes(q) ||
-        product.artisanDistrict.toLowerCase().includes(q);
+        product.artisanDistrict.toLowerCase().includes(q) ||
+        product.craftType.toLowerCase().includes(q) ||
+        product.categoryLabel.toLowerCase().includes(q) ||
+        product.shortDescription.toLowerCase().includes(q) ||
+        product.tags.some((t) => t.toLowerCase().includes(q)) ||
+        // Kannada synonyms & phonetics
+        ((q.includes("ಮಡಿಕೆ") || q.includes("ಕುಂಬಾರ") || q.includes("pot") || q.includes("clay") || q.includes("jug")) && product.craftType === "Pottery") ||
+        ((q.includes("ಕಸೂತಿ") || q.includes("ಶಾಲು") || q.includes("ಸೀರೆ") || q.includes("shawl") || q.includes("sari")) && product.craftType === "Kasuti") ||
+        ((q.includes("ಬುಟ್ಟಿ") || q.includes("ಬೀಡು") || q.includes("ಹುಲ್ಲು") || q.includes("basket")) && product.craftType === "Beedu") ||
+        ((q.includes("ಬಿದ್ರಿ") || q.includes("ಬೆಳ್ಳಿ") || q.includes("silver") || q.includes("vase")) && product.craftType === "Bidriware") ||
+        ((q.includes("ಆಟಿಕೆ") || q.includes("ಮರ") || q.includes("toy") || q.includes("horse")) && product.craftType === "Woodcraft");
 
       return matchesCategory && matchesDistrict && matchesGI && matchesSearch;
     });
@@ -345,8 +430,8 @@ export default function MarketplacePage() {
                   <div className="w-7 h-7 rounded-lg bg-amber-100 text-[#C85A32] flex items-center justify-center font-bold text-xs mb-2">
                     03
                   </div>
-                  <h4 className="text-xs font-bold text-[#2A1810]">Coastal Pottery</h4>
-                  <p className="text-[11px] text-stone-500 mt-1">Netravati riverbed silt & agate burnish</p>
+                  <h4 className="text-xs font-bold text-[#2A1810]">Khanapur Terracotta</h4>
+                  <p className="text-[11px] text-stone-500 mt-1">Belagavi Malaprabha riverbed pottery & urns</p>
                 </div>
 
                 <div className="p-3.5 bg-white rounded-xl border border-stone-200 hover:border-amber-400 transition-colors">
@@ -451,46 +536,93 @@ export default function MarketplacePage() {
             </div>
           </div>
 
-          {/* Voice Search Listening Toast Indicator with Instant Quick Speak Test Chips */}
+          {/* Voice Search Listening Toast Indicator with Live Transcript & Bilingual Toggle */}
           {isListening && (
-            <div className="p-3 rounded-xl bg-amber-50 border border-amber-300 text-[#2A1810] text-xs font-semibold space-y-2">
+            <div className="p-3.5 rounded-xl bg-gradient-to-r from-amber-900 to-[#2A1810] text-white text-xs font-semibold space-y-2.5 shadow-lg border border-amber-700/50 animate-in fade-in duration-200">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-red-600">
-                  <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-ping" />
-                  <span className="font-bold">ಕನ್ನಡದಲ್ಲಿ ಮಾತನಾಡಿ... (Listening in Kannada speech):</span>
+                <div className="flex items-center gap-2.5">
+                  <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                  </span>
+                  <div>
+                    <span className="font-bold text-amber-200">
+                      Listening in {voiceLang === "en-IN" ? "English (Indian)" : "ಕನ್ನಡ (Kannada)"}...
+                    </span>
+                    <span className="text-stone-300 ml-2 text-[11px] font-normal">
+                      {interimTranscript ? (
+                        <span className="text-white font-medium bg-black/30 px-2 py-0.5 rounded">
+                          &quot;{interimTranscript}&quot;
+                        </span>
+                      ) : (
+                        "Speak clearly into your mic (e.g., 'Belagavi pottery', 'Kasuti shawl', 'ಖಾನಾಪುರ')"
+                      )}
+                    </span>
+                  </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setIsListening(false)}
-                  className="text-stone-400 hover:text-stone-700 text-xs"
-                >
-                  ✕ Close
-                </button>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const nextLang = voiceLang === "en-IN" ? "kn-IN" : "en-IN";
+                      setVoiceLang(nextLang);
+                      stopListening();
+                      setTimeout(() => startListening(nextLang), 100);
+                    }}
+                    className="px-2.5 py-1 rounded bg-amber-800/80 hover:bg-amber-700 text-amber-100 text-[11px] font-bold border border-amber-600 transition-colors"
+                    title="Switch voice recognition language"
+                  >
+                    Switch to {voiceLang === "en-IN" ? "ಕನ್ನಡ" : "English"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={stopListening}
+                    className="px-2.5 py-1 rounded bg-red-700 hover:bg-red-600 text-white text-[11px] font-bold shadow-xs"
+                  >
+                    Done / Stop
+                  </button>
+                </div>
               </div>
-              <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px]">
-                <span className="text-stone-500 font-normal">Or click spoken craft preset:</span>
-                <button
-                  type="button"
-                  onClick={() => { setSearchQuery("ಕಸೂತಿ"); setIsListening(false); }}
-                  className="px-2.5 py-1 rounded-md bg-white border border-amber-400 text-[#C85A32] hover:bg-amber-100 font-bold shadow-2xs"
-                >
-                  &quot;ಕಸೂತಿ ಶಾಲು&quot; (Kasuti)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setSearchQuery("ಬಿದ್ರಿ"); setIsListening(false); }}
-                  className="px-2.5 py-1 rounded-md bg-white border border-amber-400 text-[#C85A32] hover:bg-amber-100 font-bold shadow-2xs"
-                >
-                  &quot;ಬಿದ್ರಿ ಬೆಳ್ಳಿ&quot; (Bidriware)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setSearchQuery("ಖಾನಾಪುರ"); setIsListening(false); }}
-                  className="px-2.5 py-1 rounded-md bg-white border border-amber-400 text-[#C85A32] hover:bg-amber-100 font-bold shadow-2xs"
-                >
-                  &quot;ಖಾನಾಪುರ ಮಡಿಕೆ&quot; (Belagavi Pottery)
-                </button>
+
+              {/* Quick Spoken Voice Shortcuts */}
+              <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-amber-800/50 text-[11px]">
+                <span className="text-amber-200/80 font-normal">Or click test phrase:</span>
+                {[
+                  { label: "🏺 'Khanapur Terracotta'", query: "Khanapur Terracotta" },
+                  { label: "🧵 'Kasuti Silk Shawl'", query: "Kasuti Silk Shawl" },
+                  { label: "✨ 'Bidriware'", query: "Bidri" },
+                  { label: "📍 'Belagavi'", query: "Belagavi" },
+                  { label: "🧺 'Beedu Basket'", query: "Beedu" },
+                  { label: "🏺 'ಖಾನಾಪುರ ಮಡಿಕೆ'", query: "ಖಾನಾಪುರ" },
+                ].map((item) => (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery(item.query);
+                      stopListening();
+                    }}
+                    className="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-amber-100 text-[11px] transition-colors border border-amber-700/60"
+                  >
+                    {item.label}
+                  </button>
+                ))}
               </div>
+            </div>
+          )}
+
+          {/* Voice Search Error / Notice Banner */}
+          {voiceNotice && !isListening && (
+            <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-300 text-xs text-amber-900 flex items-center justify-between">
+              <span>⚠️ {voiceNotice}</span>
+              <button
+                type="button"
+                onClick={() => setVoiceNotice(null)}
+                className="text-stone-500 hover:text-stone-800 text-xs font-bold px-2 py-0.5"
+              >
+                ✕ Dismiss
+              </button>
             </div>
           )}
 
@@ -506,7 +638,7 @@ export default function MarketplacePage() {
                 { id: "ALL", label: "All Crafts (ಎಲ್ಲಾ)" },
                 { id: "Kasuti", label: "Kasuti Embroidery (ಕಸೂತಿ)" },
                 { id: "Beedu", label: "Beedu Basketry (ಬೀಡು ಬುಟ್ಟಿ)" },
-                { id: "Pottery", label: "Coastal Pottery (ಕರಾವಳಿ ಮಡಿಕೆ)" },
+                { id: "Pottery", label: "Terracotta & Pottery (ಮಣ್ಣಿನ ಕಲೆ)" },
                 { id: "Bidriware", label: "Bidri Metalcraft (ಬಿದ್ರಿ ಕಲೆ)" },
                 { id: "Woodcraft", label: "Channapatna Woodcraft (ಚನ್ನಪಟ್ಟಣ ಮರ)" }
               ] as const
