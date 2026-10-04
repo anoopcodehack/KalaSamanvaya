@@ -51,9 +51,10 @@ This prototype addresses four PS 4.2 capability areas:
 | PS 4.2 Capability Area | Implementation in KalaSamanvaya | Status |
 | :--- | :--- | :---: |
 | **1. Working Storefront / Catalogue Interface**<br>*(Artisans can plausibly use with minimal training)* | Clean, visual catalogue specifically customized for **Kasuti embroidery**, **Beedu basketry & craft**, and **Coastal pottery**. Low cognitive load interface displaying maker profiles and pricing. | `Implemented prototype` |
-| **2. Simple Listing & Order Flow**<br>*(Payment integration can be mocked)* | **Kannada voice-assisted listing (`kn-IN`)** + **Kannada Order Inbox** allowing rural artisans to list verbally without typing and review/accept production allocations. Streamlined retail mock checkout. | `Implemented prototype` |
-| **3. Craft-Storytelling & Pricing Support**<br>*(To communicate handmade value)* | **"Why This Price?" Craft Card:** Transparent breakdown of hand labor hours, authentic materials, and regional heritage to communicate handmade value. QR-linked digital provenance passports (`Planned roadmap`). | `Implemented prototype` / `Planned roadmap` |
+| **2. Simple Listing & Order Flow**<br>*(Payment integration can be mocked)* | **Multimodal Onboarding (Kannada Voice `kn-IN` + AI Craft Photo Scanner)** + **Kannada Order Inbox** allowing rural artisans to list verbally without typing or snap photos with automated craft recognition, and review/accept production allocations. Streamlined retail mock checkout. | `Implemented prototype` |
+| **3. Craft-Storytelling & Pricing Support**<br>*(To communicate handmade value)* | **"Why This Price?" Craft Card & GI Craft Passport:** Transparent breakdown of hand labor hours, authentic materials, and regional heritage. **Interactive GI Craft Passport with scannable QR hangtag and spoken Kannada provenance audio narration (`kn-IN`).** | `Implemented prototype` |
 | **4. Capacity-Aware Multi-Artisan Fulfilment**<br>*(Coordinated cluster supply)* | Solves the **scale mismatch** by aggregating fragmented artisan capacity into bulk fulfilment plans for enterprise buyers with capacity-update recovery. | `Implemented prototype` |
+| **5. Fair-Trade Impact & Monetization Simulator**<br>*(Long-term sustainability & transparency)* | **Fair-Trade Impact Simulator (`/impact`):** Interactive model demonstrating the 8% platform fee structure vs 30–50% traditional middleman cuts, showing direct 92% artisan earnings and B2B unit economics. | `Implemented prototype` |
 
 ---
 
@@ -160,30 +161,34 @@ Capacity Recovery:   A(40) + B(70) + C(60) + D(30) = 200 / 200 (Deficit fully re
 
 ---
 
-## Voice-Assisted Onboarding (kn-IN)
+## Multimodal Artisan Onboarding (Voice + AI Photo)
 
-To reduce digital-literacy and typing barriers, artisans register their inventory using browser-based voice input:
+To eliminate digital-literacy and typing barriers, artisans can register products via two complementary channels on `/artisan/onboard`:
 
+```text
+┌─────────────────────────────────┐       ┌─────────────────────────────────┐
+│     SPOKEN KANNADA VOICE        │       │    MULTIMODAL AI PHOTO SCANNER  │
+│  "ನನ್ನ ಬಳಿ 50 ಕಸೂತಿ ಸೀರೆಗಳಿವೆ..." │       │   Mobile camera / image upload  │
+└────────────────┬────────────────┘       └────────────────┬────────────────┘
+                 │ Web Speech API (kn-IN)                  │ Auto-detects craft, material,
+                 ▼                                         ▼ color & suggested price
+┌───────────────────────────────────────────────────────────────────────────┐
+│                      AUTOMATED STRUCTURED EXTRACTION                      │
+│      • Craft Type (Kasuti, Beedu, Pottery)   • Available Batch Units      │
+│      • Suggested Artisan Price (INR)         • Production Lead Days       │
+└─────────────────────────────────────┬─────────────────────────────────────┘
+                                      ▼
+┌───────────────────────────────────────────────────────────────────────────┐
+│                     VERNACULAR HIGH-CONTRAST REVIEW                       │
+│    Artisan inspects and confirms pre-filled numeric values in one tap    │
+└─────────────────────────────────────┬─────────────────────────────────────┘
+                                      ▼
+                      [ Cluster Inventory Registry ]
 ```
-[ Spoken Kannada Audio ]
-       │  "ನನ್ನ ಬಳಿ 50 ಕಸೂತಿ ಸೀರೆಗಳಿವೆ, ಒಂದಕ್ಕೆ 1600 ರೂಪಾಯಿ..."
-       ▼
-[ Web Speech API (kn-IN) ]
-       │  Real-time streaming transcript
-       ▼
-[ Structured Extraction ]
-       │  Heuristic structured extraction with optional LLM fallback
-       ▼
-[ Visual Review Modal ]
-       │  Large tap targets, vernacular preview, one-touch confirmation
-       ▼
-[ Cluster Inventory Registry ]
-```
 
-* **No Typing Friction:** Transcribes native Kannada speech directly within Chromium-based browsers.
-* **Extraction Fields:** Identifies craft type (ಕಸೂತಿ / ಮಡಿಕೆ / ಬೀಡು), available units, price in INR, and turnaround time.
-* **Human-in-the-Loop Review:** Artisan reviews numeric values on high-contrast cards before publishing.
-* **Standalone Execution:** Speech recognition and heuristic extraction work without an LLM API; the LLM parser is optional when configured.
+* **No Typing Friction:** Transcribes native Kannada speech directly within Chromium-based browsers using `kn-IN` Web Speech API.
+* **Instant Visual Craft Recognition:** Artisans can photograph raw crafts; the scanner auto-populates craft category, heritage materials, and baseline pricing.
+* **Human-in-the-Loop Review:** Visual vernacular preview ensures the artisan retains full control before committing quantities.
 
 ---
 
@@ -196,14 +201,15 @@ All technical claims within this repository are categorized into verified tiers 
 | **Storefront & Catalogue** | `Implemented prototype` | Responsive product catalogue showcasing authentic maker profiles, craft items, and retail pricing. |
 | **Multi-artisan allocation** | `Implemented prototype` | Deterministic score calculation ($S_i$) and sequential allocation execute in pure TypeScript within the repository. |
 | **Capacity-update rebalancing** | `Implemented prototype` | Recalculates allocation after a capacity update and routes available standby capacity in the prototype. |
-| **Kannada voice UI** | `Implemented prototype` | Browser-based Web Speech API with language tag `kn-IN` and heuristic extraction. |
+| **Kannada voice UI (`kn-IN`)** | `Implemented prototype` | Browser-based Web Speech API with language tag `kn-IN` and vernacular heuristic extraction. |
+| **Multimodal AI Craft Scanner** | `Implemented prototype` | Interactive camera/photo analyzer detecting craft type, materials, and fair base price on `/artisan/onboard`. |
+| **GI Craft Passport & Scannable QR** | `Implemented prototype` | Live modal with printable physical hangtags, batch ID, GI cluster coordinates, and Kannada voice provenance narration (`kn-IN`). |
+| **Fair-Trade Impact Simulator** | `Implemented prototype` | Dynamic 8% platform fee vs 30–50% middleman calculator with direct 92% artisan payout projections on `/impact` and `/b2b`. |
 | **"Why This Price?" Craft Card** | `Implemented prototype` | Transparent breakdown of labor hours, materials, and regional heritage to communicate handmade value. |
 | **Artisan Order Inbox** | `Implemented prototype` | Visual Kannada interface for rural artisans to review and accept cluster production commitments. |
 | **200-unit scenario** | `Demonstrated benchmark scenario` | Benchmark test data used to prove algorithmic correctness for a 200-unit Kasuti fulfilment order. |
-| **Provenance/QR** | `Planned roadmap` | Digital Provenance Passports linking each product to maker bio and cluster heritage to support artisan pricing. |
 | **Artisan verification** | `Pilot target` | Identity and craft verification planned during onboarding for field pilot. |
 | **50+ maker expansion** | `Pilot target` | Planned 90-day onboarding milestone across Karnataka artisan clusters (Kasuti & Beedu crafts). |
-| **Transparent artisan payout model** | `Pilot target` | Maximize transparent artisan earnings through clearly itemized platform and fulfilment costs. |
 
 ---
 
@@ -225,18 +231,23 @@ d:/KalaSamanvaya/
 │   │   ├── layout.tsx             # Root layout with shared navigation & brand footer
 │   │   ├── page.tsx               # Landing page highlighting problem, solution & entry points
 │   │   ├── b2b/page.tsx           # B2B Bulk Order Allocation & Capacity Recovery Console
-│   │   ├── artisan/onboard/page.tsx # Kannada voice listing interface (kn-IN)
-│   │   ├── marketplace/page.tsx   # B2C Retail Discovery catalog
-│   │   ├── provenance/[id]/page.tsx # Authenticity & craft story page (Roadmap prototype)
+│   │   ├── impact/page.tsx        # Fair-Trade Monetization & Supply Chain Simulator (8% fee)
+│   │   ├── login/page.tsx         # Multi-Persona Role Switcher (Artisan, Buyer, Admin)
+│   │   ├── artisan/
+│   │   │   ├── onboard/page.tsx   # Multimodal Kannada Voice + AI Photo Listing interface
+│   │   │   └── inbox/page.tsx     # Rural Artisan Order Acceptance & Work Order Inbox
+│   │   ├── marketplace/page.tsx   # B2C Retail Discovery & GI Craft Passport Showcase
 │   │   └── api/
 │   │       ├── allocate/route.ts  # Deterministic matching & greedy allocation endpoint
 │   │       ├── reallocate/route.ts# Capacity-update rebalance simulator endpoint
+│   │       ├── orders/route.ts    # Work orders & allocation acceptance endpoint
+│   │       ├── products/route.ts  # Cluster craft catalogue endpoint
 │   │       └── voice-parse/route.ts# Kannada transcript parsing endpoint
 │   │
 │   ├── components/                # Modular UI Components
-│   │   ├── b2b/                   # Allocation graph, shortfall alert, recovery simulator
-│   │   ├── voice/                 # Web Speech API recorder & structured review modal
-│   │   ├── marketplace/           # Product cards, craft filters, craft story cards
+│   │   ├── b2b/                   # Allocation graph, FairTradeSimulatorCard, standby recovery
+│   │   ├── voice/                 # KannadaVoiceRecorder & AiPhotoCraftScanner
+│   │   ├── marketplace/           # Product cards, GiCraftPassportModal, "Why This Price?"
 │   │   ├── shared/                # Navbar, Footer, Language toggle
 │   │   └── ui/                    # Reusable button, card, badge primitives
 │   │
@@ -299,12 +310,15 @@ Computes deterministic order allocation across registered cluster makers.
 }
 ```
 
-### Unit Economics (B2B Bulk Order)
+### Unit Economics & Fair-Trade Monetization Simulator (`/impact`)
 
 * **200-Unit Enterprise Order × ₹600 Average Unit Value** = ₹1,20,000 GMV
-* **Proposed 4% Platform Coordination Fee** = ₹4,800 Platform Revenue
-* **Primary (B2B Bulk Fulfilment):** Proposed 3–5% platform coordination fee on completed multi-artisan orders.
-* **Secondary (B2C Retail Storefront):** Proposed 5–8% transactional fee on individual retail sales via the artisan showcase.
+* **Platform Sustainability Fee (8%):** ₹9,600 (Reinvestment in cluster quality control & vernacular tooling)
+* **Direct Artisan Community Payout (92%):** ₹1,10,400 (vs only ₹60,000 under predatory 50% middleman cuts)
+* **Live Interactive Simulator:** Visit `/impact` (or test inside `/b2b`) to dynamically toggle between **Enterprise B2B (200 units)** and **Retail Storefront (5 units)** for instant 3-way supply chain benchmarks.
+* **Dual Revenue Model:**
+  * **Primary (B2B Bulk Orders):** 4–8% platform coordination fee on completed multi-artisan orders.
+  * **Secondary (B2C Retail Storefront):** 5–8% transactional fee on individual retail sales via the artisan showcase.
 
 ### 2. Recalculate on Dropout
 **`POST /api/reallocate`**
