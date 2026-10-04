@@ -22,10 +22,13 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    const buyerName = body.buyerName || body.customerName || "Patron Customer";
+    const buyerPhone = body.buyerPhone || body.customerPhone || "+91 98765 43210";
+    const deliveryAddress = body.deliveryAddress || body.shippingAddress || "Standard Delivery";
 
-    if (!body.productId || !body.buyerName || !body.buyerPhone) {
+    if (!body.productId) {
       return NextResponse.json(
-        { error: "Missing required fields: productId, buyerName, buyerPhone" },
+        { error: "Missing required field: productId" },
         { status: 400 }
       );
     }
@@ -46,10 +49,10 @@ export async function POST(req: Request) {
     const newOrder: CustomerOrder = {
       orderId: `KS-${Math.floor(100000 + Math.random() * 900000)}`,
       createdAt: new Date().toISOString(),
-      buyerName: body.buyerName,
-      buyerPhone: body.buyerPhone,
+      buyerName: buyerName,
+      buyerPhone: buyerPhone,
       deliveryDistrict: body.deliveryDistrict || "Bengaluru Urban",
-      deliveryAddress: body.deliveryAddress || "Standard Delivery",
+      deliveryAddress: deliveryAddress,
       paymentMethod: body.paymentMethod || "UPI",
       status: "CONFIRMED",
       items: [
