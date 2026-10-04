@@ -20,16 +20,27 @@ import {
   Receipt,
   MapPin,
   Clock,
-  QrCode
+  QrCode,
+  Mic,
+  MicOff,
+  SlidersHorizontal,
+  RotateCcw,
+  X,
+  Sparkles
 } from "lucide-react";
 import Link from "next/link";
 
 type CraftFilterType = "ALL" | "Kasuti" | "Beedu" | "Pottery" | "Bidriware" | "Woodcraft";
+type SortOption = "featured" | "hours-high" | "payout-high" | "price-low" | "price-high";
 
 export default function MarketplacePage() {
   const [productsList, setProductsList] = useState<ArtisanProduct[]>(ARTISAN_PRODUCTS);
   const [selectedCategory, setSelectedCategory] = useState<CraftFilterType>("ALL");
+  const [selectedDistrict, setSelectedDistrict] = useState<string>("ALL");
+  const [giOnly, setGiOnly] = useState<boolean>(false);
+  const [sortBy, setSortBy] = useState<SortOption>("featured");
   const [searchQuery, setSearchQuery] = useState("");
+  const [isListening, setIsListening] = useState(false);
   const [activeStoryProduct, setActiveStoryProduct] = useState<ArtisanProduct | null>(null);
   const [activeCheckoutProduct, setActiveCheckoutProduct] = useState<ArtisanProduct | null>(null);
   const [activePassportProduct, setActivePassportProduct] = useState<ArtisanProduct | null>(null);
@@ -46,21 +57,102 @@ export default function MarketplacePage() {
       .catch((err) => console.error("Failed to load products from API", err));
   }, []);
 
-  // Filter products by category and search
+  // Voice Search (Kannada & English Speech-to-Text)
+  const toggleVoiceSearch = () => {
+    if (typeof window === "undefined") return;
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      alert("Voice search is not supported by your browser. Please type in the search bar.");
+      return;
+    }
+
+    if (isListening) {
+      setIsListening(false);
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.lang = "kn-IN"; // Native Kannada speech recognition
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => setIsListening(true);
+      recognition.onend = () => setIsListening(false);
+      recognition.onerror = () => setIsListening(false);
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        if (transcript) {
+          setSearchQuery(transcript);
+        }
+      };
+
+      recognition.start();
+    } catch (e) {
+      console.error("Speech recognition error", e);
+      setIsListening(false);
+    }
+  };
+
+  // Dynamic counts for category tabs
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = { ALL: productsList.length };
+    productsList.forEach((p) => {
+      counts[p.craftType] = (counts[p.craftType] || 0) + 1;
+    });
+    return counts;
+  }, [productsList]);
+
+  // Reset all filters
+  const resetFilters = () => {
+    setSelectedCategory("ALL");
+    setSelectedDistrict("ALL");
+    setGiOnly(false);
+    setSearchQuery("");
+    setSortBy("featured");
+  };
+
+  const hasActiveFilters =
+    selectedCategory !== "ALL" ||
+    selectedDistrict !== "ALL" ||
+    giOnly ||
+    searchQuery.trim() !== "" ||
+    sortBy !== "featured";
+
+  // Filter products by category, district, GI tag, search, and sort
   const filteredProducts = useMemo(() => {
-    return productsList.filter((product) => {
+    let list = productsList.filter((product) => {
       const matchesCategory =
         selectedCategory === "ALL" || product.craftType === selectedCategory;
+      const matchesDistrict =
+        selectedDistrict === "ALL" || product.artisanDistrict === selectedDistrict;
+      const matchesGI = !giOnly || product.badge === "GI Tagged Heritage";
+      const q = searchQuery.toLowerCase().trim();
       const matchesSearch =
-        searchQuery.trim() === "" ||
-        product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.kannadaTitle.includes(searchQuery) ||
-        product.artisanName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.artisanCluster.toLowerCase().includes(searchQuery.toLowerCase());
+        q === "" ||
+        product.title.toLowerCase().includes(q) ||
+        product.kannadaTitle.includes(q) ||
+        product.artisanName.toLowerCase().includes(q) ||
+        product.artisanCluster.toLowerCase().includes(q) ||
+        product.artisanDistrict.toLowerCase().includes(q);
 
-      return matchesCategory && matchesSearch;
+      return matchesCategory && matchesDistrict && matchesGI && matchesSearch;
     });
-  }, [productsList, selectedCategory, searchQuery]);
+
+    if (sortBy === "hours-high") {
+      list = [...list].sort((a, b) => b.breakdown.handcraftHours - a.breakdown.handcraftHours);
+    } else if (sortBy === "payout-high") {
+      list = [...list].sort((a, b) => b.breakdown.artisanSharePercent - a.breakdown.artisanSharePercent);
+    } else if (sortBy === "price-low") {
+      list = [...list].sort((a, b) => a.priceINR - b.priceINR);
+    } else if (sortBy === "price-high") {
+      list = [...list].sort((a, b) => b.priceINR - a.priceINR);
+    }
+
+    return list;
+  }, [productsList, selectedCategory, selectedDistrict, giOnly, searchQuery, sortBy]);
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#2A1810]">
@@ -263,38 +355,100 @@ export default function MarketplacePage() {
 
       {/* ── 3. STOREFRONT PRODUCT CATALOG (Truly Tribal "Our Shop") ── */}
       <section id="catalog" className="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <ScrollReveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-          <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-[#C85A32]">
-              ಕರ್ನಾಟಕ ಕರಕುಶಲ ಭಂಡಾರ
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#2A1810] mt-1">
-              Handcrafted Product Catalogue
-            </h2>
-            <p className="text-xs text-stone-600 mt-1">
-              Select any craft to view maker profiles, handcraft hours, and the transparent &quot;Why This Price?&quot; breakdown.
-            </p>
+        <ScrollReveal direction="up" className="space-y-6 mb-8">
+          
+          {/* Header & Search/Sort Row */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-5 bg-white p-6 rounded-2xl border border-amber-900/15 shadow-sm">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100/70 border border-amber-800/20 text-[#C85A32] text-[11px] font-bold uppercase tracking-wider">
+                <Sparkles className="w-3 h-3 text-[#C85A32]" />
+                <span>ಕರ್ನಾಟಕ ಕರಕುಶಲ ಭಂಡಾರ • Verified Heritage Clusters</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#2A1810] mt-2 tracking-tight">
+                Handcrafted Product Catalogue
+              </h2>
+              <p className="text-xs sm:text-sm text-stone-600 mt-1 max-w-xl">
+                Browse authentic GI-tagged masterpieces direct from Karnataka rural artisan collectives with transparent wage breakdowns.
+              </p>
+            </div>
+
+            {/* Buyer Search & Sort Controls */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              {/* Voice-Enabled Search Bar */}
+              <div className="relative w-full sm:w-72">
+                <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Search Kasuti, Bidri, Dharwad..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-16 py-2.5 bg-[#FAF7F2] rounded-xl border border-stone-300 text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-[#C85A32] focus:bg-white transition-all shadow-inner"
+                />
+
+                {/* Clear Search Button */}
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-9 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-700"
+                    title="Clear search"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+
+                {/* Kannada Voice Search Mic Button */}
+                <button
+                  type="button"
+                  onClick={toggleVoiceSearch}
+                  title="ಧ್ವನಿ ಹುಡುಕಾಟ (Kannada Voice Search)"
+                  className={`absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition-all ${
+                    isListening
+                      ? "bg-red-600 text-white animate-pulse shadow-md"
+                      : "bg-amber-100 hover:bg-amber-200 text-[#C85A32]"
+                  }`}
+                >
+                  {isListening ? (
+                    <MicOff className="w-3.5 h-3.5" />
+                  ) : (
+                    <Mic className="w-3.5 h-3.5" />
+                  )}
+                </button>
+              </div>
+
+              {/* Sort Dropdown */}
+              <div className="relative sm:w-56">
+                <div className="flex items-center gap-1.5 px-3 py-2 bg-[#FAF7F2] rounded-xl border border-stone-300 text-xs text-stone-700">
+                  <SlidersHorizontal className="w-3.5 h-3.5 text-[#C85A32] flex-shrink-0" />
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as SortOption)}
+                    aria-label="Sort craft catalogue"
+                    className="w-full bg-transparent text-xs font-semibold text-[#2A1810] focus:outline-none cursor-pointer"
+                  >
+                    <option value="featured">Featured (ಜನಪ್ರಿಯ)</option>
+                    <option value="hours-high">Most Handcraft Hours (ಹೆಚ್ಚು ಕೆಲಸ)</option>
+                    <option value="payout-high">Highest Direct Wage % (ನೇರ ಕೂಲಿ)</option>
+                    <option value="price-low">Price: Low to High (ಕಡಿಮೆ ಬೆಲೆ)</option>
+                    <option value="price-high">Price: High to Low (ಹೆಚ್ಚಿನ ಬೆಲೆ)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Search Box */}
-          <div className="relative w-full md:w-72">
-            <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Search craft, maker or cluster..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-white rounded-full border border-stone-300 text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-[#C85A32]"
-            />
-          </div>
-        </ScrollReveal>
+          {/* Voice Search Listening Toast Indicator */}
+          {isListening && (
+            <div className="flex items-center gap-2 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold animate-pulse">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-ping" />
+              <span>ಕನ್ನಡದಲ್ಲಿ ಮಾತನಾಡಿ... (Listening in Kannada speech: try saying &quot;ಕಸೂತಿ ಶಾಲು&quot; or &quot;ಬಿದ್ರಿ&quot;)...</span>
+            </div>
+          )}
 
-        {/* Category Filter Pills */}
-        <ScrollReveal direction="up" delayMs={50}>
-          <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 scrollbar-none">
+          {/* Craft Category Tabs with Dynamic Item Count Badges */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
             <div className="flex items-center gap-1.5 text-xs font-bold text-stone-500 mr-2 flex-shrink-0">
               <Filter className="w-3.5 h-3.5 text-[#C85A32]" />
-              <span>Filter Craft:</span>
+              <span>Craft:</span>
             </div>
 
             {(
@@ -306,20 +460,110 @@ export default function MarketplacePage() {
                 { id: "Bidriware", label: "Bidri Metalcraft (ಬಿದ್ರಿ ಕಲೆ)" },
                 { id: "Woodcraft", label: "Channapatna Woodcraft (ಚನ್ನಪಟ್ಟಣ ಮರ)" }
               ] as const
-            ).map((cat) => (
+            ).map((cat) => {
+              const count = categoryCounts[cat.id] || 0;
+              const isSelected = selectedCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-1.5 ${
+                    isSelected
+                      ? "bg-[#C85A32] text-white shadow-sm"
+                      : "bg-white text-stone-700 border border-stone-300 hover:bg-amber-50"
+                  }`}
+                >
+                  <span>{cat.label}</span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                      isSelected ? "bg-white/25 text-white" : "bg-stone-100 text-stone-600"
+                    }`}
+                  >
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Secondary Faceted Filters: Cluster / District & GI Tagged Heritage */}
+          <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-amber-900/10 text-xs">
+            {/* GI Tagged Badge Toggle */}
+            <button
+              onClick={() => setGiOnly(!giOnly)}
+              className={`px-3 py-1.5 rounded-lg border text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                giOnly
+                  ? "bg-emerald-800 text-white border-emerald-900 shadow-sm"
+                  : "bg-white text-stone-700 border-stone-300 hover:bg-emerald-50 hover:border-emerald-300"
+              }`}
+            >
+              <Award className={`w-3.5 h-3.5 ${giOnly ? "text-emerald-200" : "text-emerald-700"}`} />
+              <span>🏅 GI-Tagged Heritage Only</span>
+            </button>
+
+            <span className="text-stone-300">|</span>
+
+            <div className="flex items-center gap-1.5 text-stone-500 font-medium">
+              <MapPin className="w-3.5 h-3.5 text-[#C85A32]" />
+              <span>Cluster:</span>
+            </div>
+
+            {(
+              [
+                { id: "ALL", label: "All Districts" },
+                { id: "Dharwad", label: "Dharwad" },
+                { id: "Bidar", label: "Bidar" },
+                { id: "Belagavi", label: "Belagavi" },
+                { id: "Udupi", label: "Udupi" },
+                { id: "Ramanagara", label: "Ramanagara" }
+              ] as const
+            ).map((dist) => (
               <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 ${
-                  selectedCategory === cat.id
-                    ? "bg-[#C85A32] text-white shadow-sm"
-                    : "bg-white text-stone-700 border border-stone-300 hover:bg-amber-50"
+                key={dist.id}
+                onClick={() => setSelectedDistrict(dist.id)}
+                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
+                  selectedDistrict === dist.id
+                    ? "bg-amber-900 text-white shadow-xs font-bold"
+                    : "bg-white text-stone-600 border border-stone-200 hover:bg-amber-50"
                 }`}
               >
-                {cat.label}
+                {dist.label}
               </button>
             ))}
+
+            {/* Clear All Filters Button */}
+            {hasActiveFilters && (
+              <button
+                onClick={resetFilters}
+                className="ml-auto inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-amber-100/70 hover:bg-amber-200 text-[#C85A32] text-xs font-bold transition-colors"
+              >
+                <RotateCcw className="w-3 h-3" />
+                <span>Reset Filters (ತೆರವುಗೊಳಿಸಿ)</span>
+              </button>
+            )}
           </div>
+
+          {/* Active Results Summary */}
+          <div className="flex items-center justify-between text-xs text-stone-500 pt-1">
+            <p>
+              Showing <span className="font-bold text-[#2A1810]">{filteredProducts.length}</span> of{" "}
+              <span className="font-bold text-[#2A1810]">{productsList.length}</span> authentic Karnataka craft treasures
+              {selectedCategory !== "ALL" && (
+                <span className="ml-1 text-[#C85A32] font-semibold">• Filtered by {selectedCategory}</span>
+              )}
+              {selectedDistrict !== "ALL" && (
+                <span className="ml-1 text-amber-900 font-semibold">• {selectedDistrict} Cluster</span>
+              )}
+              {giOnly && (
+                <span className="ml-1 text-emerald-800 font-semibold">• GI Tagged</span>
+              )}
+            </p>
+
+            <span className="text-[11px] text-stone-400 hidden sm:inline">
+              100% Direct-from-Artisan • Guaranteed 75%+ Maker Wage Payout
+            </span>
+          </div>
+
         </ScrollReveal>
 
         {/* Product Grid with Staggered Scroll Reveal */}
@@ -337,10 +581,20 @@ export default function MarketplacePage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 bg-white rounded-2xl border border-stone-200 p-8">
-            <p className="text-stone-500 text-sm">
-              No products found matching &quot;{searchQuery}&quot;. Try selecting &quot;All Crafts&quot;.
+          <div className="text-center py-16 bg-white rounded-2xl border border-stone-200 p-8 space-y-3">
+            <p className="text-stone-700 font-bold text-sm">
+              No craft masterpieces found matching your active filters.
             </p>
+            <p className="text-stone-500 text-xs max-w-sm mx-auto">
+              Try clearing your search query or selecting &quot;All Crafts&quot; to discover more Karnataka artisan collections.
+            </p>
+            <button
+              onClick={resetFilters}
+              className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#C85A32] text-white text-xs font-bold shadow-sm hover:bg-[#a84420] transition-colors"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Reset All Filters (ಎಲ್ಲಾ ಮರುಹೊಂದಿಸಿ)</span>
+            </button>
           </div>
         )}
       </section>
