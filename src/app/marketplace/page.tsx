@@ -581,7 +581,7 @@ export default function MarketplacePage() {
                   { label: "🎭 'Yakshagana'", query: "Yakshagana" },
                   { label: "🏺 'Khanapur Terracotta'", query: "Khanapur Terracotta" },
                   { label: "🧵 'Kasuti Silk Shawl'", query: "Kasuti Silk Shawl" },
-                  { label: "✨ 'Bidriware'", query: "Bidri" },
+                  { label: "🪙 'Bidriware'", query: "Bidri" },
                   { label: "📍 'Belagavi'", query: "Belagavi" },
                   { label: "🧺 'Beedu Basket'", query: "Beedu" },
                   { label: "🏺 'ಖಾನಾಪುರ ಮಡಿಕೆ'", query: "ಖಾನಾಪುರ" },

@@ -19,8 +19,7 @@ import {
   Volume2,
   VolumeX,
   CreditCard,
-  Award,
-  Sparkles
+  Award
 } from "lucide-react";
 
 type UserRole = "artisan" | "enterprise" | "patron";

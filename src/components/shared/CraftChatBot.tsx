@@ -14,7 +14,6 @@ import {
   ChevronRight,
   Volume2,
   VolumeX,
-  Sparkles,
   Info,
   AlertCircle
 } from "lucide-react";
@@ -95,6 +94,7 @@ export default function CraftChatBot() {
   const audioChunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
   const finalTextRef = useRef<string>("");
+  const accumulatedFinalRef = useRef<string>("");
   const isListeningRef = useRef<boolean>(false);
   const silenceTimerRef = useRef<any>(null);
 
@@ -208,11 +208,12 @@ export default function CraftChatBot() {
     stopSpeech();
     setVoiceNotice(null);
     finalTextRef.current = "";
+    accumulatedFinalRef.current = "";
     isListeningRef.current = true;
     setIsListening(true);
     audioChunksRef.current = [];
 
-    // 1. Start audio recording buffer for 100% reliable Gemini Multimodal fallback
+    // 1. Start audio recording buffer for reliable audio fallback
     try {
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         const stream = await navigator.mediaDevices.getUserMedia({
@@ -280,20 +281,30 @@ export default function CraftChatBot() {
             }
           }
 
-          const totalSoFar = (finalTextRef.current + " " + sessionFinal).trim();
-          const displayLive = (totalSoFar + " " + sessionInterim).trim();
+          const combinedFinal = (accumulatedFinalRef.current + " " + sessionFinal).trim();
+          const displayLive = (combinedFinal + " " + sessionInterim).trim();
 
           if (displayLive) {
             setInputValue(displayLive);
+            finalTextRef.current = displayLive;
           }
 
           if (sessionFinal.trim()) {
-            finalTextRef.current = totalSoFar;
+            accumulatedFinalRef.current = combinedFinal;
           }
         };
 
         recognition.onerror = (e: any) => {
           console.warn("Chat speech recognition notice:", e.error);
+        };
+
+        recognition.onend = () => {
+          // Keep listening across natural pauses if user hasn't explicitly stopped
+          if (isListeningRef.current) {
+            try {
+              recognition.start();
+            } catch (_) {}
+          }
         };
 
         recognition.start();
@@ -601,9 +612,22 @@ export default function CraftChatBot() {
             ))}
           </div>
 
+          {/* Voice Processing In-Progress Banner (Warm craft aesthetic, zero AI hype) */}
+          {isProcessingVoice && (
+            <div className="px-3.5 py-2 bg-[#FAF4ED] border-t border-amber-200 flex items-center gap-2 text-xs text-amber-950">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C85A32] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#C85A32]"></span>
+              </span>
+              <span className="font-medium text-[11px] text-stone-800">
+                {language === "kn" ? "ಧ್ವನಿ ಸ್ವೀಕರಿಸಲಾಗುತ್ತಿದೆ..." : "Processing audio..."}
+              </span>
+            </div>
+          )}
+
           {/* Live Voice Indicator & Language Switcher Banner */}
-          {isListening && (
-            <div className="px-3.5 py-2 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-t border-amber-200/90 flex items-center justify-between text-xs text-amber-950">
+          {isListening && !isProcessingVoice && (
+            <div className="px-3.5 py-2 bg-amber-50/90 border-t border-amber-200 flex items-center justify-between text-xs text-amber-950">
               <div className="flex items-center gap-2">
                 <span className="relative flex h-2.5 w-2.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -621,16 +645,6 @@ export default function CraftChatBot() {
               >
                 {language === "kn" ? "Switch to English" : "ಕನ್ನಡಕ್ಕೆ ಬದಲಿಸಿ"}
               </button>
-            </div>
-          )}
-
-          {/* AI Voice Transcribing In-Progress Banner */}
-          {isProcessingVoice && (
-            <div className="px-3.5 py-2 bg-gradient-to-r from-amber-100 to-orange-100 border-t border-amber-300 flex items-center gap-2 text-xs text-amber-950 animate-pulse">
-              <Sparkles className="w-3.5 h-3.5 text-[#C85A32] animate-spin" />
-              <span className="font-semibold text-[11px]">
-                {language === "kn" ? "ಧ್ವನಿಯನ್ನು AI ಮೂಲಕ ಪರಿವರ್ತಿಸಲಾಗುತ್ತಿದೆ..." : "Transcribing your voice with Gemini AI..."}
-              </span>
             </div>
           )}
 
@@ -693,8 +707,8 @@ export default function CraftChatBot() {
               placeholder={
                 isListening
                   ? language === "kn"
-                    ? "ಮಾತನಾಡಿ... ಧ್ವನಿ ಮುದ್ರಣವಾಗುತ್ತಿದೆ"
-                    : "Speaking... transcribing voice live"
+                    ? "ಮಾತನಾಡಿ... ಧ್ವನಿ ಸ್ವೀಕರಿಸಲಾಗುತ್ತಿದೆ"
+                    : "Listening... speak your question"
                   : language === "kn"
                   ? "ಕನ್ನಡದಲ್ಲಿ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಕೇಳಿ..."
                   : "Ask in Kannada or English..."
