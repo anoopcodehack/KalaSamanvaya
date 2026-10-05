@@ -40,22 +40,22 @@ export async function POST(req: Request) {
                       },
                     },
                     {
-                      text: `You are an AI assistant for KalaSamanvaya (ಕಲಾ ಸಮನ್ವಯ), a digital marketplace for rural Karnataka artisans.
-Listen to this voice recording (spoken in Kannada or Indian English).
-1. Transcribe the spoken text in "rawTranscript".
-2. Extract the craft name, quantity, price per unit in INR, and turnaround days.
+                      text: `You are an AI speech transcriber and assistant for KalaSamanvaya (ಕಲಾ ಸಮನ್ವಯ), a Karnataka craft platform.
+Listen to this voice recording spoken in Kannada, Indian English, or Kanglish.
+1. Transcribe the exact spoken words into "rawTranscript".
+2. If this is a craft listing (e.g., "80 kasuti shawls 600 rupees"), also extract craft, quantity, and price. If it is a general question or message, transcribe it and set quantity to 1.
 
 Return ONLY a valid JSON object matching this schema without markdown code blocks:
 {
-  "rawTranscript": "spoken text in Kannada or English",
-  "craft": "Kasuti" | "Beedu" | "Pottery" | "Bidriware" | "Channapatna Toys" | "Udupi Sarees" | "Yakshagana Regalia" | "Belagavi Terracotta",
-  "craftKannada": "ಕಸೂತಿ ಕಲೆ" | "ಬೀಡು ಬುಟ್ಟಿ" | "ಜೇಡಿಮಣ್ಣಿನ ಮಡಿಕೆ" | "ಬಿದ್ರಿ ಕಲೆ" | "ಚನ್ನಪಟ್ಟಣದ ಬಣ್ಣದ ಆಟಿಕೆ" | "ಉಡುಪಿ ಸೀರೆ" | "ಯಕ್ಷಗಾನ ಕಿರೀಟ" | "ಖಾನಾಪುರ ಟೆರಾಕೋಟಾ",
-  "itemName": "Authentic Handcrafted item title",
-  "quantity": number,
-  "pricePerUnitINR": number,
-  "totalValueINR": number,
+  "rawTranscript": "exact words spoken in Kannada or English",
+  "craft": "Kasuti" | "Beedu" | "Pottery" | "Bidriware" | "Channapatna Toys" | "Udupi Sarees" | "Yakshagana Regalia" | "Belagavi Terracotta" | "General",
+  "craftKannada": "ಕಸೂತಿ ಕಲೆ" | "ಬೀಡು ಬುಟ್ಟಿ" | "ಜೇಡಿಮಣ್ಣಿನ ಮಡಿಕೆ" | "ಬಿದ್ರಿ ಕಲೆ" | "ಚನ್ನಪಟ್ಟಣದ ಬಣ್ಣದ ಆಟಿಕೆ" | "ಉಡುಪಿ ಸೀರೆ" | "ಯಕ್ಷಗಾನ ಕಿರೀಟ" | "ಖಾನಾಪುರ ಟೆರಾಕೋಟಾ" | "ಸಾಮಾನ್ಯ",
+  "itemName": "Title or summary of speech",
+  "quantity": 1,
+  "pricePerUnitINR": 0,
+  "totalValueINR": 0,
   "material": "Authentic cluster material",
-  "leadTimeDays": number,
+  "leadTimeDays": 7,
   "confidence": 0.98
 }`,
                     },
@@ -70,12 +70,20 @@ Return ONLY a valid JSON object matching this schema without markdown code block
           const data = await geminiRes.json();
           const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
           const cleaned = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
-          const parsed = JSON.parse(cleaned);
-          if (parsed.craft && parsed.quantity && parsed.pricePerUnitINR) {
+          let parsed: any = {};
+          try {
+            parsed = JSON.parse(cleaned);
+          } catch (_) {
+            parsed = { rawTranscript: cleaned };
+          }
+          if (parsed && (parsed.rawTranscript || parsed.itemName)) {
             return NextResponse.json({
               success: true,
-              extracted: parsed,
-              source: "Google Gemini 1.5 Flash Multimodal Audio Transcriber",
+              extracted: {
+                ...parsed,
+                rawTranscript: parsed.rawTranscript || rawText,
+              },
+              source: "Google Gemini Multimodal Audio Transcriber",
             });
           }
         }
@@ -123,12 +131,20 @@ Extract into pure JSON without code fences:
           const data = await geminiRes.json();
           const rawText = data?.candidates?.[0]?.content?.parts?.find((p: any) => p.text)?.text || "";
           const cleaned = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
-          const parsed = JSON.parse(cleaned);
-          if (parsed.craft && parsed.quantity && parsed.pricePerUnitINR) {
+          let parsed: any = {};
+          try {
+            parsed = JSON.parse(cleaned);
+          } catch (_) {
+            parsed = { rawTranscript: cleaned };
+          }
+          if (parsed && (parsed.rawTranscript || parsed.itemName || parsed.craft)) {
             return NextResponse.json({
               success: true,
-              extracted: parsed,
-              source: "Google Gemini 1.5 Flash AI Engine",
+              extracted: {
+                ...parsed,
+                rawTranscript: parsed.rawTranscript || transcript,
+              },
+              source: "Google Gemini AI Engine",
             });
           }
         }

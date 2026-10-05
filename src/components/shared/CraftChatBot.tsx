@@ -84,12 +84,16 @@ export default function CraftChatBot() {
   const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES.kn);
   const [inputValue, setInputValue] = useState("");
   const [isListening, setIsListening] = useState(false);
+  const [isProcessingVoice, setIsProcessingVoice] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null);
   const [voiceNotice, setVoiceNotice] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const streamRef = useRef<MediaStream | null>(null);
   const finalTextRef = useRef<string>("");
   const isListeningRef = useRef<boolean>(false);
   const silenceTimerRef = useRef<any>(null);
@@ -111,143 +115,197 @@ export default function CraftChatBot() {
   }, [isOpen]);
 
   // Stop listening helper
-  const stopListening = () => {
+  const stopListening = async () => {
     isListeningRef.current = false;
+    setIsListening(false);
+
     if (silenceTimerRef.current) {
       clearTimeout(silenceTimerRef.current);
       silenceTimerRef.current = null;
     }
+
     if (recognitionRef.current) {
       try {
         recognitionRef.current.abort();
       } catch (_) {}
       recognitionRef.current = null;
     }
-    setIsListening(false);
+
+    const webSpeechText = (finalTextRef.current || inputValue).trim();
+
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      const recorder = mediaRecorderRef.current;
+      recorder.onstop = async () => {
+        const mimeType = recorder.mimeType || "audio/webm";
+        const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
+
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach((track) => track.stop());
+          streamRef.current = null;
+        }
+
+        // If Web Speech API captured a full phrase, use it
+        if (webSpeechText.length > 3) {
+          handleSend(webSpeechText);
+          return;
+        }
+
+        // Otherwise use Google Gemini Multimodal Audio Transcriber
+        if (audioBlob.size > 1000) {
+          setIsProcessingVoice(true);
+          const reader = new FileReader();
+          reader.onloadend = async () => {
+            const res = reader.result as string;
+            const audioBase64 = res.includes(",") ? res.split(",")[1] : res;
+            try {
+              const parseRes = await fetch("/api/voice-parse", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ audioBase64, mimeType }),
+              });
+              if (parseRes.ok) {
+                const data = await parseRes.json();
+                const text = data?.extracted?.rawTranscript || data?.extracted?.itemName;
+                if (text && text.trim()) {
+                  setInputValue(text);
+                  handleSend(text);
+                } else {
+                  setVoiceNotice(
+                    language === "kn"
+                      ? "ಧ್ವನಿ ಸ್ಪಷ್ಟವಾಗಿ ಕೇಳಿಸಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೊಮ್ಮೆ ಮಾತನಾಡಿ."
+                      : "Voice was unclear. Please speak again closer to the mic."
+                  );
+                }
+              }
+            } catch (err) {
+              console.warn("Gemini audio fallback error:", err);
+            } finally {
+              setIsProcessingVoice(false);
+            }
+          };
+          reader.readAsDataURL(audioBlob);
+        } else if (webSpeechText.length > 0) {
+          handleSend(webSpeechText);
+        }
+      };
+
+      try {
+        recorder.stop();
+      } catch (_) {}
+    } else {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+      }
+      if (webSpeechText.length > 0) {
+        handleSend(webSpeechText);
+      }
+    }
   };
 
-  // Start listening with zero stream conflict and seamless sentence continuation
-  const startListening = (lang: "kn" | "en" = language) => {
+  // Start listening with live MediaRecorder buffer + Web Speech API
+  const startListening = async (lang: "kn" | "en" = language) => {
     stopSpeech();
     setVoiceNotice(null);
     finalTextRef.current = "";
     isListeningRef.current = true;
+    setIsListening(true);
+    audioChunksRef.current = [];
 
+    // 1. Start audio recording buffer for 100% reliable Gemini Multimodal fallback
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: true, noiseSuppression: true },
+        });
+        streamRef.current = stream;
+
+        let mimeType = "audio/webm";
+        if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
+          mimeType = "audio/webm;codecs=opus";
+        }
+        const recorder = new MediaRecorder(stream, { mimeType });
+        recorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) audioChunksRef.current.push(e.data);
+        };
+        recorder.start(250);
+        mediaRecorderRef.current = recorder;
+      }
+    } catch (e: any) {
+      console.warn("Audio buffer notice:", e);
+      if (e.name === "NotAllowedError" || e.name === "PermissionDeniedError") {
+        setVoiceNotice(
+          lang === "kn"
+            ? "ಮೈಕ್ರೊಫೋನ್ ಅನುಮತಿ ನಿರಾಕರಿಸಲಾಗಿದೆ. ಬ್ರೌಸರ್ ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ಅನುಮತಿಸಿ."
+            : "Microphone permission denied. Please allow microphone in browser settings."
+        );
+        setIsListening(false);
+        isListeningRef.current = false;
+        return;
+      }
+    }
+
+    // 2. Also start Web Speech API for real-time live typing if supported
     const SpeechRecognition =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
-    if (!SpeechRecognition) {
-      setVoiceNotice(
-        lang === "kn"
-          ? "ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಧ್ವನಿ ಗುರುತಿಸುವಿಕೆ ಲಭ್ಯವಿಲ್ಲ. ದಯವಿಟ್ಟು ಟೈಪ್ ಮಾಡಿ."
-          : "Speech recognition is not supported in this browser. Please type."
-      );
-      return;
-    }
+    if (SpeechRecognition) {
+      try {
+        if (recognitionRef.current) {
+          try { recognitionRef.current.abort(); } catch (_) {}
+        }
 
-    try {
-      if (recognitionRef.current) {
-        try { recognitionRef.current.abort(); } catch (_) {}
+        const recognition = new SpeechRecognition();
+        recognitionRef.current = recognition;
+        recognition.lang = lang === "kn" ? "kn-IN" : "en-IN";
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
+
+        recognition.onstart = () => {
+          setIsListening(true);
+          setVoiceNotice(null);
+        };
+
+        recognition.onresult = (event: any) => {
+          let sessionFinal = "";
+          let sessionInterim = "";
+
+          for (let i = 0; i < event.results.length; i++) {
+            const item = event.results[i];
+            if (item.isFinal) {
+              sessionFinal += item[0].transcript + " ";
+            } else {
+              sessionInterim += item[0].transcript;
+            }
+          }
+
+          const totalSoFar = (finalTextRef.current + " " + sessionFinal).trim();
+          const displayLive = (totalSoFar + " " + sessionInterim).trim();
+
+          if (displayLive) {
+            setInputValue(displayLive);
+          }
+
+          if (sessionFinal.trim()) {
+            finalTextRef.current = totalSoFar;
+          }
+        };
+
+        recognition.onerror = (e: any) => {
+          console.warn("Chat speech recognition notice:", e.error);
+        };
+
+        recognition.start();
+      } catch (recErr) {
+        console.warn("SpeechRecognition start notice:", recErr);
       }
-
-      const recognition = new SpeechRecognition();
-      recognitionRef.current = recognition;
-      recognition.lang = lang === "kn" ? "kn-IN" : "en-IN";
-      recognition.continuous = true;
-      recognition.interimResults = true;
-      recognition.maxAlternatives = 1;
-
-      recognition.onstart = () => {
-        setIsListening(true);
-        setVoiceNotice(null);
-      };
-
-      recognition.onresult = (event: any) => {
-        let sessionFinal = "";
-        let sessionInterim = "";
-
-        for (let i = 0; i < event.results.length; i++) {
-          const item = event.results[i];
-          if (item.isFinal) {
-            sessionFinal += item[0].transcript + " ";
-          } else {
-            sessionInterim += item[0].transcript;
-          }
-        }
-
-        const totalSoFar = (finalTextRef.current + " " + sessionFinal).trim();
-        const displayLive = (totalSoFar + " " + sessionInterim).trim();
-
-        if (displayLive) {
-          setInputValue(displayLive);
-        }
-
-        if (sessionFinal.trim()) {
-          finalTextRef.current = totalSoFar;
-        }
-
-        // Auto-send after 2.5s pause in speech
-        if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
-        silenceTimerRef.current = setTimeout(() => {
-          const toSend = (finalTextRef.current || displayLive).trim();
-          if (toSend.length > 2 && isListeningRef.current) {
-            stopListening();
-            handleSend(toSend);
-          }
-        }, 2500);
-      };
-
-      recognition.onerror = (e: any) => {
-        console.warn("Chat speech recognition notice:", e.error);
-        if (e.error === "not-allowed" || e.error === "permission-denied") {
-          setVoiceNotice(
-            lang === "kn"
-              ? "ಮೈಕ್ರೊಫೋನ್ ಅನುಮತಿ ನಿರಾಕರಿಸಲಾಗಿದೆ. ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಅನುಮತಿಸಿ."
-              : "Microphone permission denied. Please allow microphone in browser."
-          );
-          stopListening();
-        } else if (e.error === "no-speech") {
-          // Keep listening, do not abort
-        } else if (e.error !== "aborted") {
-          setVoiceNotice(
-            lang === "kn"
-              ? `ಧ್ವನಿ ಸೂಚನೆ: ${e.error}. ಕೆಳಗೆ ಟೈಪ್ ಮಾಡಿ.`
-              : `Speech notice: ${e.error}. Please type below.`
-          );
-        }
-      };
-
-      recognition.onend = () => {
-        // Automatically restart if user hasn't explicitly stopped listening
-        if (isListeningRef.current) {
-          try {
-            recognition.start();
-          } catch (_) {}
-        } else {
-          setIsListening(false);
-        }
-      };
-
-      recognition.start();
-      setIsListening(true);
-    } catch (recErr) {
-      console.warn("SpeechRecognition start failed:", recErr);
-      setVoiceNotice(
-        lang === "kn"
-          ? "ಧ್ವನಿ ಗುರುತಿಸುವಿಕೆ ಪ್ರಾರಂಭಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ."
-          : "Could not start speech recognition."
-      );
-      setIsListening(false);
     }
   };
 
   const toggleListening = () => {
     if (isListening) {
-      const textToSubmit = (finalTextRef.current || inputValue).trim();
       stopListening();
-      if (textToSubmit.length > 1) {
-        handleSend(textToSubmit);
-      }
     } else {
       startListening(language);
     }
@@ -563,6 +621,16 @@ export default function CraftChatBot() {
               >
                 {language === "kn" ? "Switch to English" : "ಕನ್ನಡಕ್ಕೆ ಬದಲಿಸಿ"}
               </button>
+            </div>
+          )}
+
+          {/* AI Voice Transcribing In-Progress Banner */}
+          {isProcessingVoice && (
+            <div className="px-3.5 py-2 bg-gradient-to-r from-amber-100 to-orange-100 border-t border-amber-300 flex items-center gap-2 text-xs text-amber-950 animate-pulse">
+              <Sparkles className="w-3.5 h-3.5 text-[#C85A32] animate-spin" />
+              <span className="font-semibold text-[11px]">
+                {language === "kn" ? "ಧ್ವನಿಯನ್ನು AI ಮೂಲಕ ಪರಿವರ್ತಿಸಲಾಗುತ್ತಿದೆ..." : "Transcribing your voice with Gemini AI..."}
+              </span>
             </div>
           )}
 

@@ -186,6 +186,35 @@ export default function KannadaVoiceRecorder({
     accumulatedFinalRef.current = "";
     isRecordingRef.current = true;
     setIsRecording(true);
+    audioChunksRef.current = [];
+
+    // Always start MediaRecorder audio buffer for 100% reliable Gemini Multimodal transcription
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const audioStream = await navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: true, noiseSuppression: true },
+        });
+        streamRef.current = audioStream;
+
+        let options: MediaRecorderOptions = {};
+        if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
+          options = { mimeType: "audio/webm;codecs=opus" };
+        } else if (MediaRecorder.isTypeSupported("audio/webm")) {
+          options = { mimeType: "audio/webm" };
+        }
+
+        const recorder = new MediaRecorder(audioStream, options);
+        recorder.ondataavailable = (event) => {
+          if (event.data && event.data.size > 0) {
+            audioChunksRef.current.push(event.data);
+          }
+        };
+        recorder.start(250);
+        mediaRecorderRef.current = recorder;
+      }
+    } catch (micErr: any) {
+      console.warn("Microphone access notice:", micErr);
+    }
 
     const SpeechRecognition =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -266,37 +295,6 @@ export default function KannadaVoiceRecorder({
         recognition.start();
       } catch (e) {
         console.warn("SpeechRecognition start notice:", e);
-      }
-    } else {
-      // Fallback for browsers without Web Speech API
-      try {
-        const audioStream = await navigator.mediaDevices.getUserMedia({
-          audio: { echoCancellation: true, noiseSuppression: true },
-        });
-        streamRef.current = audioStream;
-
-        let options: MediaRecorderOptions = {};
-        if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
-          options = { mimeType: "audio/webm;codecs=opus" };
-        } else if (MediaRecorder.isTypeSupported("audio/webm")) {
-          options = { mimeType: "audio/webm" };
-        }
-
-        const recorder = new MediaRecorder(audioStream, options);
-        audioChunksRef.current = [];
-        recorder.ondataavailable = (event) => {
-          if (event.data && event.data.size > 0) {
-            audioChunksRef.current.push(event.data);
-          }
-        };
-        recorder.start(250);
-        mediaRecorderRef.current = recorder;
-      } catch (micErr: any) {
-        setErrorMessage(
-          language === "kn"
-            ? "ಮೈಕ್ರೊಫೋನ್ ಅನುಮತಿ ನಿರಾಕರಿಸಲಾಗಿದೆ."
-            : "Microphone permission denied."
-        );
       }
     }
   };
