@@ -88,6 +88,8 @@ export default function KannadaVoiceRecorder({
   const streamRef = useRef<MediaStream | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const capturedTextRef = useRef<string>("");
+  const isRecordingRef = useRef<boolean>(false);
+  const accumulatedFinalRef = useRef<string>("");
 
   useEffect(() => {
     // Reset any ongoing speech or text when user switches top language toggle
@@ -162,7 +164,7 @@ export default function KannadaVoiceRecorder({
       if (res.ok) {
         const data = await res.json();
         if (data.extracted) {
-          if (data.extracted.rawTranscript && !text) {
+          if (data.extracted.rawTranscript) {
             setTranscript(data.extracted.rawTranscript);
           }
           handleExtractedResult(data.extracted);
@@ -181,133 +183,132 @@ export default function KannadaVoiceRecorder({
     setTranscript("");
     setInterimText("");
     capturedTextRef.current = "";
-    audioChunksRef.current = [];
+    accumulatedFinalRef.current = "";
+    isRecordingRef.current = true;
+    setIsRecording(true);
 
-    let audioStream: MediaStream;
-    try {
-      audioStream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-        },
-      });
-      streamRef.current = audioStream;
-    } catch (micErr: any) {
-      console.error("Microphone permission failed:", micErr);
-      setErrorMessage(
-        language === "kn"
-          ? "ಮೈಕ್ರೊಫೋನ್ ಅನುಮತಿ ನಿರಾಕರಿಸಲಾಗಿದೆ. ಬ್ರೌಸರ್ ಅಡ್ರೆಸ್ ಬಾರ್‌ನಲ್ಲಿರುವ ಲಾಕ್ ಐಕಾನ್ ಕ್ಲಿಕ್ ಮಾಡಿ ಅನುಮತಿಸಿ."
-          : "Microphone permission denied. Please allow microphone access in your browser settings."
-      );
-      return;
-    }
-
-    // Audio Visualizer
-    try {
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const analyser = audioContext.createAnalyser();
-      analyser.fftSize = 256;
-      const source = audioContext.createMediaStreamSource(audioStream);
-      source.connect(analyser);
-      const dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-      const updateLevel = () => {
-        analyser.getByteFrequencyData(dataArray);
-        let sum = 0;
-        for (let i = 0; i < dataArray.length; i++) {
-          sum += dataArray[i];
-        }
-        const average = sum / dataArray.length;
-        setAudioLevel(Math.min(100, Math.round((average / 128) * 100)));
-        animationFrameRef.current = requestAnimationFrame(updateLevel);
-      };
-      updateLevel();
-    } catch (e) {
-      console.warn("Audio visualizer notice:", e);
-    }
-
-    // MediaRecorder for raw audio blob
-    try {
-      let options: MediaRecorderOptions = {};
-      if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
-        options = { mimeType: "audio/webm;codecs=opus" };
-      } else if (MediaRecorder.isTypeSupported("audio/webm")) {
-        options = { mimeType: "audio/webm" };
-      }
-
-      const recorder = new MediaRecorder(audioStream, options);
-      recorder.ondataavailable = (event) => {
-        if (event.data && event.data.size > 0) {
-          audioChunksRef.current.push(event.data);
-        }
-      };
-      recorder.start(250);
-      mediaRecorderRef.current = recorder;
-    } catch (recErr) {
-      console.warn("MediaRecorder start notice:", recErr);
-    }
-
-    // Web Speech API
     const SpeechRecognition =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
     if (SpeechRecognition) {
       try {
+        if (recognitionRef.current) {
+          try { recognitionRef.current.abort(); } catch (_) {}
+        }
+
         const recognition = new SpeechRecognition();
+        recognitionRef.current = recognition;
         recognition.lang = speechLang;
         recognition.continuous = true;
         recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
 
         recognition.onresult = (event: any) => {
-          let currentInterim = "";
-          let finalTotal = "";
+          let sessionFinal = "";
+          let sessionInterim = "";
 
-          for (let i = event.resultIndex; i < event.results.length; i++) {
+          for (let i = 0; i < event.results.length; i++) {
             const item = event.results[i];
             if (item.isFinal) {
-              finalTotal += item[0].transcript + " ";
+              sessionFinal += item[0].transcript + " ";
             } else {
-              currentInterim += item[0].transcript;
+              sessionInterim += item[0].transcript;
             }
           }
 
-          if (currentInterim) {
-            setInterimText(currentInterim);
+          const combinedFinal = (accumulatedFinalRef.current + " " + sessionFinal).trim();
+          const liveDisplay = (combinedFinal + " " + sessionInterim).trim();
+
+          if (sessionInterim) {
+            setInterimText(sessionInterim);
+          } else {
+            setInterimText("");
           }
 
-          if (finalTotal.trim()) {
-            capturedTextRef.current = (capturedTextRef.current + " " + finalTotal).trim();
-            setTranscript(capturedTextRef.current);
-            setInterimText("");
+          if (liveDisplay) {
+            capturedTextRef.current = liveDisplay;
+            setTranscript(liveDisplay);
+            // Instant heuristic preview as full sentence emerges
+            if (liveDisplay.length > 8) {
+              const preview = parseKannadaTranscript(liveDisplay);
+              if (preview && preview.craft) {
+                handleExtractedResult(preview);
+              }
+            }
+          }
+
+          if (sessionFinal.trim()) {
+            accumulatedFinalRef.current = combinedFinal;
           }
         };
 
         recognition.onerror = (event: any) => {
           console.warn("Web Speech API notice:", event.error);
+          if (event.error === "not-allowed" || event.error === "permission-denied") {
+            setErrorMessage(
+              language === "kn"
+                ? "ಮೈಕ್ರೊಫೋನ್ ಅನುಮತಿ ನಿರಾಕರಿಸಲಾಗಿದೆ. ಬ್ರೌಸರ್ ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ಅನುಮತಿಸಿ."
+                : "Microphone permission denied. Please allow microphone access in your browser settings."
+            );
+            stopRecording();
+          }
+        };
+
+        // Crucial: keep listening across natural pauses so full sentence is captured
+        recognition.onend = () => {
+          if (isRecordingRef.current) {
+            try {
+              recognition.start();
+            } catch (_) {}
+          }
         };
 
         recognition.start();
-        recognitionRef.current = recognition;
       } catch (e) {
         console.warn("SpeechRecognition start notice:", e);
       }
-    }
+    } else {
+      // Fallback for browsers without Web Speech API
+      try {
+        const audioStream = await navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: true, noiseSuppression: true },
+        });
+        streamRef.current = audioStream;
 
-    setIsRecording(true);
+        let options: MediaRecorderOptions = {};
+        if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
+          options = { mimeType: "audio/webm;codecs=opus" };
+        } else if (MediaRecorder.isTypeSupported("audio/webm")) {
+          options = { mimeType: "audio/webm" };
+        }
+
+        const recorder = new MediaRecorder(audioStream, options);
+        audioChunksRef.current = [];
+        recorder.ondataavailable = (event) => {
+          if (event.data && event.data.size > 0) {
+            audioChunksRef.current.push(event.data);
+          }
+        };
+        recorder.start(250);
+        mediaRecorderRef.current = recorder;
+      } catch (micErr: any) {
+        setErrorMessage(
+          language === "kn"
+            ? "ಮೈಕ್ರೊಫೋನ್ ಅನುಮತಿ ನಿರಾಕರಿಸಲಾಗಿದೆ."
+            : "Microphone permission denied."
+        );
+      }
+    }
   };
 
   const stopRecording = () => {
+    isRecordingRef.current = false;
     setIsRecording(false);
     setAudioLevel(0);
 
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-      animationFrameRef.current = null;
-    }
-
     if (recognitionRef.current) {
       try {
-        recognitionRef.current.stop();
+        recognitionRef.current.abort();
       } catch (_) {}
       recognitionRef.current = null;
     }
@@ -316,21 +317,13 @@ export default function KannadaVoiceRecorder({
       mediaRecorderRef.current.onstop = () => {
         const mimeType = mediaRecorderRef.current?.mimeType || "audio/webm";
         const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
-
         const textToSend = (capturedTextRef.current || interimText || transcript).trim();
-        if (textToSend) {
-          setTranscript(textToSend);
-          setInterimText("");
-        }
-
         sendForParsing(textToSend, audioBlob);
-
         if (streamRef.current) {
           streamRef.current.getTracks().forEach((track) => track.stop());
           streamRef.current = null;
         }
       };
-
       try {
         mediaRecorderRef.current.stop();
       } catch (_) {}
