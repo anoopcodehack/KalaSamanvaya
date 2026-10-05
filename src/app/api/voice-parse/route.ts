@@ -20,27 +20,29 @@ export async function POST(req: Request) {
 
     // SCENARIO 1: Direct Audio Recording passed with Gemini API Key
     if (audioBase64 && isGeminiAvailable) {
-      try {
-        const cleanBase64 = audioBase64.replace(/^data:audio\/\w+;base64,/, "");
-        const audioMime = mimeType || "audio/webm";
+      const modelsToTry = ["gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gemini-flash-latest"];
+      const cleanBase64 = audioBase64.replace(/^data:audio\/\w+;base64,/, "");
+      const audioMime = mimeType || "audio/webm";
 
-        const geminiRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              contents: [
-                {
-                  parts: [
-                    {
-                      inlineData: {
-                        mimeType: audioMime,
-                        data: cleanBase64,
+      for (const model of modelsToTry) {
+        try {
+          const geminiRes = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [
+                  {
+                    parts: [
+                      {
+                        inlineData: {
+                          mimeType: audioMime,
+                          data: cleanBase64,
+                        },
                       },
-                    },
-                    {
-                      text: `You are an AI speech transcriber and assistant for KalaSamanvaya (ಕಲಾ ಸಮನ್ವಯ), a Karnataka craft platform.
+                      {
+                        text: `You are an AI speech transcriber and assistant for KalaSamanvaya (ಕಲಾ ಸಮನ್ವಯ), a Karnataka craft platform.
 Listen to this voice recording spoken in Kannada, Indian English, or Kanglish.
 1. Transcribe the exact spoken words into "rawTranscript".
 2. If this is a craft listing (e.g., "80 kasuti shawls 600 rupees"), also extract craft, quantity, and price. If it is a general question or message, transcribe it and set quantity to 1.
@@ -58,54 +60,57 @@ Return ONLY a valid JSON object matching this schema without markdown code block
   "leadTimeDays": 7,
   "confidence": 0.98
 }`,
-                    },
-                  ],
-                },
-              ],
-            }),
-          }
-        );
+                      },
+                    ],
+                  },
+                ],
+              }),
+            }
+          );
 
-        if (geminiRes.ok) {
-          const data = await geminiRes.json();
-          const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-          const cleaned = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
-          let parsed: any = {};
-          try {
-            parsed = JSON.parse(cleaned);
-          } catch (_) {
-            parsed = { rawTranscript: cleaned };
+          if (geminiRes.ok) {
+            const data = await geminiRes.json();
+            const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+            const cleaned = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
+            let parsed: any = {};
+            try {
+              parsed = JSON.parse(cleaned);
+            } catch (_) {
+              parsed = { rawTranscript: cleaned };
+            }
+            if (parsed && (parsed.rawTranscript || parsed.itemName)) {
+              return NextResponse.json({
+                success: true,
+                extracted: {
+                  ...parsed,
+                  rawTranscript: parsed.rawTranscript || rawText,
+                },
+                source: `Google Gemini Multimodal (${model})`,
+              });
+            }
           }
-          if (parsed && (parsed.rawTranscript || parsed.itemName)) {
-            return NextResponse.json({
-              success: true,
-              extracted: {
-                ...parsed,
-                rawTranscript: parsed.rawTranscript || rawText,
-              },
-              source: "Google Gemini Multimodal Audio Transcriber",
-            });
-          }
+        } catch (err) {
+          console.warn(`Direct audio Gemini model ${model} notice:`, err);
         }
-      } catch (err) {
-        console.warn("Direct audio Gemini transcription failed, falling back to text:", err);
       }
     }
 
     // SCENARIO 2: Transcript text passed with Gemini API Key
     if (transcript && isGeminiAvailable) {
-      try {
-        const geminiRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              contents: [
-                {
-                  parts: [
-                    {
-                      text: `You are an AI assistant for KalaSamanvaya. Parse this rural artisan transcript: "${transcript}"
+      const modelsToTry = ["gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gemini-flash-latest"];
+      for (const model of modelsToTry) {
+        try {
+          const geminiRes = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [
+                  {
+                    parts: [
+                      {
+                        text: `You are an AI assistant for KalaSamanvaya. Parse this rural artisan transcript: "${transcript}"
 Extract into pure JSON without code fences:
 {
   "craft": "Kasuti" | "Beedu" | "Pottery" | "Bidriware" | "Channapatna Toys" | "Udupi Sarees" | "Yakshagana Regalia" | "Belagavi Terracotta",
@@ -119,37 +124,38 @@ Extract into pure JSON without code fences:
   "rawTranscript": "${transcript}",
   "confidence": 0.98
 }`,
-                    },
-                  ],
-                },
-              ],
-            }),
-          }
-        );
+                      },
+                    ],
+                  },
+                ],
+              }),
+            }
+          );
 
-        if (geminiRes.ok) {
-          const data = await geminiRes.json();
-          const rawText = data?.candidates?.[0]?.content?.parts?.find((p: any) => p.text)?.text || "";
-          const cleaned = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
-          let parsed: any = {};
-          try {
-            parsed = JSON.parse(cleaned);
-          } catch (_) {
-            parsed = { rawTranscript: cleaned };
+          if (geminiRes.ok) {
+            const data = await geminiRes.json();
+            const rawText = data?.candidates?.[0]?.content?.parts?.find((p: any) => p.text)?.text || "";
+            const cleaned = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
+            let parsed: any = {};
+            try {
+              parsed = JSON.parse(cleaned);
+            } catch (_) {
+              parsed = { rawTranscript: cleaned };
+            }
+            if (parsed && (parsed.rawTranscript || parsed.itemName || parsed.craft)) {
+              return NextResponse.json({
+                success: true,
+                extracted: {
+                  ...parsed,
+                  rawTranscript: parsed.rawTranscript || transcript,
+                },
+                source: `Google Gemini Text NLP (${model})`,
+              });
+            }
           }
-          if (parsed && (parsed.rawTranscript || parsed.itemName || parsed.craft)) {
-            return NextResponse.json({
-              success: true,
-              extracted: {
-                ...parsed,
-                rawTranscript: parsed.rawTranscript || transcript,
-              },
-              source: "Google Gemini AI Engine",
-            });
-          }
+        } catch (err) {
+          console.warn(`Gemini transcript model ${model} notice:`, err);
         }
-      } catch (err) {
-        console.warn("Gemini transcript parsing failed, using heuristic:", err);
       }
     }
 

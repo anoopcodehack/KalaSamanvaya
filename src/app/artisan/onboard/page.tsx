@@ -33,6 +33,10 @@ const CRAFT_IMAGE_MAP: Record<string, string> = {
   Beedu: "/assets/craft-beedu.jpg",
   Bidriware: "/assets/craft-bidri.jpg",
   "Channapatna Toys": "/assets/craft-channapatna.jpg",
+  "Yakshagana Regalia": "/assets/craft-yakshagana.jpg",
+  Yakshagana: "/assets/craft-yakshagana.jpg",
+  "Udupi Sarees": "/assets/craft-udupi-saree.jpg",
+  "Udupi Saree": "/assets/craft-udupi-saree.jpg",
 };
 
 const CRAFT_CLUSTER_MAP: Record<string, { kn: string; en: string }> = {
@@ -41,6 +45,10 @@ const CRAFT_CLUSTER_MAP: Record<string, { kn: string; en: string }> = {
   Beedu: { kn: "ಉಡುಪಿ ಬೀಡು ಕರಕುಶಲ ಸಂಘ (Udupi Beedu)", en: "Udupi Beedu Craft Society" },
   Bidriware: { kn: "ಬೀದರ್ ಬಿದ್ರಿ ಕಲೆ ಒಕ್ಕೂಟ (Bidar Cluster)", en: "Bidar Bidriware Guild" },
   "Channapatna Toys": { kn: "ರಾಮನಗರ ಚನ್ನಪಟ್ಟಣ ಆಟಿಕೆ ಸಂಘ", en: "Channapatna Toy Artisans" },
+  "Yakshagana Regalia": { kn: "ಉಡುಪಿ & ಹೊನ್ನಾವರ ಯಕ್ಷಗಾನ ಕಲಾ ಮಂಡಳಿ (Udupi & Honnavar)", en: "Udupi & Honnavar Yakshagana Artisan Guild" },
+  Yakshagana: { kn: "ಉಡುಪಿ & ಹೊನ್ನಾವರ ಯಕ್ಷಗಾನ ಕಲಾ ಮಂಡಳಿ (Udupi & Honnavar)", en: "Udupi & Honnavar Yakshagana Artisan Guild" },
+  "Udupi Sarees": { kn: "ಉಡುಪಿ ಪ್ರಾಥಮಿಕ ನೇಕಾರರ ಸಹಕಾರ ಸಂಘ (Udupi Handloom)", en: "Udupi Handloom Weavers Co-operative Society" },
+  "Udupi Saree": { kn: "ಉಡುಪಿ ಪ್ರಾಥಮಿಕ ನೇಕಾರರ ಸಹಕಾರ ಸಂಘ (Udupi Handloom)", en: "Udupi Handloom Weavers Co-operative Society" },
 };
 
 export default function ArtisanOnboardPage() {
@@ -77,8 +85,21 @@ export default function ArtisanOnboardPage() {
     } else if (CRAFT_IMAGE_MAP[extracted.craft]) {
       setUploadedImageUrl(CRAFT_IMAGE_MAP[extracted.craft]);
     }
-    if (CRAFT_CLUSTER_MAP[extracted.craft]) {
-      setClusterRegion(language === "kn" ? CRAFT_CLUSTER_MAP[extracted.craft].kn : CRAFT_CLUSTER_MAP[extracted.craft].en);
+
+    const clusterKey = Object.keys(CRAFT_CLUSTER_MAP).find(
+      (k) => k.toLowerCase() === extracted.craft.toLowerCase() || extracted.craft.toLowerCase().includes(k.toLowerCase())
+    );
+    if (clusterKey && CRAFT_CLUSTER_MAP[clusterKey]) {
+      setClusterRegion(language === "kn" ? CRAFT_CLUSTER_MAP[clusterKey].kn : CRAFT_CLUSTER_MAP[clusterKey].en);
+      if (clusterKey.includes("Yakshagana")) {
+        setArtisanName(language === "kn" ? "ಗಣಪತಿ ಹೆಗಡೆ (ಹೊನ್ನಾವರ)" : "Ganapati Hegde (Honnavar)");
+      } else if (clusterKey.includes("Udupi")) {
+        setArtisanName(language === "kn" ? "ಶೇಖರ್ ದೇವಾಡಿಗ (ಉಡುಪಿ)" : "Shekhar Devadiga (Udupi)");
+      } else if (clusterKey.includes("Pottery")) {
+        setArtisanName(language === "kn" ? "ಬಸವರಾಜ್ ಕುಂಬಾರ್ (ಖಾನಾಪುರ)" : "Basavaraj Kumbar (Khanapur)");
+      } else if (clusterKey.includes("Kasuti")) {
+        setArtisanName(language === "kn" ? "ಸವಿತಾ ನಾಯ್ಕ್ (ಧಾರವಾಡ)" : "Savita Naik (Dharwad)");
+      }
     }
   };
 
@@ -120,13 +141,13 @@ export default function ArtisanOnboardPage() {
           priceINR: listing.pricePerUnitINR,
           quantity: listing.quantity,
           artisanName,
-          artisanKannadaName: language === "kn" ? "ಸವಿತಾ ನಾಯ್ಕ್" : artisanName,
+          artisanKannadaName: artisanName,
           artisanCluster: clusterRegion,
-          artisanDistrict: "Dharwad",
+          artisanDistrict: listing.craft.toLowerCase().includes("yaksha") || listing.craft.toLowerCase().includes("udupi") ? "Udupi & Honnavar" : listing.craft.toLowerCase().includes("pottery") ? "Belagavi" : listing.craft.toLowerCase().includes("bidri") ? "Bidar" : "Dharwad",
           leadTimeDays: listing.leadTimeDays,
           imageUrl: uploadedImageUrl,
           shortDescription: listing.material,
-          craftStory: "ಕಲಾ ಸಮನ್ವಯ AI ಕ್ಯಾಮೆರಾ ತಪಾಸಣೆಯಿಂದ ಪರಿಶೀಲಿಸಲ್ಪಟ್ಟ ನೈಜ ಕರಕುಶಲ ಕೃತಿ. 75% ನೇರ ಕೂಲಿ ಖಾತರಿ.",
+          craftStory: `${clusterRegion} - ಪರಿಶೀಲಿಸಲ್ಪಟ್ಟ ನೈಜ ಕರಕುಶಲ ಕೃತಿ. 75% ನೇರ ಕೂಲಿ ಖಾತರಿ.`,
         }),
       });
     } catch (err) {

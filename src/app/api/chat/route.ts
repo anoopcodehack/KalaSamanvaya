@@ -44,39 +44,43 @@ export async function POST(req: Request) {
     let botResponse = "";
 
     if (isGeminiAvailable) {
-      try {
-        const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              contents: [
-                {
-                  role: "user",
-                  parts: [
-                    { text: `${SYSTEM_PROMPT}\n\nBuyer Question: "${userMessage}"\nHelpful, concise answer:` }
-                  ]
-                }
-              ],
-              generationConfig: {
-                maxOutputTokens: 2048,
-                temperature: 0.7,
-              },
-            }),
-          }
-        );
+      const modelsToTry = ["gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gemini-flash-latest"];
+      for (const model of modelsToTry) {
+        try {
+          const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [
+                  {
+                    role: "user",
+                    parts: [
+                      { text: `${SYSTEM_PROMPT}\n\nBuyer Question: "${userMessage}"\nHelpful, concise answer:` }
+                    ]
+                  }
+                ],
+                generationConfig: {
+                  maxOutputTokens: 2048,
+                  temperature: 0.7,
+                },
+              }),
+            }
+          );
 
-        if (response.ok) {
-          const data = await response.json();
-          const candidate = data.candidates?.[0];
-          const textPart = candidate?.content?.parts?.find((p: any) => p.text);
-          if (textPart && textPart.text) {
-            botResponse = textPart.text.trim();
+          if (response.ok) {
+            const data = await response.json();
+            const candidate = data.candidates?.[0];
+            const textPart = candidate?.content?.parts?.find((p: any) => p.text);
+            if (textPart && textPart.text) {
+              botResponse = textPart.text.trim();
+              break;
+            }
           }
+        } catch (geminiErr) {
+          console.warn(`Gemini chat model ${model} notice:`, geminiErr);
         }
-      } catch (geminiErr) {
-        console.warn("Gemini chat fallback:", geminiErr);
       }
     }
 
