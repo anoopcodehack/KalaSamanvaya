@@ -15,7 +15,8 @@ import {
   Volume2,
   VolumeX,
   Sparkles,
-  Info
+  Info,
+  AlertCircle
 } from "lucide-react";
 import { playSpeech, stopSpeech } from "@/lib/voice/playSpeech";
 
@@ -85,9 +86,15 @@ export default function CraftChatBot() {
   const [isListening, setIsListening] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null);
+  const [voiceNotice, setVoiceNotice] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const streamRef = useRef<MediaStream | null>(null);
+  const finalTextRef = useRef<string>("");
+  const silenceTimerRef = useRef<any>(null);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -101,20 +108,212 @@ export default function CraftChatBot() {
     if (!isOpen) {
       stopSpeech();
       setSpeakingMsgId(null);
-      if (recognitionRef.current) {
-        try {
-          recognitionRef.current.stop();
-        } catch (_) {}
-      }
-      setIsListening(false);
+      stopListening();
     }
   }, [isOpen]);
 
-  // Switch initial messages if switched when at start
+  // Stop listening helper
+  const stopListening = () => {
+    if (silenceTimerRef.current) {
+      clearTimeout(silenceTimerRef.current);
+      silenceTimerRef.current = null;
+    }
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.abort();
+      } catch (_) {}
+      recognitionRef.current = null;
+    }
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      try {
+        mediaRecorderRef.current.stop();
+      } catch (_) {}
+      mediaRecorderRef.current = null;
+    }
+    if (streamRef.current) {
+      try {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+      } catch (_) {}
+      streamRef.current = null;
+    }
+    setIsListening(false);
+  };
+
+  // Start listening with real-time interim transcript & audio backup
+  const startListening = async (lang: "kn" | "en" = language) => {
+    stopSpeech();
+    setVoiceNotice(null);
+    finalTextRef.current = "";
+
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    // 1. Microphone capture & fallback recorder
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: true, noiseSuppression: true }
+        });
+        streamRef.current = stream;
+
+        let mimeType = "audio/webm";
+        if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
+          mimeType = "audio/webm;codecs=opus";
+        }
+        audioChunksRef.current = [];
+        const recorder = new MediaRecorder(stream, { mimeType });
+        recorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) audioChunksRef.current.push(e.data);
+        };
+        recorder.onstop = async () => {
+          const textNow = (finalTextRef.current || inputValue).trim();
+          if (!textNow && audioChunksRef.current.length > 0) {
+            const blob = new Blob(audioChunksRef.current, { type: mimeType });
+            if (blob.size > 1500) {
+              const reader = new FileReader();
+              reader.onloadend = async () => {
+                const res = reader.result as string;
+                const audioBase64 = res.includes(",") ? res.split(",")[1] : res;
+                try {
+                  const parseRes = await fetch("/api/voice-parse", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ audioBase64, mimeType })
+                  });
+                  if (parseRes.ok) {
+                    const data = await parseRes.json();
+                    const text = data?.extracted?.rawTranscript || data?.extracted?.itemName;
+                    if (text && text.trim()) {
+                      setInputValue(text);
+                      handleSend(text);
+                    }
+                  }
+                } catch (e) {
+                  console.warn("Audio fallback error:", e);
+                }
+              };
+              reader.readAsDataURL(blob);
+            }
+          }
+        };
+        recorder.start(250);
+        mediaRecorderRef.current = recorder;
+      }
+    } catch (permErr: any) {
+      console.warn("Mic permission notice:", permErr);
+      if (permErr.name === "NotAllowedError" || permErr.name === "PermissionDeniedError") {
+        setVoiceNotice(
+          lang === "kn"
+            ? "ಮೈಕ್ರೊಫೋನ್ ಅನುಮತಿ ನಿರಾಕರಿಸಲಾಗಿದೆ. ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಅನುಮತಿಸಿ."
+            : "Microphone permission denied. Please allow microphone in browser settings."
+        );
+        return;
+      }
+    }
+
+    // 2. Primary Web Speech API
+    if (SpeechRecognition) {
+      try {
+        const recognition = new SpeechRecognition();
+        recognitionRef.current = recognition;
+        recognition.lang = lang === "kn" ? "kn-IN" : "en-IN";
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
+
+        recognition.onstart = () => {
+          setIsListening(true);
+          setVoiceNotice(null);
+        };
+
+        recognition.onresult = (event: any) => {
+          let interim = "";
+          let final = "";
+
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            const item = event.results[i];
+            if (item.isFinal) {
+              final += item[0].transcript + " ";
+            } else {
+              interim += item[0].transcript;
+            }
+          }
+
+          if (final.trim()) {
+            finalTextRef.current = (finalTextRef.current + " " + final).trim();
+            setInputValue(finalTextRef.current);
+          } else if (interim) {
+            const live = (finalTextRef.current + " " + interim).trim();
+            setInputValue(live);
+          }
+
+          // Automatically send after 2.2s pause in speech
+          if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+          silenceTimerRef.current = setTimeout(() => {
+            const captured = (finalTextRef.current || interim).trim();
+            if (captured.length > 2) {
+              stopListening();
+              handleSend(captured);
+            }
+          }, 2200);
+        };
+
+        recognition.onerror = (e: any) => {
+          console.warn("Speech recognition notice:", e.error);
+          if (e.error === "not-allowed" || e.error === "permission-denied") {
+            setVoiceNotice(
+              lang === "kn"
+                ? "ಮೈಕ್ರೊಫೋನ್ ಅನುಮತಿ ನಿರಾಕರಿಸಲಾಗಿದೆ."
+                : "Microphone permission denied."
+            );
+            stopListening();
+          } else if (e.error === "no-speech") {
+            // Keep listening
+          } else if (e.error !== "aborted") {
+            setVoiceNotice(
+              lang === "kn"
+                ? `ಧ್ವನಿ ಸೂಚನೆ: ${e.error}. ಕೆಳಗೆ ಟೈಪ್ ಮಾಡಿ.`
+                : `Speech notice: ${e.error}. Please type below.`
+            );
+          }
+        };
+
+        recognition.onend = () => {
+          setIsListening(false);
+        };
+
+        recognition.start();
+        setIsListening(true);
+      } catch (recErr) {
+        console.warn("SpeechRecognition start notice:", recErr);
+        setIsListening(true);
+      }
+    } else {
+      setIsListening(true);
+    }
+  };
+
+  const toggleListening = () => {
+    if (isListening) {
+      const textToSubmit = (finalTextRef.current || inputValue).trim();
+      stopListening();
+      if (textToSubmit.length > 1) {
+        handleSend(textToSubmit);
+      }
+    } else {
+      startListening(language);
+    }
+  };
+
+  // Switch language
   const handleSwitchLanguage = (newLang: "kn" | "en") => {
     setLanguage(newLang);
     stopSpeech();
     setSpeakingMsgId(null);
+    if (isListening) {
+      stopListening();
+      setTimeout(() => startListening(newLang), 200);
+    }
     if (messages.length <= 1) {
       setMessages(INITIAL_MESSAGES[newLang]);
     }
@@ -137,49 +336,6 @@ export default function CraftChatBot() {
       () => setSpeakingMsgId(msgId),
       () => setSpeakingMsgId(null)
     );
-  };
-
-  // Voice speech-to-text input (Mic button)
-  const toggleListening = () => {
-    if (isListening) {
-      recognitionRef.current?.stop();
-      setIsListening(false);
-      return;
-    }
-
-    const SpeechRecognition =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-
-    if (!SpeechRecognition) {
-      alert(
-        language === "kn"
-          ? "ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಧ್ವನಿ ಗುರುತಿಸುವಿಕೆ ಲಭ್ಯವಿಲ್ಲ. ದಯವಿಟ್ಟು ಟೈಪ್ ಮಾಡಿ."
-          : "Speech recognition is not supported in this browser. Please type your query."
-      );
-      return;
-    }
-
-    try {
-      const recognition = new SpeechRecognition();
-      recognition.lang = language === "kn" ? "kn-IN" : "en-IN";
-      recognition.interimResults = false;
-      recognition.continuous = false;
-
-      recognition.onstart = () => setIsListening(true);
-      recognition.onend = () => setIsListening(false);
-      recognition.onerror = () => setIsListening(false);
-
-      recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
-        setInputValue(transcript);
-        handleSend(transcript);
-      };
-
-      recognitionRef.current = recognition;
-      recognition.start();
-    } catch (_) {
-      setIsListening(false);
-    }
   };
 
   // Send message to backend Gemini /api/chat
@@ -439,41 +595,102 @@ export default function CraftChatBot() {
             ))}
           </div>
 
+          {/* Live Voice Indicator & Language Switcher Banner */}
+          {isListening && (
+            <div className="px-3.5 py-2 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-t border-amber-200/90 flex items-center justify-between text-xs text-amber-950">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-600"></span>
+                </span>
+                <span className="font-semibold text-[11px]">
+                  {language === "kn" ? "ಧ್ವನಿ ಕೇಳಿಸಿಕೊಳ್ಳಲಾಗುತ್ತಿದೆ (ಕನ್ನಡ)..." : "Listening to your voice (English)..."}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleSwitchLanguage(language === "kn" ? "en" : "kn")}
+                className="text-[10px] font-bold px-2 py-0.5 rounded bg-white border border-amber-300 text-stone-700 hover:bg-amber-100 transition-colors shadow-xs"
+                title="Switch voice recognition language"
+              >
+                {language === "kn" ? "Switch to English" : "ಕನ್ನಡಕ್ಕೆ ಬದಲಿಸಿ"}
+              </button>
+            </div>
+          )}
+
+          {voiceNotice && (
+            <div className="px-3 py-1.5 bg-red-50 border-t border-red-200 flex items-center justify-between text-[11px] text-red-800">
+              <div className="flex items-center gap-1.5">
+                <AlertCircle className="w-3.5 h-3.5 text-red-600 flex-shrink-0" />
+                <span>{voiceNotice}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setVoiceNotice(null)}
+                className="text-red-500 hover:text-red-800 text-xs font-bold px-1"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+
           {/* Input Footer */}
-          <div className="p-3 bg-white border-t border-stone-200 flex items-center gap-2">
+          <div className="p-3 bg-white border-t border-stone-200 flex items-center gap-1.5">
             {/* Mic Button for Voice input */}
             <button
               type="button"
               onClick={toggleListening}
               className={`p-2.5 rounded-xl transition-all ${
                 isListening
-                  ? "bg-red-500 text-white animate-pulse shadow-md"
-                  : "bg-stone-100 hover:bg-amber-100 text-[#C85A32] border border-amber-200"
+                  ? "bg-red-500 text-white animate-pulse shadow-md ring-2 ring-red-300"
+                  : "bg-amber-50 hover:bg-amber-100 text-[#C85A32] border border-amber-200"
               }`}
               title={
                 isListening
                   ? language === "kn"
-                    ? "ಕೇಳಿಸಿಕೊಳ್ಳಲಾಗುತ್ತಿದೆ..."
-                    : "Listening..."
+                    ? "ನಿಲ್ಲಿಸಲು ಕ್ಲಿಕ್ ಮಾಡಿ"
+                    : "Click to stop listening"
                   : language === "kn"
-                  ? "ಕನ್ನಡದಲ್ಲಿ ಮಾತನಾಡಿ ಕೇಳಿ"
+                  ? "ಕನ್ನಡದಲ್ಲಿ ಮಾತನಾಡಿ (ಕ್ಲಿಕ್ ಮಾಡಿ)"
                   : "Speak question in English or Kannada"
               }
             >
               {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
             </button>
 
+            {/* Quick Language Toggle Pill */}
+            <button
+              type="button"
+              onClick={() => handleSwitchLanguage(language === "kn" ? "en" : "kn")}
+              className="px-2 py-2 rounded-xl text-[10px] font-bold uppercase transition-colors bg-stone-100 hover:bg-amber-100 text-stone-700 border border-stone-200 flex-shrink-0"
+              title={
+                language === "kn"
+                  ? "ಧ್ವನಿ ಭಾಷೆ: ಕನ್ನಡ (ಕ್ಲಿಕ್ ಮಾಡಿ English ಗೆ ಬದಲಿಸಿ)"
+                  : "Voice Language: English (Click to toggle Kannada)"
+              }
+            >
+              {language === "kn" ? "ಕನ್ನಡ" : "ENG"}
+            </button>
+
             <input
               type="text"
               placeholder={
-                language === "kn"
+                isListening
+                  ? language === "kn"
+                    ? "ಮಾತನಾಡಿ... ಧ್ವನಿ ಮುದ್ರಣವಾಗುತ್ತಿದೆ"
+                    : "Speaking... transcribing voice live"
+                  : language === "kn"
                   ? "ಕನ್ನಡದಲ್ಲಿ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಕೇಳಿ..."
                   : "Ask in Kannada or English..."
               }
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="flex-1 py-2 px-3 text-xs bg-[#FAF7F2] rounded-xl border border-stone-300 focus:outline-none focus:ring-1 focus:ring-[#C85A32] text-stone-800 placeholder-stone-400"
+              className={`flex-1 py-2 px-3 text-xs rounded-xl border focus:outline-none focus:ring-1 focus:ring-[#C85A32] text-stone-800 placeholder-stone-400 transition-colors ${
+                isListening
+                  ? "bg-amber-50/50 border-amber-300 ring-1 ring-amber-200"
+                  : "bg-[#FAF7F2] border-stone-300"
+              }`}
             />
 
             <button
