@@ -23,12 +23,31 @@ export const KANNADA_CRAFT_DICTIONARY: Record<string, { craft: string; kannada: 
   "ನೀರಿನ ಜಗ್ಗು": { craft: "Pottery", kannada: "ನೀರಿನ ಜಗ್ಗು", material: "Terracotta Clay & River Silt", defaultPrice: 350, defaultLead: 7, defaultTitle: "Handcrafted Terracotta Water Jugs" },
   "ನೀರು": { craft: "Pottery", kannada: "ನೀರಿನ ಜಗ್ಗು", material: "Terracotta Clay & Natural Finish", defaultPrice: 350, defaultLead: 7, defaultTitle: "Terracotta Water Storage Jugs" },
   "ಕುಂಬಾರಿಕೆ": { craft: "Pottery", kannada: "ಕುಂಬಾರಿಕೆ ಕಲೆ", material: "Riverbed Terracotta Clay", defaultPrice: 350, defaultLead: 7, defaultTitle: "Artisanal Terracotta Earthenware" },
+  "ಖಾನಾಪುರ": { craft: "Pottery", kannada: "ಖಾನಾಪುರ ಮಣ್ಣಿನ ಕಲೆ", material: "Malaprabha Riverbed Red Clay", defaultPrice: 750, defaultLead: 7, defaultTitle: "Khanapur Belagavi Terracotta Water Jugs" },
+  "ಬೆಳಗಾವಿ": { craft: "Pottery", kannada: "ಬೆಳಗಾವಿ ಮಡಿಕೆ", material: "Malaprabha Riverbed Clay", defaultPrice: 750, defaultLead: 7, defaultTitle: "Belagavi Terracotta Earthenware" },
+  "ಉಡುಪಿ ಸೀರೆ": { craft: "Handloom", kannada: "ಉಡುಪಿ ಕೈಮಗ್ಗ ಸೀರೆ", material: "100% Combed Organic Cotton", defaultPrice: 2350, defaultLead: 14, defaultTitle: "Udupi GI Heritage Handloom Cotton Sarees" },
+  "ಉಡುಪಿ": { craft: "Handloom", kannada: "ಉಡುಪಿ ಕೈಮಗ್ಗ ಸೀರೆ", material: "100% Combed Organic Cotton", defaultPrice: 2350, defaultLead: 14, defaultTitle: "Udupi GI Heritage Handloom Cotton Sarees" },
+  "ಕೈಮಗ್ಗ": { craft: "Handloom", kannada: "ಕೈಮಗ್ಗ ಸೀರೆ", material: "Combed Cotton on Frame Looms", defaultPrice: 2350, defaultLead: 14, defaultTitle: "Udupi Coastal Handloom Sarees" },
+  "ಯಕ್ಷಗಾನ": { craft: "Yakshagana", kannada: "ಯಕ್ಷಗಾನ ಕಲೆ", material: "Carved Honne Wood, Brass Foil & Stage Mirrors", defaultPrice: 3450, defaultLead: 14, defaultTitle: "Yakshagana Traditional Stage Kireeta" },
+  "ಕಿರೀಟ": { craft: "Yakshagana", kannada: "ಯಕ್ಷಗಾನ ಕಿರೀಟ", material: "Carved Wood & Gold Foil", defaultPrice: 3450, defaultLead: 14, defaultTitle: "Yakshagana Handcrafted Kireeta" },
   "ಬಿದ್ರಿ": { craft: "Bidriware", kannada: "ಬಿದ್ರಿ ಕಲೆ", material: "Zinc-Copper Alloy with Pure Silver Wire", defaultPrice: 1400, defaultLead: 20, defaultTitle: "Bidar Pure Silver Inlay Bidriware" },
   "ಬೆಳ್ಳಿ": { craft: "Bidriware", kannada: "ಬೆಳ್ಳಿ ಕೆತ್ತನೆ", material: "Pure 99.9% Silver Wire", defaultPrice: 1400, defaultLead: 20, defaultTitle: "Bidar Silver Wire Engraved Craft" },
   "ಚನ್ನಪಟ್ಟಣ": { craft: "Channapatna Toys", kannada: "ಚನ್ನಪಟ್ಟಣದ ಬಣ್ಣದ ಆಟಿಕೆ", material: "Natural Ivory Wood & Organic Vegetable Dyes", defaultPrice: 550, defaultLead: 12, defaultTitle: "Channapatna Organic Wooden Toys" },
   "ಆಟಿಕೆ": { craft: "Channapatna Toys", kannada: "ಚನ್ನಪಟ್ಟಣದ ಬಣ್ಣದ ಆಟಿಕೆ", material: "Natural Ivory Wood & Lacquer Polish", defaultPrice: 550, defaultLead: 12, defaultTitle: "Traditional Lacquer Wooden Toys" },
 
   // English & Transliterated terms (for bilingual speech / Kanglish)
+  "khanapur terracotta": { craft: "Pottery", kannada: "ಖಾನಾಪುರ ಟೆರಾಕೋಟಾ", material: "Malaprabha Riverbed Red Clay", defaultPrice: 1200, defaultLead: 10, defaultTitle: "Khanapur Belagavi Terracotta Garden Urn" },
+  "belagavi terracotta": { craft: "Pottery", kannada: "ಬೆಳಗಾವಿ ಟೆರಾಕೋಟಾ", material: "Malaprabha Riverbed Red Clay", defaultPrice: 1200, defaultLead: 10, defaultTitle: "Khanapur Belagavi Terracotta Earthenware" },
+  "khanapur": { craft: "Pottery", kannada: "ಖಾನಾಪುರ ಮಣ್ಣಿನ ಕಲೆ", material: "Malaprabha Riverbed Red Clay", defaultPrice: 750, defaultLead: 7, defaultTitle: "Khanapur Belagavi Terracotta Water Jugs" },
+  "belagavi": { craft: "Pottery", kannada: "ಬೆಳಗಾವಿ ಮಡಿಕೆ", material: "Malaprabha Riverbed Clay", defaultPrice: 750, defaultLead: 7, defaultTitle: "Belagavi Terracotta Earthenware" },
+  "udupi sarees": { craft: "Handloom", kannada: "ಉಡುಪಿ ಕೈಮಗ್ಗ ಸೀರೆ", material: "100% Combed Organic Cotton", defaultPrice: 2350, defaultLead: 14, defaultTitle: "Udupi GI Heritage Handloom Cotton Sarees" },
+  "udupi saree": { craft: "Handloom", kannada: "ಉಡುಪಿ ಕೈಮಗ್ಗ ಸೀರೆ", material: "100% Combed Organic Cotton", defaultPrice: 2350, defaultLead: 14, defaultTitle: "Udupi GI Heritage Handloom Cotton Sarees" },
+  "udupi cotton": { craft: "Handloom", kannada: "ಉಡುಪಿ ಕೈಮಗ್ಗ ಸೀರೆ", material: "100% Combed Organic Cotton", defaultPrice: 2350, defaultLead: 14, defaultTitle: "Udupi GI Heritage Handloom Cotton Sarees" },
+  "udupi": { craft: "Handloom", kannada: "ಉಡುಪಿ ಕೈಮಗ್ಗ ಸೀರೆ", material: "100% Combed Organic Cotton", defaultPrice: 2350, defaultLead: 14, defaultTitle: "Udupi GI Heritage Handloom Cotton Sarees" },
+  "handloom": { craft: "Handloom", kannada: "ಕೈಮಗ್ಗ ಸೀರೆ", material: "Combed Cotton on Frame Looms", defaultPrice: 2350, defaultLead: 14, defaultTitle: "Udupi Coastal Handloom Sarees" },
+  "yakshagana": { craft: "Yakshagana", kannada: "ಯಕ್ಷಗಾನ ಕಲೆ", material: "Carved Honne Wood, Brass Foil & Stage Mirrors", defaultPrice: 3450, defaultLead: 14, defaultTitle: "Yakshagana Traditional Stage Kireeta" },
+  "kireeta": { craft: "Yakshagana", kannada: "ಯಕ್ಷಗಾನ ಕಿರೀಟ", material: "Carved Wood & Gold Foil", defaultPrice: 3450, defaultLead: 14, defaultTitle: "Yakshagana Handcrafted Kireeta" },
+  "regalia": { craft: "Yakshagana", kannada: "ಯಕ್ಷಗಾನ ರಂಗ ಪರಿಕರ", material: "Carved Wood & Brass Foil", defaultPrice: 3450, defaultLead: 14, defaultTitle: "Yakshagana Stage Folk Regalia" },
   "water jug": { craft: "Pottery", kannada: "ನೀರಿನ ಜಗ್ಗು", material: "Terracotta Clay & River Silt", defaultPrice: 350, defaultLead: 7, defaultTitle: "Handcrafted Terracotta Water Jugs" },
   "water jugs": { craft: "Pottery", kannada: "ನೀರಿನ ಜಗ್ಗು", material: "Terracotta Clay & River Silt", defaultPrice: 350, defaultLead: 7, defaultTitle: "Handcrafted Terracotta Water Jugs" },
   "water pot": { craft: "Pottery", kannada: "ಜೇಡಿಮಣ್ಣಿನ ಮಡಿಕೆ", material: "Netravati Riverbed Silt & Stone Polish", defaultPrice: 350, defaultLead: 7, defaultTitle: "Terracotta Water Storage Pots" },
@@ -172,56 +191,55 @@ export function parseKannadaTranscript(transcript: string): ExtractedCraftListin
     }
   }
 
-  // 2. Quantity & Price Extraction
-  const digitsFound = normalizedText.match(/\d+/g)?.map(Number) || [];
-  
+  // 2. Quantity, Price & Lead Time Extraction
+  let leadTime = defaultLead;
+  let cleanText = normalizedText;
+
+  // Extract days (lead time) first so it is not confused with quantity or price
+  const daysMatch = cleanText.match(/(\d+)\s*(?:ದಿನಗಳು|ದಿನ|days?)/i);
+  if (daysMatch) {
+    leadTime = parseInt(daysMatch[1], 10);
+    cleanText = cleanText.replace(daysMatch[0], " ");
+  }
+
+  // Extract explicit price if adjacent to currency words (₹, rs, inr, rupees, ರೂಪಾಯಿ, ರೂ.)
+  let price = defaultPrice;
+  let foundExplicitPrice = false;
+  const explicitPrice = cleanText.match(/(?:rs\.?|inr|₹|ರೂ\.)\s*(\d{2,6})|(\d{2,6})\s*(?:rupees?|rs\.?|inr|ರೂಪಾಯಿ|ರೂ\.)/i);
+  if (explicitPrice) {
+    price = parseInt(explicitPrice[1] || explicitPrice[2], 10);
+    foundExplicitPrice = true;
+    cleanText = cleanText.replace(explicitPrice[0], " ");
+  }
+
+  // Extract remaining numbers from text
+  const digitsFound = cleanText.match(/\b\d+\b/g)?.map(Number) || [];
   const wordsFound: number[] = [];
   for (const [word, val] of Object.entries(NUMERAL_WORDS)) {
-    if (normalizedText.includes(word)) {
+    // Only match as whole word or clear delimiter
+    const wordRegex = new RegExp(`(^|\\s)${word}(\\s|$)`, "i");
+    if (wordRegex.test(cleanText)) {
       wordsFound.push(val);
     }
   }
 
   const allNumbers = [...digitsFound, ...wordsFound];
-
-  let quantity = 80;
-  let price = defaultPrice;
-  let leadTime = defaultLead;
+  let quantity = 50;
 
   if (allNumbers.length === 1) {
-    if (allNumbers[0] > 150) {
+    if (!foundExplicitPrice && allNumbers[0] > 200) {
       price = allNumbers[0];
     } else {
       quantity = allNumbers[0];
     }
   } else if (allNumbers.length >= 2) {
-    const sorted = [...allNumbers].sort((a, b) => a - b);
-    const smallNums = sorted.filter(n => n <= 250);
-    const largeNums = sorted.filter(n => n > 250);
-
-    if (smallNums.length > 0) {
-      quantity = smallNums[0];
+    if (foundExplicitPrice) {
+      quantity = allNumbers[0];
+    } else {
+      const sorted = [...allNumbers].sort((a, b) => a - b);
+      quantity = sorted[0];
+      price = sorted[sorted.length - 1];
     }
-    if (largeNums.length > 0) {
-      price = largeNums[0];
-    } else if (sorted.length >= 2) {
-      price = sorted[1];
-    }
-  }
-
-  // If user specified quantity 40 for water jugs, ensure quantity is 40
-  if (normalizedText.includes("40") || normalizedText.includes("forty") || normalizedText.includes("೪೦") || normalizedText.includes("ನಲವತ್ತು")) {
-    quantity = 40;
-  } else if (normalizedText.includes("50") || normalizedText.includes("fifty") || normalizedText.includes("೫೦") || normalizedText.includes("ಐವತ್ತು")) {
-    quantity = 50;
-  } else if (normalizedText.includes("80") || normalizedText.includes("eighty") || normalizedText.includes("೮೦") || normalizedText.includes("ಎಂಬತ್ತು")) {
-    quantity = 80;
-  }
-
-  // Check for days (lead time)
-  const daysMatch = normalizedText.match(/(\d+)\s*(ದಿನ|day|days)/i);
-  if (daysMatch) {
-    leadTime = parseInt(daysMatch[1], 10);
   }
 
   return {

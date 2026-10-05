@@ -25,7 +25,7 @@ export async function POST(req: Request) {
         const audioMime = mimeType || "audio/webm";
 
         const geminiRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -48,8 +48,8 @@ Listen to this voice recording (spoken in Kannada or Indian English).
 Return ONLY a valid JSON object matching this schema without markdown code blocks:
 {
   "rawTranscript": "spoken text in Kannada or English",
-  "craft": "Kasuti" | "Beedu" | "Pottery" | "Bidriware" | "Channapatna Toys",
-  "craftKannada": "ಕಸೂತಿ ಕಲೆ" | "ಬೀಡು ಬುಟ್ಟಿ" | "ಜೇಡಿಮಣ್ಣಿನ ಮಡಿಕೆ" | "ಬಿದ್ರಿ ಕಲೆ" | "ಚನ್ನಪಟ್ಟಣದ ಬಣ್ಣದ ಆಟಿಕೆ",
+  "craft": "Kasuti" | "Beedu" | "Pottery" | "Bidriware" | "Channapatna Toys" | "Udupi Sarees" | "Yakshagana Regalia" | "Belagavi Terracotta",
+  "craftKannada": "ಕಸೂತಿ ಕಲೆ" | "ಬೀಡು ಬುಟ್ಟಿ" | "ಜೇಡಿಮಣ್ಣಿನ ಮಡಿಕೆ" | "ಬಿದ್ರಿ ಕಲೆ" | "ಚನ್ನಪಟ್ಟಣದ ಬಣ್ಣದ ಆಟಿಕೆ" | "ಉಡುಪಿ ಸೀರೆ" | "ಯಕ್ಷಗಾನ ಕಿರೀಟ" | "ಖಾನಾಪುರ ಟೆರಾಕೋಟಾ",
   "itemName": "Authentic Handcrafted item title",
   "quantity": number,
   "pricePerUnitINR": number,
@@ -88,7 +88,7 @@ Return ONLY a valid JSON object matching this schema without markdown code block
     if (transcript && isGeminiAvailable) {
       try {
         const geminiRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -100,8 +100,8 @@ Return ONLY a valid JSON object matching this schema without markdown code block
                       text: `You are an AI assistant for KalaSamanvaya. Parse this rural artisan transcript: "${transcript}"
 Extract into pure JSON without code fences:
 {
-  "craft": "Kasuti" | "Beedu" | "Pottery" | "Bidriware" | "Channapatna Toys",
-  "craftKannada": "ಕಸೂತಿ ಕಲೆ" | "ಬೀಡು ಬುಟ್ಟಿ" | "ಜೇಡಿಮಣ್ಣಿನ ಮಡಿಕೆ" | "ಬಿದ್ರಿ ಕಲೆ" | "ಚನ್ನಪಟ್ಟಣದ ಬಣ್ಣದ ಆಟಿಕೆ",
+  "craft": "Kasuti" | "Beedu" | "Pottery" | "Bidriware" | "Channapatna Toys" | "Udupi Sarees" | "Yakshagana Regalia" | "Belagavi Terracotta",
+  "craftKannada": "ಕಸೂತಿ ಕಲೆ" | "ಬೀಡು ಬುಟ್ಟಿ" | "ಜೇಡಿಮಣ್ಣಿನ ಮಡಿಕೆ" | "ಬಿದ್ರಿ ಕಲೆ" | "ಚನ್ನಪಟ್ಟಣದ ಬಣ್ಣದ ಆಟಿಕೆ" | "ಉಡುಪಿ ಸೀರೆ" | "ಯಕ್ಷಗಾನ ಕಿರೀಟ" | "ಖಾನಾಪುರ ಟೆರಾಕೋಟಾ",
   "itemName": "Descriptive Item Title",
   "quantity": number,
   "pricePerUnitINR": number,

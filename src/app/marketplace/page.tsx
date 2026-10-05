@@ -91,20 +91,6 @@ export default function MarketplacePage() {
     setVoiceNotice(null);
     setInterimTranscript("");
 
-    // Request microphone access to guarantee active stream & permission
-    try {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaStreamRef.current = stream;
-      }
-    } catch (permErr: any) {
-      console.warn("Microphone access notice:", permErr);
-      if (permErr.name === "NotAllowedError" || permErr.name === "PermissionDeniedError") {
-        setVoiceNotice("Microphone permission denied. Please allow microphone access in your browser settings.");
-        return;
-      }
-    }
-
     try {
       if (recognitionRef.current) {
         try { recognitionRef.current.abort(); } catch {}
@@ -135,6 +121,10 @@ export default function MarketplacePage() {
         }
         if (interim) {
           setInterimTranscript(interim);
+          const liveText = interim.trim().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "");
+          if (liveText.length > 1) {
+            setSearchQuery(liveText);
+          }
         }
         if (final) {
           const cleaned = final.trim().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "");
@@ -147,8 +137,8 @@ export default function MarketplacePage() {
         console.warn("Speech recognition notice:", e.error);
         if (e.error === "no-speech") {
           setVoiceNotice("No voice detected. Please speak clearly into your microphone.");
-        } else if (e.error === "not-allowed") {
-          setVoiceNotice("Microphone access was denied. Please allow microphone access.");
+        } else if (e.error === "not-allowed" || e.error === "permission-denied") {
+          setVoiceNotice("Microphone access was denied. Please allow microphone access in your browser settings.");
         } else if (e.error !== "aborted") {
           setVoiceNotice(`Speech notice: ${e.error}. Type or click a suggestion below.`);
         }
@@ -157,10 +147,6 @@ export default function MarketplacePage() {
 
       recognition.onend = () => {
         setIsListening(false);
-        if (mediaStreamRef.current) {
-          mediaStreamRef.current.getTracks().forEach((track) => track.stop());
-          mediaStreamRef.current = null;
-        }
       };
 
       recognition.start();

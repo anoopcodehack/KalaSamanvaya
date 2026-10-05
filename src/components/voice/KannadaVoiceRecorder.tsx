@@ -27,6 +27,16 @@ const DEMO_PRESETS = {
       label: "೪೦ ಜೇಡಿಮಣ್ಣಿನ ಮಡಿಕೆಗಳು",
       transcript: "ನನ್ನ ಬಳಿ 40 ಮಡಿಕೆ ಜಗ್ಗುಗಳಿವೆ, ಒಂದಕ್ಕೆ 350 ರೂಪಾಯಿ, 7 ದಿನಗಳಲ್ಲಿ ಕೊಡಬಹುದು",
       craft: "Pottery"
+    },
+    {
+      label: "೨೫ ಖಾನಾಪುರ ಟೆರಾಕೋಟಾ ಕುಂಡಗಳು",
+      transcript: "ನನ್ನ ಬಳಿ ಬೆಳಗಾವಿ ಖಾನಾಪುರದ 25 ಟೆರಾಕೋಟಾ ಮಣ್ಣಿನ ಕುಂಡಗಳಿವೆ, ಒಂದಕ್ಕೆ 1200 ರೂಪಾಯಿ, 10 ದಿನಗಳಲ್ಲಿ ಕಳುಹಿಸುತ್ತೇನೆ",
+      craft: "Pottery"
+    },
+    {
+      label: "೧೫ ಉಡುಪಿ ಹತ್ತಿ ಸೀರೆಗಳು",
+      transcript: "ನಮ್ಮ ಬಳಿ 15 ಉಡುಪಿ ಕೈಮಗ್ಗದ ನೈಸರ್ಗಿಕ ಹತ್ತಿ ಸೀರೆಗಳಿವೆ, ಒಂದಕ್ಕೆ 2350 ರೂಪಾಯಿ, 8 ದಿನಗಳಲ್ಲಿ ಕೊಡುತ್ತೇವೆ",
+      craft: "Udupi Sarees"
     }
   ],
   en: [
@@ -44,6 +54,16 @@ const DEMO_PRESETS = {
       label: "40 Terracotta Water Jugs",
       transcript: "I have 40 terracotta water jugs, 350 rupees each, delivery in 7 days",
       craft: "Pottery"
+    },
+    {
+      label: "25 Khanapur Terracotta Urns",
+      transcript: "We have 25 Belagavi Khanapur terracotta garden urns, 1200 rupees each, dispatch in 10 days",
+      craft: "Pottery"
+    },
+    {
+      label: "15 Udupi Handloom Sarees",
+      transcript: "I have 15 authentic GI tagged Udupi cotton sarees, 2350 rupees each, delivery in 8 days",
+      craft: "Udupi Sarees"
     }
   ]
 };
@@ -119,13 +139,14 @@ export default function KannadaVoiceRecorder({
 
       if (audioBlob && audioBlob.size > 0) {
         mimeType = audioBlob.type || "audio/webm";
-        const buffer = await audioBlob.arrayBuffer();
-        const bytes = new Uint8Array(buffer);
-        let binary = "";
-        for (let i = 0; i < bytes.byteLength; i++) {
-          binary += String.fromCharCode(bytes[i]);
-        }
-        audioBase64 = btoa(binary);
+        audioBase64 = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const res = reader.result as string;
+            resolve(res.includes(",") ? res.split(",")[1] : res);
+          };
+          reader.readAsDataURL(audioBlob);
+        });
       }
 
       const res = await fetch("/api/voice-parse", {
