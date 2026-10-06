@@ -129,10 +129,13 @@ export default function KannadaVoiceRecorder({
     setIsParsing(true);
     setErrorMessage("");
 
-    // Immediate local heuristic update for 0ms lag
-    if (text && text.trim()) {
+    // If preliminary browser text exists and is meaningful (>10 chars), apply immediate local heuristic update
+    if (text && text.trim().length > 10) {
       const local = parseKannadaTranscript(text);
       handleExtractedResult(local);
+    } else if (audioBlob && audioBlob.size > 800) {
+      // Audio was recorded; indicate processing while Gemini multimodal transcribes full sentence
+      setTranscript((prev) => prev && prev.length > 10 ? prev : (language === "kn" ? "ಧ್ವನಿಯನ್ನು ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ..." : "Transcribing spoken audio..."));
     }
 
     try {
@@ -306,12 +309,18 @@ export default function KannadaVoiceRecorder({
 
     if (recognitionRef.current) {
       try {
-        recognitionRef.current.abort();
+        recognitionRef.current.stop();
       } catch (_) {}
       recognitionRef.current = null;
     }
 
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      try {
+        if (mediaRecorderRef.current.state === "recording") {
+          mediaRecorderRef.current.requestData();
+        }
+      } catch (_) {}
+
       mediaRecorderRef.current.onstop = () => {
         const mimeType = mediaRecorderRef.current?.mimeType || "audio/webm";
         const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
