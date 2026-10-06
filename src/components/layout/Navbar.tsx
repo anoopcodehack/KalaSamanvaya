@@ -26,8 +26,11 @@ import MockCheckoutModal from "@/components/marketplace/MockCheckoutModal";
 interface CartItem {
   id: string;
   title: string;
+  kannadaTitle?: string;
   craft: string;
+  craftKannada?: string;
   maker: string;
+  makerKannada?: string;
   district: string;
   price: number;
   compareAtPrice: number;
@@ -40,8 +43,11 @@ const DEFAULT_CART_ITEMS: CartItem[] = [
   {
     id: "prod-kasuti-01",
     title: "Dharwad Heritage Kasuti Silk Shawl",
+    kannadaTitle: "ಧಾರವಾಡ ಪರಂಪರೆಯ ಕಸೂತಿ ರೇಷ್ಮೆ ಶಾಲು",
     craft: "Kasuti GI Heritage",
+    craftKannada: "ಕಸೂತಿ ಕಲೆ (GI)",
     maker: "Savita Naik (Dharwad Kendra)",
+    makerKannada: "ಸವಿತಾ ನಾಯ್ಕ್ (ಧಾರವಾಡ ಕೇಂದ್ರ)",
     district: "Dharwad",
     price: 1850,
     compareAtPrice: 2400,
@@ -52,8 +58,11 @@ const DEFAULT_CART_ITEMS: CartItem[] = [
   {
     id: "prod-wood-01",
     title: "Channapatna Lacquer Wooden Rocking Horse",
+    kannadaTitle: "ಚನ್ನಪಟ್ಟಣದ ಬಣ್ಣದ ಆಟಿಕೆ ಕುದುರೆ",
     craft: "Channapatna GI Woodcraft",
+    craftKannada: "ಚನ್ನಪಟ್ಟಣ ಮರದ ಆಟಿಕೆ (GI)",
     maker: "Subbanna Achar (Ramanagara)",
+    makerKannada: "ಸುಬ್ಬಣ್ಣ ಆಚಾರ್ (ರಾಮನಗರ)",
     district: "Ramanagara",
     price: 1150,
     compareAtPrice: 1500,
@@ -64,8 +73,11 @@ const DEFAULT_CART_ITEMS: CartItem[] = [
   {
     id: "prod-bidri-01",
     title: "Bidar Pure Silver Inlay Heritage Coasters",
+    kannadaTitle: "ಬೀದರ್ ಶುದ್ಧ ಬೆಳ್ಳಿ ಕೆತ್ತನೆ ಕೋಸ್ಟರ್‌ಗಳು",
     craft: "Bidriware GI Metalcraft",
+    craftKannada: "ಬಿದ್ರಿ ಬೆಳ್ಳಿ ಕಲೆ (GI)",
     maker: "Mohammed Rafeeq (Bidar Fort)",
+    makerKannada: "ಮೊಹಮ್ಮದ್ ರಫೀಕ್ (ಬೀದರ್ ಕೋಟೆ)",
     district: "Bidar",
     price: 1650,
     compareAtPrice: 2200,
@@ -82,6 +94,7 @@ export default function Navbar() {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
   const [checkoutModalOpen, setCheckoutModalOpen] = useState(false);
+  const [cartLang, setCartLang] = useState<"en" | "kn">("en");
   const [cartItems, setCartItems] = useState<CartItem[]>(DEFAULT_CART_ITEMS);
 
   const totalCartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
@@ -436,30 +449,64 @@ export default function Navbar() {
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-[#2A1810]">
-                      Your Handcrafted Cart
+                      {cartLang === "kn" ? "ನಿಮ್ಮ ಕರಕುಶಲ ಬುಟ್ಟಿ" : "Your Handcrafted Cart"}
                     </h3>
                     <p className="text-[11px] text-stone-500 font-medium">
-                      {totalCartCount} Authentic Karnataka Artisan {totalCartCount === 1 ? "Piece" : "Pieces"}
+                      {cartLang === "kn"
+                        ? `${totalCartCount} ಅಧಿಕೃತ ಕರ್ನಾಟಕ ಕಲಾಕೃತಿಗಳು`
+                        : `${totalCartCount} Authentic Karnataka Artisan ${totalCartCount === 1 ? "Piece" : "Pieces"}`}
                     </p>
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setCartDrawerOpen(false)}
-                  className="p-2 rounded-xl text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors"
-                  aria-label="Close cart"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+                <div className="flex items-center gap-2">
+                  {/* Subtle Bilingual Toggle matching page aesthetics */}
+                  <div className="flex items-center p-0.5 rounded-lg bg-stone-100 border border-stone-200 text-xs font-semibold">
+                    <button
+                      type="button"
+                      onClick={() => setCartLang("en")}
+                      className={`px-2 py-0.5 rounded-md text-[11px] font-bold transition-all ${
+                        cartLang === "en"
+                          ? "bg-[#C85A32] text-white shadow-xs"
+                          : "text-stone-600 hover:text-stone-900"
+                      }`}
+                      title="English"
+                    >
+                      EN
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCartLang("kn")}
+                      className={`px-2 py-0.5 rounded-md text-[11px] font-bold transition-all ${
+                        cartLang === "kn"
+                          ? "bg-[#C85A32] text-white shadow-xs"
+                          : "text-stone-600 hover:text-stone-900"
+                      }`}
+                      title="ಕನ್ನಡ"
+                    >
+                      ಕನ್ನಡ
+                    </button>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setCartDrawerOpen(false)}
+                    className="p-2 rounded-xl text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors"
+                    aria-label="Close cart"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
 
               {/* Free Pan-India Delivery Ribbon */}
               <div className="bg-[#24130A] text-amber-200 text-xs py-2 px-4 flex items-center justify-between">
                 <span className="text-[11px] font-semibold text-emerald-400">
-                  Free Pan-India Delivery Unlocked!
+                  {cartLang === "kn" ? "ಉಚಿತ ಅಖಿಲ ಭಾರತ ವಿತರಣೆ ಸಕ್ರಿಯ!" : "Free Pan-India Delivery Unlocked!"}
                 </span>
-                <span className="text-[10px] text-stone-400">100% GI Authentic</span>
+                <span className="text-[10px] text-stone-400">
+                  {cartLang === "kn" ? "೧೦೦% ಅಧಿಕೃತ ಜಿಐ ಕರಕುಶಲ" : "100% GI Authentic"}
+                </span>
               </div>
 
               {/* Cart Items Area */}
@@ -476,13 +523,15 @@ export default function Navbar() {
 
                         <div className="flex-1 space-y-1">
                           <span className="px-2 py-0.5 rounded bg-amber-100 text-[#C85A32] text-[10px] font-bold uppercase tracking-wider inline-block">
-                            {item.craft}
+                            {cartLang === "kn" ? (item.craftKannada || item.craft) : item.craft}
                           </span>
                           <h4 className="font-bold text-xs sm:text-sm text-[#2A1810] leading-snug">
-                            {item.title}
+                            {cartLang === "kn" ? (item.kannadaTitle || item.title) : item.title}
                           </h4>
                           <p className="text-[11px] text-stone-500">
-                            Maker: {item.maker}
+                            {cartLang === "kn"
+                              ? `ಕುಶಲಕರ್ಮಿ: ${item.makerKannada || item.maker}`
+                              : `Maker: ${item.maker}`}
                           </p>
                           <div className="flex items-baseline gap-2 pt-0.5">
                             <span className="font-extrabold text-[#C85A32] text-sm">
@@ -523,7 +572,7 @@ export default function Navbar() {
                         {/* Direct Fair Wage Payout */}
                         <div className="text-right">
                           <span className="text-[10px] text-stone-500 block">
-                            Direct Artisan Wage (75%):
+                            {cartLang === "kn" ? "ನೇರ ಕುಶಲಕರ್ಮಿ ಕೂಲಿ (೭೫%):" : "Direct Artisan Wage (75%):"}
                           </span>
                           <span className="font-extrabold text-emerald-700 text-xs">
                             ₹{(item.artisanPayout * item.quantity).toLocaleString("en-IN")}
@@ -534,13 +583,15 @@ export default function Navbar() {
                   ))
                 ) : (
                   <div className="text-center py-12 bg-white rounded-2xl border border-stone-200 p-6 space-y-2">
-                    <p className="text-stone-500 text-sm">Your cart is currently empty.</p>
+                    <p className="text-stone-500 text-sm">
+                      {cartLang === "kn" ? "ನಿಮ್ಮ ಕಾರ್ಟ್ ಪ್ರಸ್ತುತ ಖಾಲಿಯಾಗಿದೆ." : "Your cart is currently empty."}
+                    </p>
                     <Link
                       href="/marketplace#catalog"
                       onClick={() => setCartDrawerOpen(false)}
                       className="text-xs font-bold text-[#C85A32] hover:underline"
                     >
-                      Browse Karnataka Crafts Catalog →
+                      {cartLang === "kn" ? "ಕರ್ನಾಟಕ ಕರಕುಶಲ ಕ್ಯಾಟಲಾಗ್ ವೀಕ್ಷಿಸಿ →" : "Browse Karnataka Crafts Catalog →"}
                     </Link>
                   </div>
                 )}
@@ -549,10 +600,16 @@ export default function Navbar() {
                 <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/80 text-xs space-y-1">
                   <div className="flex items-center gap-1.5 font-bold text-[#C85A32]">
                     <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>Fair-Trade Direct Payment Guarantee</span>
+                    <span>
+                      {cartLang === "kn" ? "ನ್ಯಾಯಯುತ ನೇರ ಪಾವತಿ ಖಾತರಿ" : "Fair-Trade Direct Payment Guarantee"}
+                    </span>
                   </div>
                   <p className="text-[11px] text-stone-600 leading-relaxed">
-                    Zero middlemen deductions. Over <strong>74%+</strong> of this order (₹{totalArtisanPayout.toLocaleString("en-IN")}) directly credits Karnataka artisan SHG bank accounts with instant UPI settlement.
+                    {cartLang === "kn" ? (
+                      <>ಯಾವುದೇ ದಲ್ಲಾಳಿಗಳಿಲ್ಲ. ಈ ಮೊತ್ತದ <strong>೭೪%+</strong> ಕ್ಕೂ ಹೆಚ್ಚು (₹{totalArtisanPayout.toLocaleString("en-IN")}) ನೇರವಾಗಿ ಕರ್ನಾಟಕದ ಕುಶಲಕರ್ಮಿ ಸಂಘಗಳ ಬ್ಯಾಂಕ್ ಖಾತೆಗೆ ಜಮೆಯಾಗುತ್ತದೆ.</>
+                    ) : (
+                      <>Zero middlemen deductions. Over <strong>74%+</strong> of this order (₹{totalArtisanPayout.toLocaleString("en-IN")}) directly credits Karnataka artisan SHG bank accounts with instant UPI settlement.</>
+                    )}
                   </p>
                 </div>
               </div>
@@ -561,17 +618,25 @@ export default function Navbar() {
               <div className="p-4 sm:p-5 bg-white border-t border-stone-200 space-y-3">
                 <div className="space-y-1.5 text-xs text-stone-600">
                   <div className="flex justify-between">
-                    <span>Subtotal ({totalCartCount} items):</span>
+                    <span>
+                      {cartLang === "kn" ? `ಉಪಮೊತ್ತ (${totalCartCount} ವಸ್ತುಗಳು):` : `Subtotal (${totalCartCount} items):`}
+                    </span>
                     <span className="font-semibold text-stone-800">
                       ₹{cartSubtotal.toLocaleString("en-IN")}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Pan-India Delivery:</span>
-                    <span className="font-bold text-emerald-600">FREE</span>
+                    <span>
+                      {cartLang === "kn" ? "ಅಖಿಲ ಭಾರತ ವಿತರಣೆ:" : "Pan-India Delivery:"}
+                    </span>
+                    <span className="font-bold text-emerald-600">
+                      {cartLang === "kn" ? "ಉಚಿತ (FREE)" : "FREE"}
+                    </span>
                   </div>
                   <div className="flex justify-between text-sm font-extrabold text-[#2A1810] pt-1.5 border-t border-stone-100">
-                    <span>Total Order Value:</span>
+                    <span>
+                      {cartLang === "kn" ? "ಒಟ್ಟು ಆರ್ಡರ್ ಮೊತ್ತ:" : "Total Order Value:"}
+                    </span>
                     <span className="text-[#C85A32] text-base">
                       ₹{cartSubtotal.toLocaleString("en-IN")}
                     </span>
@@ -587,7 +652,9 @@ export default function Navbar() {
                   }}
                   className="w-full py-3.5 px-4 rounded-xl bg-[#C85A32] hover:bg-[#a84420] disabled:bg-stone-300 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 hover:-translate-y-0.5 active:translate-y-0"
                 >
-                  <span>Proceed to Instant Mock Checkout (UPI)</span>
+                  <span>
+                    {cartLang === "kn" ? "ತಕ್ಷಣದ ಯುಪಿಐ ಪಾವತಿಗೆ ಮುಂದುವರಿಯಿರಿ (UPI)" : "Proceed to Instant Mock Checkout (UPI)"}
+                  </span>
                   <ChevronRight className="w-4 h-4" />
                 </button>
 
@@ -597,7 +664,7 @@ export default function Navbar() {
                     onClick={() => setCartDrawerOpen(false)}
                     className="text-xs text-stone-500 hover:text-[#C85A32] underline"
                   >
-                    Or explore more handcrafted collections
+                    {cartLang === "kn" ? "ಅಥವಾ ಇನ್ನಷ್ಟು ಕರಕುಶಲ ಕಲಾಕೃತಿಗಳನ್ನು ವೀಕ್ಷಿಸಿ" : "Or explore more handcrafted collections"}
                   </Link>
                 </div>
               </div>
