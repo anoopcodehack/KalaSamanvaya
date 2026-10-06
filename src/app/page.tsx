@@ -10,6 +10,7 @@ import { ARTISAN_PRODUCTS, ArtisanProduct } from "@/lib/db/products";
 import WhyThisPriceModal from "@/components/marketplace/WhyThisPriceModal";
 import MockCheckoutModal from "@/components/marketplace/MockCheckoutModal";
 import CraftPassportModal from "@/components/marketplace/CraftPassportModal";
+import FairWageShieldModal from "@/components/marketplace/FairWageShieldModal";
 import {
   ArrowRight,
   Info,
@@ -29,12 +30,14 @@ import {
   Building2,
   Users,
   QrCode,
+  Scale,
 } from "lucide-react";
 
 export default function HomePage() {
   const [activeStoryProduct, setActiveStoryProduct] = useState<ArtisanProduct | null>(null);
   const [activeCheckoutProduct, setActiveCheckoutProduct] = useState<ArtisanProduct | null>(null);
   const [activePassportProduct, setActivePassportProduct] = useState<ArtisanProduct | null>(null);
+  const [activeFairWageProduct, setActiveFairWageProduct] = useState<ArtisanProduct | null>(null);
 
   const featuredShopProducts = ARTISAN_PRODUCTS.slice(0, 4);
 
@@ -94,6 +97,14 @@ export default function HomePage() {
               >
                 <QrCode className="w-4 h-4 text-[#E67E22]" />
                 <span>GI Craft Passport (QR & ಧ್ವನಿ)</span>
+              </button>
+
+              <button
+                onClick={() => setActiveFairWageProduct(ARTISAN_PRODUCTS[0])}
+                className="px-6 py-3.5 rounded-full border border-emerald-500/60 bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-200 font-semibold text-sm transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center gap-2 backdrop-blur-sm"
+              >
+                <Scale className="w-4 h-4 text-emerald-400" />
+                <span>Fair-Wage Shield (ಕೂಲಿ ರಕ್ಷಕ)</span>
               </button>
             </div>
 
@@ -880,6 +891,13 @@ export default function HomePage() {
         product={activePassportProduct}
         isOpen={Boolean(activePassportProduct)}
         onClose={() => setActivePassportProduct(null)}
+      />
+
+      <FairWageShieldModal
+        product={activeFairWageProduct}
+        isOpen={Boolean(activeFairWageProduct)}
+        onClose={() => setActiveFairWageProduct(null)}
+        onProceedToCheckout={(p) => setActiveCheckoutProduct(p)}
       />
     </div>
   );

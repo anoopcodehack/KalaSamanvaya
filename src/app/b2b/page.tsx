@@ -467,6 +467,30 @@ export default function B2BFulfillmentPage() {
           <FairTradeSimulatorCard initialUnits={200} />
         </ScrollReveal>
 
+        {/* ── ANTI-EXPLOITATION FAIR-WAGE SHIELD FOR B2B PROCUREMENT ── */}
+        <ScrollReveal direction="up" delayMs={75}>
+          <div className="p-6 bg-gradient-to-r from-[#2A1810] via-[#351C12] to-[#2A1810] text-[#FAF6F0] rounded-3xl shadow-xl border-2 border-amber-800/60 flex flex-col md:flex-row md:items-center justify-between gap-5">
+            <div className="space-y-1.5 max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-[11px] font-extrabold uppercase tracking-wider border border-amber-500/40">
+                <Scale className="w-3.5 h-3.5 text-amber-300" />
+                <span>Statutory Fair-Wage Shield • ಕನಿಷ್ಠ ನ್ಯಾಯಯುತ ಕೂಲಿ ರಕ್ಷಣೆ</span>
+              </div>
+              <h3 className="text-lg font-black tracking-wide text-white">
+                Zero Squeezing: Karnataka Fair Handcraft Wage Standard
+              </h3>
+              <p className="text-xs text-amber-100/80 leading-relaxed">
+                Large corporations and event buyers cannot bully rural self-help groups into below-cost bids. Every B2B purchase order enforces a non-negotiable living wage floor (₹36–₹60/hr skilled craftsmanship + certified GI raw material cost), providing your enterprise with an official ESG Fair-Trade Audit Certificate.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-xs text-center flex-shrink-0 space-y-1">
+              <span className="text-[10px] uppercase font-bold text-amber-300 block">Guaranteed Maker Share</span>
+              <span className="text-2xl font-black text-white block">74.6% DBT</span>
+              <span className="text-[10px] text-stone-300 block">Direct into rural women&apos;s bank accounts</span>
+            </div>
+          </div>
+        </ScrollReveal>
+
         {/* Corporate Trust Pillars with Staggered Scroll Reveal */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
           <ScrollReveal direction="up" delayMs={0}>

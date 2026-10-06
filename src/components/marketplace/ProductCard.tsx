@@ -2,20 +2,22 @@
 
 import React from "react";
 import { ArtisanProduct } from "@/lib/db/products";
-import { Info, MapPin, ShoppingBag, Clock, Award, QrCode } from "lucide-react";
+import { Info, MapPin, ShoppingBag, Clock, Award, QrCode, ShieldCheck } from "lucide-react";
 
 interface ProductCardProps {
   product: ArtisanProduct;
   onOpenWhyThisPrice: (product: ArtisanProduct) => void;
   onOpenCheckout: (product: ArtisanProduct) => void;
   onOpenPassport?: (product: ArtisanProduct) => void;
+  onOpenFairWageShield?: (product: ArtisanProduct) => void;
 }
 
 export default function ProductCard({
   product,
   onOpenWhyThisPrice,
   onOpenCheckout,
-  onOpenPassport
+  onOpenPassport,
+  onOpenFairWageShield,
 }: ProductCardProps) {
   const cardRef = React.useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = React.useState({ x: 0, y: 0, active: false });
@@ -166,6 +168,17 @@ export default function ProductCard({
             >
               <QrCode className="w-3.5 h-3.5 text-[#C85A32]" />
               <span>GI Passport & Voice QR (ಪ್ರಮಾಣಪತ್ರ)</span>
+            </button>
+          )}
+
+          {onOpenFairWageShield && (
+            <button
+              type="button"
+              onClick={() => onOpenFairWageShield(product)}
+              className="w-full py-1.5 px-2.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-950 text-xs font-bold flex items-center justify-center gap-1.5 transition-colors shadow-2xs"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+              <span>Fair-Wage Shield (ಕೂಲಿ ರಕ್ಷಣೆ)</span>
             </button>
           )}
 

@@ -6,6 +6,7 @@ import ProductCard from "@/components/marketplace/ProductCard";
 import WhyThisPriceModal from "@/components/marketplace/WhyThisPriceModal";
 import MockCheckoutModal from "@/components/marketplace/MockCheckoutModal";
 import CraftPassportModal from "@/components/marketplace/CraftPassportModal";
+import FairWageShieldModal from "@/components/marketplace/FairWageShieldModal";
 import FolkArtBorder from "@/components/shared/FolkArtBorder";
 import FolkArtBanner from "@/components/shared/FolkArtBanner";
 import ScrollReveal from "@/components/shared/ScrollReveal";
@@ -25,6 +26,7 @@ import {
   MicOff,
   SlidersHorizontal,
   RotateCcw,
+  Scale,
   X
 } from "lucide-react";
 import Link from "next/link";
@@ -46,6 +48,7 @@ export default function MarketplacePage() {
   const [activeStoryProduct, setActiveStoryProduct] = useState<ArtisanProduct | null>(null);
   const [activeCheckoutProduct, setActiveCheckoutProduct] = useState<ArtisanProduct | null>(null);
   const [activePassportProduct, setActivePassportProduct] = useState<ArtisanProduct | null>(null);
+  const [activeFairWageProduct, setActiveFairWageProduct] = useState<ArtisanProduct | null>(null);
 
   const recognitionRef = React.useRef<any>(null);
   const mediaStreamRef = React.useRef<MediaStream | null>(null);
@@ -751,6 +754,7 @@ export default function MarketplacePage() {
                   onOpenWhyThisPrice={(p) => setActiveStoryProduct(p)}
                   onOpenCheckout={(p) => setActiveCheckoutProduct(p)}
                   onOpenPassport={(p) => setActivePassportProduct(p)}
+                  onOpenFairWageShield={(p) => setActiveFairWageProduct(p)}
                 />
               </ScrollReveal>
             ))}
@@ -782,6 +786,14 @@ export default function MarketplacePage() {
         product={activeStoryProduct}
         isOpen={Boolean(activeStoryProduct)}
         onClose={() => setActiveStoryProduct(null)}
+        onProceedToCheckout={(p) => setActiveCheckoutProduct(p)}
+        onOpenFairWageShield={(p) => setActiveFairWageProduct(p)}
+      />
+
+      <FairWageShieldModal
+        product={activeFairWageProduct}
+        isOpen={Boolean(activeFairWageProduct)}
+        onClose={() => setActiveFairWageProduct(null)}
         onProceedToCheckout={(p) => setActiveCheckoutProduct(p)}
       />
 

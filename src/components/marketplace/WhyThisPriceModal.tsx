@@ -9,13 +9,15 @@ interface WhyThisPriceModalProps {
   isOpen: boolean;
   onClose: () => void;
   onProceedToCheckout: (product: ArtisanProduct) => void;
+  onOpenFairWageShield?: (product: ArtisanProduct) => void;
 }
 
 export default function WhyThisPriceModal({
   product,
   isOpen,
   onClose,
-  onProceedToCheckout
+  onProceedToCheckout,
+  onOpenFairWageShield,
 }: WhyThisPriceModalProps) {
   if (!isOpen || !product) return null;
 
@@ -260,6 +262,31 @@ export default function WhyThisPriceModal({
                   </li>
                 </ul>
               </div>
+            </div>
+
+            {/* Fair-Wage Shield Callout Banner */}
+            <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div className="space-y-0.5">
+                <span className="font-extrabold text-emerald-950 flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-emerald-700" />
+                  Anti-Exploitation Fair-Wage Floor Protected
+                </span>
+                <span className="text-[11px] text-emerald-900 block">
+                  Karnataka skilled artisan living wage index prevents below-cost haggling.
+                </span>
+              </div>
+              {onOpenFairWageShield && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onOpenFairWageShield(product);
+                  }}
+                  className="px-3.5 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition-colors whitespace-nowrap self-start sm:self-auto"
+                >
+                  Test Anti-Haggling Shield (ಕೂಲಿ ರಕ್ಷಣೆ)
+                </button>
+              )}
             </div>
           </div>
         </div>
