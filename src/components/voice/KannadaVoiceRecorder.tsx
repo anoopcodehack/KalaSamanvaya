@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { Mic, MicOff, Volume2, AlertCircle, RefreshCw, Send, Radio } from "lucide-react";
-import { parseKannadaTranscript, ExtractedCraftListing } from "@/lib/voice/kannadaKeywords";
+import { parseKannadaTranscript, transliterateKanglishToKannada, ExtractedCraftListing } from "@/lib/voice/kannadaKeywords";
 import { playSpeech, stopSpeech } from "@/lib/voice/playSpeech";
 
 interface KannadaVoiceRecorderProps {
@@ -161,6 +161,7 @@ export default function KannadaVoiceRecorder({
           transcript: text,
           audioBase64,
           mimeType,
+          language,
         }),
       });
 
@@ -168,7 +169,10 @@ export default function KannadaVoiceRecorder({
         const data = await res.json();
         if (data.extracted) {
           if (data.extracted.rawTranscript) {
-            setTranscript(data.extracted.rawTranscript);
+            const finalDisplayText = language === "kn"
+              ? transliterateKanglishToKannada(data.extracted.rawTranscript)
+              : data.extracted.rawTranscript;
+            setTranscript(finalDisplayText);
           }
           handleExtractedResult(data.extracted);
         }
@@ -251,17 +255,21 @@ export default function KannadaVoiceRecorder({
           const combinedFinal = (accumulatedFinalRef.current + " " + sessionFinal).trim();
           const liveDisplay = (combinedFinal + " " + sessionInterim).trim();
 
+          const displayForUser = language === "kn"
+            ? transliterateKanglishToKannada(liveDisplay)
+            : liveDisplay;
+
           if (sessionInterim) {
-            setInterimText(sessionInterim);
+            setInterimText(language === "kn" ? transliterateKanglishToKannada(sessionInterim) : sessionInterim);
           } else {
             setInterimText("");
           }
 
           if (liveDisplay) {
             capturedTextRef.current = liveDisplay;
-            setTranscript(liveDisplay);
+            setTranscript(displayForUser);
             // Instant heuristic preview as full sentence emerges
-            if (liveDisplay.length > 8) {
+            if (liveDisplay.length > 5) {
               const preview = parseKannadaTranscript(liveDisplay);
               if (preview && preview.craft) {
                 handleExtractedResult(preview);
@@ -379,8 +387,9 @@ export default function KannadaVoiceRecorder({
   const handleManualSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!manualInput.trim()) return;
-    setTranscript(manualInput);
-    sendForParsing(manualInput);
+    const formatted = language === "kn" ? transliterateKanglishToKannada(manualInput) : manualInput;
+    setTranscript(formatted);
+    sendForParsing(formatted);
     setManualInput("");
   };
 

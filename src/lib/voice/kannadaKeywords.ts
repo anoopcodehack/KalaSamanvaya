@@ -140,10 +140,84 @@ function normalizeKannadaNumbers(text: string): string {
   return normalized;
 }
 
+const KANGLISH_TO_KANNADA_REPLACEMENTS: [RegExp, string][] = [
+  // Phrases
+  [/\b(?:na\s+badi|na\s+baadi|nanna\s+bali|nanna\s+baLi|nan\s+hatra|nanna\s+hatra)\b/gi, "ನನ್ನ ಬಳಿ"],
+  [/\b(?:namma\s+sanghadalli|namma\s+sangha|namma\s+koota)\b/gi, "ನಮ್ಮ ಸಂಘದಲ್ಲಿ"],
+  [/\bnan\s+baddi\b/gi, "ನನ್ನ ಬಳಿ"],
+
+  // Quantities & Numbers
+  [/\b(?:gammathu|ombattu|ombatu)\b/gi, "೯ (ಒಂಬತ್ತು)"],
+  [/\b(?:embattu|embatu|yembattu)\b/gi, "೮೦ (ಎಂಬತ್ತು)"],
+  [/\b(?:eppattu|yeppattu)\b/gi, "೭೦ (ಎಪ್ಪತ್ತು)"],
+  [/\baravattu\b/gi, "೬೦ (ಅರವತ್ತು)"],
+  [/\b(?:aivattu|ayvattu)\b/gi, "೫೦ (ಐವತ್ತು)"],
+  [/\bnalavattu\b/gi, "೪೦ (ನಲವತ್ತು)"],
+  [/\b(?:moovattu|muvattu)\b/gi, "೩೦ (ಮೂವತ್ತು)"],
+  [/\bippattu\b/gi, "೨೦ (ಇಪ್ಪತ್ತು)"],
+  [/\bhattu\b/gi, "೧೦ (ಹತ್ತು)"],
+  [/\bnooru\b/gi, "೧೦೦"],
+  [/\binnooru\b/gi, "೨೦೦"],
+  [/\bmunnooru\b/gi, "೩೦೦"],
+  [/\bnannooru\b/gi, "೪೦೦"],
+  [/\bainooru\b/gi, "೫೦೦"],
+  [/\baarunooru\b/gi, "೬೦೦"],
+  [/\b(?:saavira|savira)\b/gi, "೧೦೦೦ (ಸಾವಿರ)"],
+
+  // Crafts & Artifacts
+  [/\b(?:kasuti|kasooti)\b/gi, "ಕಸೂತಿ"],
+  [/\bshalugalive\b/gi, "ಶಾಲುಗಳಿವೆ"],
+  [/\bshalugalu\b/gi, "ಶಾಲುಗಳು"],
+  [/\bshalu\b/gi, "ಶಾಲು"],
+  [/\bseeregalive\b/gi, "ಸೀರೆಗಳಿವೆ"],
+  [/\b(?:seere|saree)\b/gi, "ಸೀರೆ"],
+  [/\bbeedu\b/gi, "ಬೀಡು"],
+  [/\bhullina\b/gi, "ಹುಲ್ಲಿನ"],
+  [/\bbuttigalive\b/gi, "ಬುಟ್ಟಿಗಳಿವೆ"],
+  [/\bbutti\b/gi, "ಬುಟ್ಟಿ"],
+  [/\bmadikegalive\b/gi, "ಮಡಿಕೆಗಳಿವೆ"],
+  [/\bmadike\b/gi, "ಮಡಿಕೆ"],
+  [/\bjaggugalive\b/gi, "ಜಗ್ಗುಗಳಿವೆ"],
+  [/\bjaggu\b/gi, "ಜಗ್ಗು"],
+  [/\bneerina\b/gi, "ನೀರಿನ"],
+  [/\bterracotta\b/gi, "ಟೆರಾಕೋಟಾ"],
+  [/\bkundagalu\b/gi, "ಕುಂಡಗಳು"],
+  [/\budupi\b/gi, "ಉಡುಪಿ"],
+  [/\bkaimagga\b/gi, "ಕೈಮಗ್ಗ"],
+  [/\byakshagana\b/gi, "ಯಕ್ಷಗಾನ"],
+  [/\bkireeta\b/gi, "ಕಿರೀಟ"],
+  [/\bbidri\b/gi, "ಬಿದ್ರಿ"],
+  [/\bchannapatna\b/gi, "ಚನ್ನಪಟ್ಟಣ"],
+  [/\b(?:aatike|atike)\b/gi, "ಆಟಿಕೆ"],
+
+  // Commercial verbs & units
+  [/\b(?:ondakke|ondak)\b/gi, "ಒಂದಕ್ಕೆ"],
+  [/\bbele\b/gi, "ಬೆಲೆ"],
+  [/\b(?:roopayi|rupayi|rupees?|rs\.?)\b/gi, "ರೂಪಾಯಿ"],
+  [/\b(?:dinagalalli|dinadalli)\b/gi, "ದಿನಗಳಲ್ಲಿ"],
+  [/\b(?:needuttene|needuteve|koduttene|koduteve)\b/gi, "ನೀಡುತ್ತೇವೆ"],
+  [/\b(?:tayarisuttene|tayarisuteve)\b/gi, "ತಯಾರಿಸುತ್ತೇವೆ"],
+  [/\bide\b/gi, "ಇದೆ"],
+  [/\bive\b/gi, "ಇವೆ"],
+];
+
+/**
+ * Transliterates Kanglish (Kannada written in Latin/English letters) into authentic Kannada script
+ */
+export function transliterateKanglishToKannada(text: string): string {
+  if (!text) return "";
+  let converted = text;
+  for (const [pattern, knScript] of KANGLISH_TO_KANNADA_REPLACEMENTS) {
+    converted = converted.replace(pattern, knScript);
+  }
+  return converted;
+}
+
 /**
  * Intelligent Heuristic Extractor for Spoken Kannada & Bilingual Indian Speech
  */
 export function parseKannadaTranscript(transcript: string): ExtractedCraftListing {
+  const convertedText = transliterateKanglishToKannada(transcript);
   const normalizedText = normalizeKannadaNumbers(transcript).toLowerCase();
 
   // 1. Craft identification (Check specific multi-word matches first)
@@ -251,7 +325,7 @@ export function parseKannadaTranscript(transcript: string): ExtractedCraftListin
     totalValueINR: quantity * price,
     material: detectedMaterial,
     leadTimeDays: leadTime,
-    rawTranscript: transcript,
+    rawTranscript: convertedText || transcript,
     confidence: 0.96
   };
 }

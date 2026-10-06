@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { parseKannadaTranscript } from "@/lib/voice/kannadaKeywords";
+import { parseKannadaTranscript, transliterateKanglishToKannada } from "@/lib/voice/kannadaKeywords";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +13,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { transcript, audioBase64, mimeType } = body;
+    const { transcript, audioBase64, mimeType, language = "kn" } = body;
 
     const apiKey = process.env.GEMINI_API_KEY;
     const isGeminiAvailable = apiKey && apiKey !== "your_gemini_api_key_here" && apiKey.trim().length > 10;
@@ -47,21 +47,26 @@ export async function POST(req: Request) {
                         },
                       },
                       {
-                        text: `You are an AI speech transcriber and assistant for KalaSamanvaya (ಕಲಾ ಸಮನ್ವಯ), a Karnataka craft platform.
-Listen to this voice recording spoken in Kannada, Indian English, or Kanglish.
-1. Transcribe the exact spoken words into "rawTranscript".
-2. If this is a craft listing (e.g., "80 kasuti shawls 600 rupees"), also extract craft, quantity, and price. If it is a general question or message, transcribe it and set quantity to 1.
+                        text: `You are an expert Kannada speech-to-text transcriber and craft assistant for KalaSamanvaya (ಕಲಾ ಸಮನ್ವಯ), a Karnataka craft platform.
+Listen to this voice recording spoken by an artisan.
+
+CRITICAL SCRIPT & LANGUAGE RULES:
+1. If the speaker spoke in Kannada, Kanglish, or regional Kannada dialects:
+   You MUST transcribe into authentic KANNADA SCRIPT (ಕನ್ನಡ ಲಿಪಿಯಲ್ಲಿ ಬರೆಯಿರಿ, e.g. "ನನ್ನ ಬಳಿ ೮೦ ಕಸೂತಿ ಶಾಲುಗಳಿವೆ").
+   NEVER write Kannada in English/Latin letters like "na Badi Kasuti" or "nanna bali". Write ONLY native Kannada letters!
+2. If the speaker spoke completely in English, transcribe in English.
+3. If this is a craft listing (e.g. "80 kasuti shawls 600 rupees"), extract craft, quantity, and price.
 
 Return ONLY a valid JSON object matching this schema without markdown code blocks:
 {
-  "rawTranscript": "exact words spoken in Kannada or English",
+  "rawTranscript": "ಕನ್ನಡ ಲಿಪಿಯಲ್ಲಿ ಪೂರ್ಣ ವಾಕ್ಯ",
   "craft": "Kasuti" | "Beedu" | "Pottery" | "Bidriware" | "Channapatna Toys" | "Udupi Sarees" | "Yakshagana Regalia" | "Belagavi Terracotta" | "General",
   "craftKannada": "ಕಸೂತಿ ಕಲೆ" | "ಬೀಡು ಬುಟ್ಟಿ" | "ಜೇಡಿಮಣ್ಣಿನ ಮಡಿಕೆ" | "ಬಿದ್ರಿ ಕಲೆ" | "ಚನ್ನಪಟ್ಟಣದ ಬಣ್ಣದ ಆಟಿಕೆ" | "ಉಡುಪಿ ಸೀರೆ" | "ಯಕ್ಷಗಾನ ಕಿರೀಟ" | "ಖಾನಾಪುರ ಟೆರಾಕೋಟಾ" | "ಸಾಮಾನ್ಯ",
-  "itemName": "Title or summary of speech",
+  "itemName": "ವಸ್ತುವಿನ ಹೆಸರು (ಕನ್ನಡ ಅಥವಾ ಇಂಗ್ಲಿಷ್)",
   "quantity": 1,
   "pricePerUnitINR": 0,
   "totalValueINR": 0,
-  "material": "Authentic cluster material",
+  "material": "ಕರಕುಶಲ ವಸ್ತು ಸಾಮಗ್ರಿ",
   "leadTimeDays": 7,
   "confidence": 0.98
 }`,
@@ -84,11 +89,15 @@ Return ONLY a valid JSON object matching this schema without markdown code block
               parsed = { rawTranscript: cleaned };
             }
             if (parsed && (parsed.rawTranscript || parsed.itemName)) {
+              let finalScript = parsed.rawTranscript || rawText;
+              if (language === "kn") {
+                finalScript = transliterateKanglishToKannada(finalScript);
+              }
               return NextResponse.json({
                 success: true,
                 extracted: {
                   ...parsed,
-                  rawTranscript: parsed.rawTranscript || rawText,
+                  rawTranscript: finalScript,
                 },
                 source: `Google Gemini Multimodal (${model})`,
               });
@@ -115,18 +124,25 @@ Return ONLY a valid JSON object matching this schema without markdown code block
                   {
                     parts: [
                       {
-                        text: `You are an AI assistant for KalaSamanvaya. Parse this rural artisan transcript: "${transcript}"
+                        text: `You are an expert Kannada assistant for KalaSamanvaya. Parse this rural artisan transcript: "${transcript}"
+
+CRITICAL SCRIPT MANDATE:
+1. If this text is in Kannada, or Kanglish (Kannada spoken or written in English/Latin letters, such as "na Badi Gammathu Kasuti" or "nanna bali 80 kasuti"):
+   Convert "rawTranscript" strictly into authentic KANNADA SCRIPT (ಕನ್ನಡ ಲಿಪಿಯಲ್ಲಿ, e.g. "ನನ್ನ ಬಳಿ ೯ ಕಸೂತಿ" or "ನನ್ನ ಬಳಿ ೮೦ ಕಸೂತಿ ಶಾಲುಗಳಿವೆ").
+   NEVER leave Kannada words in English/Latin letters!
+2. Extract the craft, quantity, and price.
+
 Extract into pure JSON without code fences:
 {
   "craft": "Kasuti" | "Beedu" | "Pottery" | "Bidriware" | "Channapatna Toys" | "Udupi Sarees" | "Yakshagana Regalia" | "Belagavi Terracotta",
   "craftKannada": "ಕಸೂತಿ ಕಲೆ" | "ಬೀಡು ಬುಟ್ಟಿ" | "ಜೇಡಿಮಣ್ಣಿನ ಮಡಿಕೆ" | "ಬಿದ್ರಿ ಕಲೆ" | "ಚನ್ನಪಟ್ಟಣದ ಬಣ್ಣದ ಆಟಿಕೆ" | "ಉಡುಪಿ ಸೀರೆ" | "ಯಕ್ಷಗಾನ ಕಿರೀಟ" | "ಖಾನಾಪುರ ಟೆರಾಕೋಟಾ",
-  "itemName": "Descriptive Item Title",
+  "itemName": "ಕನ್ನಡ ಹೆಸರು ಅಥವಾ ವಿವರಣೆ",
   "quantity": number,
   "pricePerUnitINR": number,
   "totalValueINR": number,
-  "material": "Authentic Craft Materials",
+  "material": "ಕರಕುಶಲ ಸಾಮಗ್ರಿ ವಿವರ",
   "leadTimeDays": number,
-  "rawTranscript": "${transcript}",
+  "rawTranscript": "ಕನ್ನಡ ಲಿಪಿಯಲ್ಲಿ ವಾಕ್ಯ",
   "confidence": 0.98
 }`,
                       },
@@ -148,11 +164,15 @@ Extract into pure JSON without code fences:
               parsed = { rawTranscript: cleaned };
             }
             if (parsed && (parsed.rawTranscript || parsed.itemName || parsed.craft)) {
+              let finalScript = parsed.rawTranscript || transcript;
+              if (language === "kn") {
+                finalScript = transliterateKanglishToKannada(finalScript);
+              }
               return NextResponse.json({
                 success: true,
                 extracted: {
                   ...parsed,
-                  rawTranscript: parsed.rawTranscript || transcript,
+                  rawTranscript: finalScript,
                 },
                 source: `Google Gemini Text NLP (${model})`,
               });
