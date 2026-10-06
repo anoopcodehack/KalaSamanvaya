@@ -47,15 +47,33 @@ export async function POST(req: Request) {
                         },
                       },
                       {
-                        text: `You are an expert Kannada speech-to-text transcriber and craft assistant for KalaSamanvaya (ಕಲಾ ಸಮನ್ವಯ), a Karnataka craft platform.
+                        text: language === "en"
+                          ? `You are an expert English speech-to-text transcriber and craft assistant for KalaSamanvaya.
+Listen to this voice recording spoken in English.
+1. Transcribe the exact spoken words into "rawTranscript" strictly in ENGLISH.
+2. Extract the craft listing: craft, quantity, and price.
+
+Return ONLY a valid JSON object matching this schema without markdown code blocks:
+{
+  "rawTranscript": "spoken words in English",
+  "craft": "Kasuti" | "Beedu" | "Pottery" | "Bidriware" | "Channapatna Toys" | "Udupi Sarees" | "Yakshagana Regalia" | "Belagavi Terracotta" | "General",
+  "craftKannada": "ಕಸೂತಿ ಕಲೆ" | "ಬೀಡು ಬುಟ್ಟಿ" | "ಜೇಡಿಮಣ್ಣಿನ ಮಡಿಕೆ" | "ಬಿದ್ರಿ ಕಲೆ" | "ಚನ್ನಪಟ್ಟಣದ ಬಣ್ಣದ ಆಟಿಕೆ" | "ಉಡುಪಿ ಸೀರೆ" | "ಯಕ್ಷಗಾನ ಕಿರೀಟ" | "ಖಾನಾಪುರ ಟೆರಾಕೋಟಾ" | "ಸಾಮಾನ್ಯ",
+  "itemName": "English Item Title",
+  "quantity": 1,
+  "pricePerUnitINR": 0,
+  "totalValueINR": 0,
+  "material": "Authentic cluster material",
+  "leadTimeDays": 7,
+  "confidence": 0.98
+}`
+                          : `You are an expert Kannada speech-to-text transcriber and craft assistant for KalaSamanvaya (ಕಲಾ ಸಮನ್ವಯ), a Karnataka craft platform.
 Listen to this voice recording spoken by an artisan.
 
 CRITICAL SCRIPT & LANGUAGE RULES:
 1. If the speaker spoke in Kannada, Kanglish, or regional Kannada dialects:
    You MUST transcribe into authentic KANNADA SCRIPT (ಕನ್ನಡ ಲಿಪಿಯಲ್ಲಿ ಬರೆಯಿರಿ, e.g. "ನನ್ನ ಬಳಿ ೮೦ ಕಸೂತಿ ಶಾಲುಗಳಿವೆ").
    NEVER write Kannada in English/Latin letters like "na Badi Kasuti" or "nanna bali". Write ONLY native Kannada letters!
-2. If the speaker spoke completely in English, transcribe in English.
-3. If this is a craft listing (e.g. "80 kasuti shawls 600 rupees"), extract craft, quantity, and price.
+2. If this is a craft listing (e.g. "80 kasuti shawls 600 rupees"), extract craft, quantity, and price.
 
 Return ONLY a valid JSON object matching this schema without markdown code blocks:
 {
@@ -124,7 +142,22 @@ Return ONLY a valid JSON object matching this schema without markdown code block
                   {
                     parts: [
                       {
-                        text: `You are an expert Kannada assistant for KalaSamanvaya. Parse this rural artisan transcript: "${transcript}"
+                        text: language === "en"
+                          ? `You are an assistant for KalaSamanvaya. Parse this English artisan listing: "${transcript}"
+Extract into pure JSON without code fences:
+{
+  "craft": "Kasuti" | "Beedu" | "Pottery" | "Bidriware" | "Channapatna Toys" | "Udupi Sarees" | "Yakshagana Regalia" | "Belagavi Terracotta",
+  "craftKannada": "ಕಸೂತಿ ಕಲೆ" | "ಬೀಡು ಬುಟ್ಟಿ" | "ಜೇಡಿಮಣ್ಣಿನ ಮಡಿಕೆ" | "ಬಿದ್ರಿ ಕಲೆ" | "ಚನ್ನಪಟ್ಟಣದ ಬಣ್ಣದ ಆಟಿಕೆ" | "ಉಡುಪಿ ಸೀರೆ" | "ಯಕ್ಷಗಾನ ಕಿರೀಟ" | "ಖಾನಾಪುರ ಟೆರಾಕೋಟಾ",
+  "itemName": "English Item Title",
+  "quantity": number,
+  "pricePerUnitINR": number,
+  "totalValueINR": number,
+  "material": "Authentic Craft Materials",
+  "leadTimeDays": number,
+  "rawTranscript": "${transcript}",
+  "confidence": 0.98
+}`
+                          : `You are an expert Kannada assistant for KalaSamanvaya. Parse this rural artisan transcript: "${transcript}"
 
 CRITICAL SCRIPT MANDATE:
 1. If this text is in Kannada, or Kanglish (Kannada spoken or written in English/Latin letters, such as "na Badi Gammathu Kasuti" or "nanna bali 80 kasuti"):
@@ -192,7 +225,7 @@ Extract into pure JSON without code fences:
       );
     }
 
-    const extracted = parseKannadaTranscript(transcript);
+    const extracted = parseKannadaTranscript(transcript, language as "kn" | "en");
 
     return NextResponse.json({
       success: true,

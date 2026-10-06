@@ -216,8 +216,8 @@ export function transliterateKanglishToKannada(text: string): string {
 /**
  * Intelligent Heuristic Extractor for Spoken Kannada & Bilingual Indian Speech
  */
-export function parseKannadaTranscript(transcript: string): ExtractedCraftListing {
-  const convertedText = transliterateKanglishToKannada(transcript);
+export function parseKannadaTranscript(transcript: string, lang: "kn" | "en" = "kn"): ExtractedCraftListing {
+  const convertedText = lang === "kn" ? transliterateKanglishToKannada(transcript) : transcript;
   const normalizedText = normalizeKannadaNumbers(transcript).toLowerCase();
 
   // 1. Craft identification (Check specific multi-word matches first)
@@ -325,7 +325,7 @@ export function parseKannadaTranscript(transcript: string): ExtractedCraftListin
     totalValueINR: quantity * price,
     material: detectedMaterial,
     leadTimeDays: leadTime,
-    rawTranscript: convertedText || transcript,
+    rawTranscript: lang === "kn" ? (convertedText || transcript) : transcript,
     confidence: 0.96
   };
 }

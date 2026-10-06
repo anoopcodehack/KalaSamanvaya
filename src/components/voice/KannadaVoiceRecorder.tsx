@@ -131,7 +131,7 @@ export default function KannadaVoiceRecorder({
 
     // If preliminary browser text exists and is meaningful (>10 chars), apply immediate local heuristic update
     if (text && text.trim().length > 10) {
-      const local = parseKannadaTranscript(text);
+      const local = parseKannadaTranscript(text, language);
       handleExtractedResult(local);
     } else if (audioBlob && audioBlob.size > 800) {
       // Audio was recorded; indicate processing while Gemini multimodal transcribes full sentence
@@ -270,7 +270,7 @@ export default function KannadaVoiceRecorder({
             setTranscript(displayForUser);
             // Instant heuristic preview as full sentence emerges
             if (liveDisplay.length > 5) {
-              const preview = parseKannadaTranscript(liveDisplay);
+              const preview = parseKannadaTranscript(liveDisplay, language);
               if (preview && preview.craft) {
                 handleExtractedResult(preview);
               }
