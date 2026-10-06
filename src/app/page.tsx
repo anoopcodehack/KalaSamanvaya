@@ -399,19 +399,29 @@ export default function HomePage() {
                   </div>
                   <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                     <div>
-                      <div className="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-[#E67E22]" />
-                        <span>Dharwad District</span>
+                      <div className="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center justify-between">
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-3 h-3 text-[#E67E22]" />
+                          <span className="group-hover:hidden">Dharwad District</span>
+                          <span className="hidden group-hover:inline text-amber-300">ಧಾರವಾಡ ಜಿಲ್ಲೆ</span>
+                        </span>
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-950/70 border border-amber-800/40 text-stone-400 group-hover:text-amber-300 transition-colors">
+                          <span className="group-hover:hidden">Hover for ಕನ್ನಡ</span>
+                          <span className="hidden group-hover:inline text-[#E67E22] font-bold">ಕನ್ನಡ</span>
+                        </span>
                       </div>
                       <h3 className="text-base font-bold text-white mt-1 group-hover:text-[#E67E22] transition-colors">
-                        Kasuti Handloom Silk
+                        <span className="group-hover:hidden">Kasuti Handloom Silk</span>
+                        <span className="hidden group-hover:inline text-amber-200 font-serif font-bold">ಕಸೂತಿ ಕೈಮಗ್ಗ ರೇಷ್ಮೆ ಕಲೆ</span>
                       </h3>
                       <p className="text-xs text-stone-300 mt-1 leading-relaxed">
-                        38 hours of counted-thread needlework with zero visible knots, inspired by Chalukyan temple art.
+                        <span className="group-hover:hidden">38 hours of counted-thread needlework with zero visible knots, inspired by Chalukyan temple art.</span>
+                        <span className="hidden group-hover:inline text-amber-100/90 font-serif">ಚಾಲುಕ್ಯರ ದೇವಾಲಯದ ಕಲೆಯ ಸ್ಪೂರ್ತಿ, ಗಂಟುಗಳಿಲ್ಲದ ೩೮ ಗಂಟೆಗಳ ಸೂಕ್ಷ್ಮ ಸೂಜಿಯ ಕೈಕೆಲಸ.</span>
                       </p>
                     </div>
                     <div className="pt-2 border-t border-amber-900/40 text-xs font-semibold text-[#E67E22] flex items-center justify-between">
-                      <span>Explore Kasuti</span>
+                      <span className="group-hover:hidden">Explore Kasuti</span>
+                      <span className="hidden group-hover:inline text-amber-300">ಕಸೂತಿ ಅನ್ವೇಷಿಸಿ</span>
                       <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
@@ -440,19 +450,29 @@ export default function HomePage() {
                   </div>
                   <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                     <div>
-                      <div className="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-[#E67E22]" />
-                        <span>Bidar District</span>
+                      <div className="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center justify-between">
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-3 h-3 text-[#E67E22]" />
+                          <span className="group-hover:hidden">Bidar District</span>
+                          <span className="hidden group-hover:inline text-amber-300">ಬೀದರ್ ಜಿಲ್ಲೆ</span>
+                        </span>
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-950/70 border border-amber-800/40 text-stone-400 group-hover:text-amber-300 transition-colors">
+                          <span className="group-hover:hidden">Hover for ಕನ್ನಡ</span>
+                          <span className="hidden group-hover:inline text-[#E67E22] font-bold">ಕನ್ನಡ</span>
+                        </span>
                       </div>
                       <h3 className="text-base font-bold text-white mt-1 group-hover:text-[#E67E22] transition-colors">
-                        Bidri Silver Metalcraft
+                        <span className="group-hover:hidden">Bidri Silver Metalcraft</span>
+                        <span className="hidden group-hover:inline text-amber-200 font-serif font-bold">ಬಿದ್ರಿ ಬೆಳ್ಳಿ ಕೆತ್ತನೆ ಕಲೆ</span>
                       </h3>
                       <p className="text-xs text-stone-300 mt-1 leading-relaxed">
-                        Centuries-old blackened zinc alloy intricately inlaid with pure silver floral motifs.
+                        <span className="group-hover:hidden">Centuries-old blackened zinc alloy intricately inlaid with pure silver floral motifs.</span>
+                        <span className="hidden group-hover:inline text-amber-100/90 font-serif">ಶುದ್ಧ ಬೆಳ್ಳಿಯ ತಂತಿಯಿಂದ ಕಪ್ಪು ಮಿಶ್ರಲೋಹದ ಮೇಲೆ ಕೆತ್ತಲಾದ ಶತಮಾನಗಳ ಐತಿಹಾಸಿಕ ಕಲೆ.</span>
                       </p>
                     </div>
                     <div className="pt-2 border-t border-amber-900/40 text-xs font-semibold text-[#E67E22] flex items-center justify-between">
-                      <span>Explore Bidriware</span>
+                      <span className="group-hover:hidden">Explore Bidriware</span>
+                      <span className="hidden group-hover:inline text-amber-300">ಬಿದ್ರಿ ಕಲೆ ಅನ್ವೇಷಿಸಿ</span>
                       <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
@@ -481,19 +501,29 @@ export default function HomePage() {
                   </div>
                   <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                     <div>
-                      <div className="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-[#E67E22]" />
-                        <span>Belagavi District</span>
+                      <div className="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center justify-between">
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-3 h-3 text-[#E67E22]" />
+                          <span className="group-hover:hidden">Belagavi District</span>
+                          <span className="hidden group-hover:inline text-amber-300">ಬೆಳಗಾವಿ ಜಿಲ್ಲೆ</span>
+                        </span>
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-950/70 border border-amber-800/40 text-stone-400 group-hover:text-amber-300 transition-colors">
+                          <span className="group-hover:hidden">Hover for ಕನ್ನಡ</span>
+                          <span className="hidden group-hover:inline text-[#E67E22] font-bold">ಕನ್ನಡ</span>
+                        </span>
                       </div>
                       <h3 className="text-base font-bold text-white mt-1 group-hover:text-[#E67E22] transition-colors">
-                        Khanapur Terracotta
+                        <span className="group-hover:hidden">Khanapur Terracotta</span>
+                        <span className="hidden group-hover:inline text-amber-200 font-serif font-bold">ಖಾನಾಪುರ ಟೆರಾಕೋಟಾ ಮಣ್ಣಿನ ಕಲೆ</span>
                       </h3>
                       <p className="text-xs text-stone-300 mt-1 leading-relaxed">
-                        Wheel-thrown natural earthenware crafted from Malaprabha riverbed clay and wood fired.
+                        <span className="group-hover:hidden">Wheel-thrown natural earthenware crafted from Malaprabha riverbed clay and wood fired.</span>
+                        <span className="hidden group-hover:inline text-amber-100/90 font-serif">ಮಲಪ್ರಭಾ ನದಿಯ ಕೆಂಪು ಜೇಡಿಮಣ್ಣಿನಿಂದ ಚಕ್ರದ ಮೇಲೆ ನೈಸರ್ಗಿಕವಾಗಿ ತಯಾರಿಸಿದ ಕುಂಬಾರಿಕೆ.</span>
                       </p>
                     </div>
                     <div className="pt-2 border-t border-amber-900/40 text-xs font-semibold text-[#E67E22] flex items-center justify-between">
-                      <span>Explore Pottery</span>
+                      <span className="group-hover:hidden">Explore Pottery</span>
+                      <span className="hidden group-hover:inline text-amber-300">ಕುಂಬಾರಿಕೆ ಅನ್ವೇಷಿಸಿ</span>
                       <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
@@ -522,19 +552,29 @@ export default function HomePage() {
                   </div>
                   <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                     <div>
-                      <div className="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-[#E67E22]" />
-                        <span>Udupi Coastal Belt</span>
+                      <div className="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center justify-between">
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-3 h-3 text-[#E67E22]" />
+                          <span className="group-hover:hidden">Udupi Coastal Belt</span>
+                          <span className="hidden group-hover:inline text-amber-300">ಉಡುಪಿ ಕರಾವಳಿ</span>
+                        </span>
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-950/70 border border-amber-800/40 text-stone-400 group-hover:text-amber-300 transition-colors">
+                          <span className="group-hover:hidden">Hover for ಕನ್ನಡ</span>
+                          <span className="hidden group-hover:inline text-[#E67E22] font-bold">ಕನ್ನಡ</span>
+                        </span>
                       </div>
                       <h3 className="text-base font-bold text-white mt-1 group-hover:text-[#E67E22] transition-colors">
-                        Beedu Grass Basketry
+                        <span className="group-hover:hidden">Beedu Grass Basketry</span>
+                        <span className="hidden group-hover:inline text-amber-200 font-serif font-bold">ಬೀಡು ನೈಸರ್ಗಿಕ ಹುಲ್ಲಿನ ಬುಟ್ಟಿ</span>
                       </h3>
                       <p className="text-xs text-stone-300 mt-1 leading-relaxed">
-                        Sun-cured riverside wildgrass plaited by coastal women&apos;s self-help groups without chemicals.
+                        <span className="group-hover:hidden">Sun-cured riverside wildgrass plaited by coastal women&apos;s self-help groups without chemicals.</span>
+                        <span className="hidden group-hover:inline text-amber-100/90 font-serif">ಕರಾವಳಿ ಮಹಿಳಾ ಸ್ವಸಹಾಯ ಸಂಘಗಳಿಂದ ರಾಸಾಯನಿಕವಿಲ್ಲದೆ ಹೆಣೆದ ನೈಸರ್ಗಿಕ ಹುಲ್ಲಿನ ಬುಟ್ಟಿ.</span>
                       </p>
                     </div>
                     <div className="pt-2 border-t border-amber-900/40 text-xs font-semibold text-[#E67E22] flex items-center justify-between">
-                      <span>Explore Basketry</span>
+                      <span className="group-hover:hidden">Explore Basketry</span>
+                      <span className="hidden group-hover:inline text-amber-300">ಬುಟ್ಟಿ ಹೆಣಿಗೆ ಅನ್ವೇಷಿಸಿ</span>
                       <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
@@ -563,19 +603,29 @@ export default function HomePage() {
                   </div>
                   <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                     <div>
-                      <div className="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-[#E67E22]" />
-                        <span>Ramanagara District</span>
+                      <div className="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center justify-between">
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-3 h-3 text-[#E67E22]" />
+                          <span className="group-hover:hidden">Ramanagara District</span>
+                          <span className="hidden group-hover:inline text-amber-300">ರಾಮನಗರ ಜಿಲ್ಲೆ</span>
+                        </span>
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-950/70 border border-amber-800/40 text-stone-400 group-hover:text-amber-300 transition-colors">
+                          <span className="group-hover:hidden">Hover for ಕನ್ನಡ</span>
+                          <span className="hidden group-hover:inline text-[#E67E22] font-bold">ಕನ್ನಡ</span>
+                        </span>
                       </div>
                       <h3 className="text-base font-bold text-white mt-1 group-hover:text-[#E67E22] transition-colors">
-                        Channapatna Toys
+                        <span className="group-hover:hidden">Channapatna Toys</span>
+                        <span className="hidden group-hover:inline text-amber-200 font-serif font-bold">ಚನ್ನಪಟ್ಟಣದ ಬಣ್ಣದ ಆಟಿಕೆ</span>
                       </h3>
                       <p className="text-xs text-stone-300 mt-1 leading-relaxed">
-                        Non-toxic ivory wood lacquerware hand-turned with natural turmeric & kumkum vegetable dyes.
+                        <span className="group-hover:hidden">Non-toxic ivory wood lacquerware hand-turned with natural turmeric & kumkum vegetable dyes.</span>
+                        <span className="hidden group-hover:inline text-amber-100/90 font-serif">ನೈಸರ್ಗಿಕ ಅರಿಶಿನ, ಕುಂಕುಮ ಮತ್ತು ಆಲೆಮರದಿಂದ ಮಾಡಿದ ವಿಷಮುಕ್ತ ಮರದ ಆಟಿಕೆಗಳು.</span>
                       </p>
                     </div>
                     <div className="pt-2 border-t border-amber-900/40 text-xs font-semibold text-[#E67E22] flex items-center justify-between">
-                      <span>Explore Woodcraft</span>
+                      <span className="group-hover:hidden">Explore Woodcraft</span>
+                      <span className="hidden group-hover:inline text-amber-300">ಮರದ ಆಟಿಕೆ ಅನ್ವೇಷಿಸಿ</span>
                       <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
@@ -736,7 +786,8 @@ export default function HomePage() {
                       {/* Ribbon Badge */}
                       <div className="absolute top-0 left-0">
                         <span className="inline-block px-3 py-1 bg-[#E67E22] text-white text-[10px] font-extrabold uppercase tracking-wider shadow-md">
-                          {idx === 0 ? "New Arrival" : "EXCLUSIVE PRODUCT"}
+                          <span className="group-hover:hidden">{idx === 0 ? "New Arrival" : "EXCLUSIVE PRODUCT"}</span>
+                          <span className="hidden group-hover:inline">{idx === 0 ? "ಹೊಸ ಕಲಾಕೃತಿ" : "ವಿಶೇಷ ಕಲಾಕೃತಿ"}</span>
                         </span>
                       </div>
 
@@ -747,7 +798,7 @@ export default function HomePage() {
                           className="px-4 py-2 rounded-md bg-white/90 backdrop-blur-sm text-stone-900 font-bold text-xs shadow-lg hover:bg-white flex items-center gap-1.5 transition-transform hover:scale-105"
                         >
                           <Eye className="w-3.5 h-3.5 text-[#E67E22]" />
-                          <span>Quick View</span>
+                          <span>ವಿವರ ನೋಡಿ (View Story)</span>
                         </button>
                       </div>
                     </div>
@@ -755,11 +806,21 @@ export default function HomePage() {
                     {/* Card Bottom Content */}
                     <div className="p-4 space-y-2 flex-1 flex flex-col justify-between">
                       <div>
+                        <div className="flex items-center justify-between text-[9px] text-stone-400 mb-1">
+                          <span className="group-hover:hidden font-mono uppercase tracking-wider text-amber-400/90">{product.craftType}</span>
+                          <span className="hidden group-hover:inline font-bold text-amber-300 font-serif">{product.categoryLabel}</span>
+                          <span className="px-1.5 py-0.5 rounded bg-amber-950/80 border border-amber-800/40 text-[9px] text-stone-400 group-hover:text-amber-300 transition-colors">
+                            <span className="group-hover:hidden">Hover for ಕನ್ನಡ</span>
+                            <span className="hidden group-hover:inline text-[#E67E22] font-bold">ಕನ್ನಡ</span>
+                          </span>
+                        </div>
                         <h3 className="text-sm font-bold text-white line-clamp-1 group-hover:text-[#E67E22] transition-colors">
-                          {product.title}
+                          <span className="group-hover:hidden">{product.title}</span>
+                          <span className="hidden group-hover:inline text-amber-200 font-serif font-bold">{product.kannadaTitle || product.title}</span>
                         </h3>
                         <p className="text-[11px] text-stone-400 line-clamp-1 mt-0.5">
-                          By {product.artisanName} • {product.artisanCluster}
+                          <span className="group-hover:hidden">By {product.artisanName} • {product.artisanCluster}</span>
+                          <span className="hidden group-hover:inline text-amber-300/90 font-serif">ಕುಶಲಕರ್ಮಿ: {product.artisanKannadaName || product.artisanName} • {product.artisanDistrict}</span>
                         </p>
                       </div>
 
@@ -795,7 +856,8 @@ export default function HomePage() {
                             className="px-3 py-1.5 rounded-lg bg-[#E67E22] hover:bg-[#cf6d17] active:scale-95 text-white text-xs font-semibold transition-all flex items-center gap-1 shadow-sm"
                           >
                             <ShoppingBag className="w-3 h-3" />
-                            <span>Buy</span>
+                            <span className="group-hover:hidden">Buy</span>
+                            <span className="hidden group-hover:inline font-bold">ಖರೀದಿಸಿ</span>
                           </button>
                         </div>
                       </div>
