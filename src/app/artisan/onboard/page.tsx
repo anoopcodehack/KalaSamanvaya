@@ -52,7 +52,7 @@ const CRAFT_CLUSTER_MAP: Record<string, { kn: string; en: string }> = {
 };
 
 export default function ArtisanOnboardPage() {
-  const [language, setLanguage] = useState<"kn" | "en">("kn");
+  const [language, setLanguage] = useState<"kn" | "en" | "tcy">("kn");
   const [artisanName, setArtisanName] = useState("ಸವಿತಾ ನಾಯ್ಕ್ (Savita Naik)");
   const [clusterRegion, setClusterRegion] = useState("ಧಾರವಾಡ ಕಸೂತಿ ಸಂಘ (Dharwad Cluster)");
 
@@ -90,15 +90,15 @@ export default function ArtisanOnboardPage() {
       (k) => k.toLowerCase() === extracted.craft.toLowerCase() || extracted.craft.toLowerCase().includes(k.toLowerCase())
     );
     if (clusterKey && CRAFT_CLUSTER_MAP[clusterKey]) {
-      setClusterRegion(language === "kn" ? CRAFT_CLUSTER_MAP[clusterKey].kn : CRAFT_CLUSTER_MAP[clusterKey].en);
+      setClusterRegion(language === "en" ? CRAFT_CLUSTER_MAP[clusterKey].en : CRAFT_CLUSTER_MAP[clusterKey].kn);
       if (clusterKey.includes("Yakshagana")) {
-        setArtisanName(language === "kn" ? "ಗಣಪತಿ ಹೆಗಡೆ (ಹೊನ್ನಾವರ)" : "Ganapati Hegde (Honnavar)");
-      } else if (clusterKey.includes("Udupi")) {
-        setArtisanName(language === "kn" ? "ಶೇಖರ್ ದೇವಾಡಿಗ (ಉಡುಪಿ)" : "Shekhar Devadiga (Udupi)");
+        setArtisanName(language === "en" ? "Ganapati Hegde (Honnavar)" : language === "tcy" ? "ಗಣಪತಿ ಹೆಗಡೆ (ಹೊನ್ನಾವರ - ಕರಾವಳಿ)" : "ಗಣಪತಿ ಹೆಗಡೆ (ಹೊನ್ನಾವರ)");
+      } else if (clusterKey.includes("Udupi") || clusterKey.includes("Beedu")) {
+        setArtisanName(language === "en" ? "Shekhar Devadiga (Udupi)" : language === "tcy" ? "ಶೇಖರ್ ದೇವಾಡಿಗ (ಉಡುಪಿ - ಕರಾವಳಿ)" : "ಶೇಖರ್ ದೇವಾಡಿಗ (ಉಡುಪಿ)");
       } else if (clusterKey.includes("Pottery")) {
-        setArtisanName(language === "kn" ? "ಬಸವರಾಜ್ ಕುಂಬಾರ್ (ಖಾನಾಪುರ)" : "Basavaraj Kumbar (Khanapur)");
+        setArtisanName(language === "en" ? "Basavaraj Kumbar (Khanapur)" : "ಬಸವರಾಜ್ ಕುಂಬಾರ್ (ಖಾನಾಪುರ)");
       } else if (clusterKey.includes("Kasuti")) {
-        setArtisanName(language === "kn" ? "ಸವಿತಾ ನಾಯ್ಕ್ (ಧಾರವಾಡ)" : "Savita Naik (Dharwad)");
+        setArtisanName(language === "en" ? "Savita Naik (Dharwad)" : "ಸವಿತಾ ನಾಯ್ಕ್ (ಧಾರವಾಡ)");
       }
     }
   };
@@ -190,37 +190,62 @@ export default function ArtisanOnboardPage() {
       <section className="bg-[#F5EFEB] pt-10 pb-8 px-4 sm:px-6 lg:px-8 border-b border-stone-200">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <ScrollReveal direction="up" className="space-y-1">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-stone-300 text-[#C85A32] text-xs font-semibold uppercase shadow-sm">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-stone-300 text-[#C85A32] text-xs font-semibold uppercase shadow-xs">
               <Mic className="w-3.5 h-3.5 text-[#C85A32]" />
-              <span>{language === "kn" ? "ಗ್ರಾಮೀಣ ಕುಶಲಕರ್ಮಿಗಳ ವೇದಿಕೆ" : "Rural Artisan Voice Listing Portal"}</span>
+              <span>
+                {language === "kn"
+                  ? "ಗ್ರಾಮೀಣ ಕುಶಲಕರ್ಮಿಗಳ ವೇದಿಕೆ"
+                  : language === "tcy"
+                  ? "ಕರಾವಳಿ ತುಳುನಾಡ್ ಕುಶಲಕರ್ಮಿಗಳ ವೇದಿಕೆ (Dakshina Kannada & Udupi)"
+                  : "Rural Artisan Voice Listing Portal"}
+              </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-[#2A1810]">
-              {language === "kn" ? "ಕನ್ನಡ ಧ್ವನಿ ಆಧಾರಿತ ಸರಕು ನೊಂದಣಿ" : "Kannada Voice-Assisted Inventory Listing"}
+              {language === "kn"
+                ? "ಕನ್ನಡ ಧ್ವನಿ ಆಧಾರಿತ ಸರಕು ನೊಂದಣಿ"
+                : language === "tcy"
+                ? "ತುಳು & ಕನ್ನಡ ಧ್ವನಿ ಆಧಾರಿತ ಸರಕು ನೊಂದಣಿ"
+                : "Voice-Assisted Craft Inventory Listing"}
             </h1>
             <p className="text-xs text-stone-600">
               {language === "kn"
                 ? "ಟೈಪ್ ಮಾಡುವ ಅಗತ್ಯವಿಲ್ಲ • ಮಾತನಾಡಿ, ಪರಿಶೀಲಿಸಿ, ನೇರವಾಗಿ ಪ್ರಕಟಿಸಿ"
-                : "Zero typing friction • Speak in Kannada, review high-contrast cards, and publish"}
+                : language === "tcy"
+                ? "ಟೈಪ್ ಮಲ್ಪುನ ಅಗತ್ಯ ಇಜ್ಜಿ • ಪಾತೆರ್ಲೆ, ತೂಲೆ, ಪ್ರಕಟ ಮಲ್ಪುಲೆ"
+                : "Zero typing friction • Speak in Kannada or Tulu, review high-contrast cards, and publish"}
             </p>
           </ScrollReveal>
 
-          {/* Vernacular Language Switcher */}
-          <ScrollReveal direction="left" delayMs={50} className="flex items-center gap-1.5 p-1 bg-white rounded-xl border border-stone-300 shadow-sm self-start sm:self-auto">
+          {/* Vernacular Language Switcher: Kannada | Tulu | English */}
+          <ScrollReveal direction="left" delayMs={50} className="flex items-center gap-1.5 p-1 bg-white rounded-xl border border-stone-300 shadow-xs self-start sm:self-auto">
             <button
+              type="button"
               onClick={() => setLanguage("kn")}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 ${
                 language === "kn"
-                  ? "bg-[#C85A32] text-white shadow-sm"
+                  ? "bg-[#C85A32] text-white shadow-xs"
                   : "text-stone-700 hover:text-[#C85A32]"
               }`}
             >
               ಕನ್ನಡ
             </button>
             <button
+              type="button"
+              onClick={() => setLanguage("tcy")}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 ${
+                language === "tcy"
+                  ? "bg-[#C85A32] text-white shadow-xs"
+                  : "text-stone-700 hover:text-[#C85A32]"
+              }`}
+            >
+              ತುಳು (Tulu)
+            </button>
+            <button
+              type="button"
               onClick={() => setLanguage("en")}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 ${
                 language === "en"
-                  ? "bg-[#C85A32] text-white shadow-sm"
+                  ? "bg-[#C85A32] text-white shadow-xs"
                   : "text-stone-700 hover:text-[#C85A32]"
               }`}
             >
@@ -405,7 +430,7 @@ export default function ArtisanOnboardPage() {
               {/* Render active input mode */}
               {onboardingMode === "photo" ? (
                 <AiPhotoCraftScanner
-                  language={language}
+                  language={language === "tcy" ? "kn" : language}
                   onListingExtracted={(extracted, img) => handleListingExtracted(extracted, img)}
                 />
               ) : (

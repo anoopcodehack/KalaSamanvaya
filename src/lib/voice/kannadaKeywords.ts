@@ -12,7 +12,18 @@ export interface ExtractedCraftListing {
 }
 
 export const KANNADA_CRAFT_DICTIONARY: Record<string, { craft: string; kannada: string; material: string; defaultPrice: number; defaultLead: number; defaultTitle: string }> = {
-  // Pure Kannada terms
+  // Pure Kannada & Coastal Tulu terms
+  "ಬೀಡುದ ಬುಟ್ಟಿ": { craft: "Beedu", kannada: "ಬೀಡು ಬುಟ್ಟಿ (ಕರಾವಳಿ)", material: "Sun-Cured Coastal Wildgrass & Raw Jute", defaultPrice: 450, defaultLead: 10, defaultTitle: "Udupi Coastal Beedu Wildgrass Baskets" },
+  "ಬೀಡುದ": { craft: "Beedu", kannada: "ಬೀಡು ಬುಟ್ಟಿ", material: "Coastal Wildgrass & Jute", defaultPrice: 450, defaultLead: 10, defaultTitle: "Udupi Beedu Wildgrass Baskets" },
+  "ಬುಟ್ಟಿಲು": { craft: "Beedu", kannada: "ಹುಲ್ಲಿನ ಬುಟ್ಟಿಲು", material: "Coastal Wild Rivergrass", defaultPrice: 450, defaultLead: 10, defaultTitle: "Coastal Handwoven Baskets" },
+  "ಮುಟ್ಟಾಲೆ": { craft: "Yakshagana", kannada: "ಕರಾವಳಿ ಮುಟ್ಟಾಲೆ / ಕಿರೀಟ", material: "Traditional Coastal Areca & Wood Craft", defaultPrice: 1250, defaultLead: 7, defaultTitle: "Coastal Tulunadu Traditional Muttale Headgear" },
+  "ಯಕ್ಷಗಾನದ ಮುಟ್ಟಾಲೆ": { craft: "Yakshagana", kannada: "ಯಕ್ಷಗಾನ ಮುಟ್ಟಾಲೆ", material: "Carved Wood & Brass Embellishments", defaultPrice: 1850, defaultLead: 10, defaultTitle: "Yakshagana Stage Muttale Headgear" },
+  "ಯಕ್ಷಗಾನದ ಕಿರೀಟ": { craft: "Yakshagana", kannada: "ಯಕ್ಷಗಾನ ಕಿರೀಟ", material: "Carved Honne Wood & Gold Foil", defaultPrice: 3450, defaultLead: 14, defaultTitle: "Yakshagana Handcrafted Kireeta" },
+  "ಉಡುಪಿದ ಸೀರೆ": { craft: "Handloom", kannada: "ಉಡುಪಿ ಕೈಮಗ್ಗ ಸೀರೆ", material: "100% Combed Organic Cotton", defaultPrice: 2350, defaultLead: 14, defaultTitle: "Udupi GI Heritage Handloom Cotton Sarees" },
+  "ಮಣ್ಣ್ದ ಮಡಿಕೆ": { craft: "Pottery", kannada: "ಕರಾವಳಿ ಜೇಡಿಮಣ್ಣಿನ ಮಡಿಕೆ", material: "Netravati Riverbed Silt & Stone Polish", defaultPrice: 350, defaultLead: 7, defaultTitle: "Coastal Terracotta Earthenware" },
+  "ಮಣ್ಣ್ದ ಜಗ್ಗು": { craft: "Pottery", kannada: "ನೀರಿನ ಜಗ್ಗು", material: "Netravati Riverbed Clay", defaultPrice: 350, defaultLead: 7, defaultTitle: "Handcrafted Terracotta Water Jugs" },
+  "ಮಣ್ಣ್ದ": { craft: "Pottery", kannada: "ಮಣ್ಣಿನ ಕಲೆ", material: "Riverbed Terracotta Clay", defaultPrice: 350, defaultLead: 7, defaultTitle: "Artisanal Terracotta Pottery" },
+  "ಕಸೂತಿದ ಶಾಲು": { craft: "Kasuti", kannada: "ಕಸೂತಿ ಶಾಲು", material: "Pure Silk Cotton Base", defaultPrice: 600, defaultLead: 15, defaultTitle: "Dharwad Heritage Kasuti Silk Shawls" },
   "ಕಸೂತಿ": { craft: "Kasuti", kannada: "ಕಸೂತಿ ಕಲೆ", material: "Pure Mulberry Silk Thread & Handloom Cotton", defaultPrice: 600, defaultLead: 15, defaultTitle: "Dharwad Heritage Kasuti Silk Shawls" },
   "ಶಾಲು": { craft: "Kasuti", kannada: "ಕಸೂತಿ ಶಾಲು", material: "Pure Silk Cotton Base", defaultPrice: 600, defaultLead: 15, defaultTitle: "Dharwad Heritage Kasuti Silk Shawls" },
   "ಸೀರೆ": { craft: "Kasuti", kannada: "ಕಸೂತಿ ಸೀರೆ", material: "Ilkal Handloom Silk", defaultPrice: 1600, defaultLead: 20, defaultTitle: "Ilkal Kasuti Handcrafted Saree" },
@@ -35,7 +46,10 @@ export const KANNADA_CRAFT_DICTIONARY: Record<string, { craft: string; kannada: 
   "ಚನ್ನಪಟ್ಟಣ": { craft: "Channapatna Toys", kannada: "ಚನ್ನಪಟ್ಟಣದ ಬಣ್ಣದ ಆಟಿಕೆ", material: "Natural Ivory Wood & Organic Vegetable Dyes", defaultPrice: 550, defaultLead: 12, defaultTitle: "Channapatna Organic Wooden Toys" },
   "ಆಟಿಕೆ": { craft: "Channapatna Toys", kannada: "ಚನ್ನಪಟ್ಟಣದ ಬಣ್ಣದ ಆಟಿಕೆ", material: "Natural Ivory Wood & Lacquer Polish", defaultPrice: 550, defaultLead: 12, defaultTitle: "Traditional Lacquer Wooden Toys" },
 
-  // English & Transliterated terms (for bilingual speech / Kanglish)
+  // English & Transliterated terms (for bilingual speech / Kanglish / Coastal Tulu terms in English)
+  "muttale": { craft: "Yakshagana", kannada: "ಕರಾವಳಿ ಮುಟ್ಟಾಲೆ", material: "Traditional Coastal Areca Craft", defaultPrice: 1250, defaultLead: 7, defaultTitle: "Coastal Tulunadu Muttale Headgear" },
+  "beeduda butti": { craft: "Beedu", kannada: "ಬೀಡುದ ಬುಟ್ಟಿ", material: "Coastal Wildgrass & Jute", defaultPrice: 450, defaultLead: 10, defaultTitle: "Udupi Beedu Wildgrass Baskets" },
+  "beeduda": { craft: "Beedu", kannada: "ಬೀಡುದ ಬುಟ್ಟಿ", material: "Coastal Wildgrass & Jute", defaultPrice: 450, defaultLead: 10, defaultTitle: "Udupi Beedu Wildgrass Baskets" },
   "khanapur terracotta": { craft: "Pottery", kannada: "ಖಾನಾಪುರ ಟೆರಾಕೋಟಾ", material: "Malaprabha Riverbed Red Clay", defaultPrice: 1200, defaultLead: 10, defaultTitle: "Khanapur Belagavi Terracotta Garden Urn" },
   "belagavi terracotta": { craft: "Pottery", kannada: "ಬೆಳಗಾವಿ ಟೆರಾಕೋಟಾ", material: "Malaprabha Riverbed Red Clay", defaultPrice: 1200, defaultLead: 10, defaultTitle: "Khanapur Belagavi Terracotta Earthenware" },
   "khanapur": { craft: "Pottery", kannada: "ಖಾನಾಪುರ ಮಣ್ಣಿನ ಕಲೆ", material: "Malaprabha Riverbed Red Clay", defaultPrice: 750, defaultLead: 7, defaultTitle: "Khanapur Belagavi Terracotta Water Jugs" },
@@ -82,24 +96,49 @@ export const KANNADA_CRAFT_DICTIONARY: Record<string, { craft: string; kannada: 
 
 // Kannada & English numeral words mapping to integer values
 const NUMERAL_WORDS: Record<string, number> = {
-  // Kannada
+  // Kannada & Tulu Numerals
+  "ಒಂಜಿ": 1,
+  "ರಡ್ಡ್": 2,
+  "ಮೂಜಿ": 3,
+  "ನಾಲ್": 4,
+  "ಐನ್": 5,
+  "ಆಜಿ": 6,
+  "ಏಳ್": 7,
+  "ಎನ್ಮ": 8,
+  "ಒರುಂಬ": 9,
+  "ಪತ್ತ್": 10,
   "ಹತ್ತು": 10,
   "ಇಪ್ಪತ್ತು": 20,
+  "ಇರ್ವ": 20,
   "ಮೂವತ್ತು": 30,
+  "ಮುಪ್ಪ": 30,
   "ನಲವತ್ತು": 40,
+  "ನಲ್ಪ": 40,
   "ಐವತ್ತು": 50,
+  "ಐವ": 50,
   "ಅರವತ್ತು": 60,
+  "ಅಜಿಪ": 60,
   "ಎಪ್ಪತ್ತು": 70,
+  "ಎಲ್ಪ": 70,
   "ಎಂಬತ್ತು": 80,
   "ಎಂಭತ್ತು": 80,
+  "ಎನ್ಪ": 80,
   "ತೊಂಬತ್ತು": 90,
+  "ಸೊನ್ಪ": 90,
   "ನೂರು": 100,
+  "ನೂದು": 100,
   "ಇನ್ನೂರು": 200,
+  "ಇನ್ನೂದು": 200,
   "ಮುನ್ನೂರು": 300,
+  "ಮುನ್ನೂದು": 300,
   "ನಾನ್ನೂರು": 400,
+  "ನಾನ್ನೂದು": 400,
   "ಐನೂರು": 500,
+  "ಐನೂದು": 500,
   "ಆರುನೂರು": 600,
+  "ಆರ್ನೂದು": 600,
   "ಎಂಟುನೂರು": 800,
+  "ಎನ್ಮನೂದು": 800,
   "ಸಾವಿರ": 1000,
 
   // English
@@ -141,9 +180,12 @@ function normalizeKannadaNumbers(text: string): string {
 }
 
 const KANGLISH_TO_KANNADA_REPLACEMENTS: [RegExp, string][] = [
-  // Phrases
+  // Phrases (Kannada & Tulu)
   [/\b(?:na\s+badi|na\s+baadi|nanna\s+bali|nanna\s+baLi|nan\s+hatra|nanna\s+hatra)\b/gi, "ನನ್ನ ಬಳಿ"],
   [/\b(?:namma\s+sanghadalli|namma\s+sangha|namma\s+koota)\b/gi, "ನಮ್ಮ ಸಂಘದಲ್ಲಿ"],
+  [/\b(?:enkulede|yenkuleda|yenkuled|yenklede|enkleda)\b/gi, "ಯೆಂಕುಲೆಡ"],
+  [/\b(?:enna\s+kayit|enna\s+kaiyt|enna\s+kaiyit)\b/gi, "ಎನ್ನ ಕೈಟ್"],
+  [/\b(?:namma\s+sanghodu|namma\s+sanghadu)\b/gi, "ನಮ್ಮ ಸಂಘೊಡು"],
   [/\bnan\s+baddi\b/gi, "ನನ್ನ ಬಳಿ"],
 
   // Quantities & Numbers
@@ -190,13 +232,18 @@ const KANGLISH_TO_KANNADA_REPLACEMENTS: [RegExp, string][] = [
   [/\bchannapatna\b/gi, "ಚನ್ನಪಟ್ಟಣ"],
   [/\b(?:aatike|atike)\b/gi, "ಆಟಿಕೆ"],
 
-  // Commercial verbs & units
+  // Commercial verbs & units (Kannada & Tulu)
   [/\b(?:ondakke|ondak)\b/gi, "ಒಂದಕ್ಕೆ"],
+  [/\b(?:onjek|onjeg)\b/gi, "ಒಂಜೆಕ್"],
   [/\bbele\b/gi, "ಬೆಲೆ"],
-  [/\b(?:roopayi|rupayi|rupees?|rs\.?)\b/gi, "ರೂಪಾಯಿ"],
+  [/\b(?:roopayi|rupayi|rupees?|rs\.?)\b/gi, "ರುಪಾಯಿ"],
   [/\b(?:dinagalalli|dinadalli)\b/gi, "ದಿನಗಳಲ್ಲಿ"],
+  [/\b(?:dinotu|dinat)\b/gi, "ದಿನೊಟು"],
   [/\b(?:needuttene|needuteve|koduttene|koduteve)\b/gi, "ನೀಡುತ್ತೇವೆ"],
+  [/\b(?:korpa|korpe|korpar)\b/gi, "ಕೊರ್ಪ"],
   [/\b(?:tayarisuttene|tayarisuteve)\b/gi, "ತಯಾರಿಸುತ್ತೇವೆ"],
+  [/\b(?:malpuv|malpuna)\b/gi, "ಮಲ್ಪುನ"],
+  [/\b(?:undu|und)\b/gi, "ಉಂಡು"],
   [/\bide\b/gi, "ಇದೆ"],
   [/\bive\b/gi, "ಇವೆ"],
 ];
@@ -216,8 +263,8 @@ export function transliterateKanglishToKannada(text: string): string {
 /**
  * Intelligent Heuristic Extractor for Spoken Kannada & Bilingual Indian Speech
  */
-export function parseKannadaTranscript(transcript: string, lang: "kn" | "en" = "kn"): ExtractedCraftListing {
-  const convertedText = lang === "kn" ? transliterateKanglishToKannada(transcript) : transcript;
+export function parseKannadaTranscript(transcript: string, lang: "kn" | "en" | "tcy" = "kn"): ExtractedCraftListing {
+  const convertedText = (lang === "kn" || lang === "tcy") ? transliterateKanglishToKannada(transcript) : transcript;
   const normalizedText = normalizeKannadaNumbers(transcript).toLowerCase();
 
   // 1. Craft identification (Check specific multi-word matches first)
@@ -248,20 +295,27 @@ export function parseKannadaTranscript(transcript: string, lang: "kn" | "en" = "
 
   // Fallback checks if no direct dictionary keyword matched
   if (!matched) {
-    if (normalizedText.includes("jug") || normalizedText.includes("water") || normalizedText.includes("pot") || normalizedText.includes("ಮಡಿಕೆ") || normalizedText.includes("ಜಗ್ಗು")) {
+    if (normalizedText.includes("jug") || normalizedText.includes("water") || normalizedText.includes("pot") || normalizedText.includes("ಮಡಿಕೆ") || normalizedText.includes("ಜಗ್ಗು") || normalizedText.includes("ಮಣ್ಣ್ದ")) {
       detectedCraft = "Pottery";
       detectedKannada = "ಜೇಡಿಮಣ್ಣಿನ ಮಡಿಕೆ / ನೀರಿನ ಜಗ್ಗು";
       detectedMaterial = "Netravati Riverbed Silt & Stone Polish";
       detectedTitle = "Handcrafted Terracotta Water Jugs";
       defaultPrice = 350;
       defaultLead = 7;
-    } else if (normalizedText.includes("basket") || normalizedText.includes("grass") || normalizedText.includes("ಬುಟ್ಟಿ") || normalizedText.includes("ಬೀಡು")) {
+    } else if (normalizedText.includes("basket") || normalizedText.includes("grass") || normalizedText.includes("ಬುಟ್ಟಿ") || normalizedText.includes("ಬೀಡು") || normalizedText.includes("ಬುಟ್ಟಿಲು") || normalizedText.includes("ಬೀಡುದ")) {
       detectedCraft = "Beedu";
-      detectedKannada = "ಬೀಡು ಹುಲ್ಲಿನ ಬುಟ್ಟಿ";
+      detectedKannada = "ಬೀಡು ಹುಲ್ಲಿನ ಬುಟ್ಟಿ (ಉಡುಪಿ)";
       detectedMaterial = "Natural Wild Rivergrass";
       detectedTitle = "Udupi Beedu Wildgrass Baskets";
       defaultPrice = 450;
       defaultLead = 10;
+    } else if (normalizedText.includes("muttale") || normalizedText.includes("ಮುಟ್ಟಾಲೆ") || normalizedText.includes("kireeta") || normalizedText.includes("ಕಿರೀಟ")) {
+      detectedCraft = "Yakshagana";
+      detectedKannada = "ಕರಾವಳಿ ಯಕ್ಷಗಾನ ಕಿರೀಟ / ಮುಟ್ಟಾಲೆ";
+      detectedMaterial = "Honne Wood & Brass Embellishments";
+      detectedTitle = "Yakshagana Stage Regalia";
+      defaultPrice = 2800;
+      defaultLead = 12;
     }
   }
 
@@ -270,16 +324,16 @@ export function parseKannadaTranscript(transcript: string, lang: "kn" | "en" = "
   let cleanText = normalizedText;
 
   // Extract days (lead time) first so it is not confused with quantity or price
-  const daysMatch = cleanText.match(/(\d+)\s*(?:ದಿನಗಳು|ದಿನ|days?)/i);
+  const daysMatch = cleanText.match(/(\d+)\s*(?:ದಿನೊಟು|ದಿನಗಳು|ದಿನ|days?)/i);
   if (daysMatch) {
     leadTime = parseInt(daysMatch[1], 10);
     cleanText = cleanText.replace(daysMatch[0], " ");
   }
 
-  // Extract explicit price if adjacent to currency words (₹, rs, inr, rupees, ರೂಪಾಯಿ, ರೂ.)
+  // Extract explicit price if adjacent to currency words (₹, rs, inr, rupees, ರೂಪಾಯಿ, ರುಪಾಯಿ, ರೂ., ರು.)
   let price = defaultPrice;
   let foundExplicitPrice = false;
-  const explicitPrice = cleanText.match(/(?:rs\.?|inr|₹|ರೂ\.)\s*(\d{2,6})|(\d{2,6})\s*(?:rupees?|rs\.?|inr|ರೂಪಾಯಿ|ರೂ\.)/i);
+  const explicitPrice = cleanText.match(/(?:rs\.?|inr|₹|ರೂ\.|ರು\.)\s*(\d{2,6})|(\d{2,6})\s*(?:rupees?|rs\.?|inr|ರುಪಾಯಿ|ರೂಪಾಯಿ|ರೂ\.|ರು\.)/i);
   if (explicitPrice) {
     price = parseInt(explicitPrice[1] || explicitPrice[2], 10);
     foundExplicitPrice = true;
@@ -325,7 +379,7 @@ export function parseKannadaTranscript(transcript: string, lang: "kn" | "en" = "
     totalValueINR: quantity * price,
     material: detectedMaterial,
     leadTimeDays: leadTime,
-    rawTranscript: lang === "kn" ? (convertedText || transcript) : transcript,
+    rawTranscript: (lang === "kn" || lang === "tcy") ? (convertedText || transcript) : transcript,
     confidence: 0.96
   };
 }

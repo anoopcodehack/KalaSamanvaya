@@ -66,6 +66,25 @@ Return ONLY a valid JSON object matching this schema without markdown code block
   "leadTimeDays": 7,
   "confidence": 0.98
 }`
+                          : language === "tcy"
+                          ? `You are an expert Tulu language (ತುಳು ಬಾಸೆ) speech-to-text transcriber and craft assistant for KalaSamanvaya.
+Listen to this voice recording spoken by a coastal artisan from Udupi or Mangaluru in TULU language.
+1. Transcribe the exact spoken Tulu words into authentic Kannada script (Tulu is written in Kannada script, e.g. "ಯೆಂಕುಲೆಡ ೫೦ ಬೀಡುದ ಬುಟ್ಟಿ ಉಂಡು, ಒಂಜೆಕ್ ೪೫೦ ರುಪಾಯಿ, ೧೦ ದಿನೊಟು ಕೊರ್ಪ").
+2. Extract the coastal craft (Beedu, Udupi Handloom Sarees, Yakshagana Regalia, Pottery), quantity, and price.
+
+Return ONLY a valid JSON object matching this schema without markdown code blocks:
+{
+  "rawTranscript": "ತುಳು ವಾಕ್ಯ ಕನ್ನಡ ಲಿಪಿಯಲ್ಲಿ",
+  "craft": "Beedu" | "Udupi Sarees" | "Yakshagana Regalia" | "Pottery" | "Kasuti" | "General",
+  "craftKannada": "ಬೀಡು ಬುಟ್ಟಿ (ಉಡುಪಿ)" | "ಉಡುಪಿ ಕೈಮಗ್ಗ ಸೀರೆ" | "ಯಕ್ಷಗಾನ ಕಿರೀಟ / ಮುಟ್ಟಾಲೆ" | "ಜೇಡಿಮಣ್ಣಿನ ಮಡಿಕೆ" | "ಕಸೂತಿ ಕಲೆ" | "ಸಾಮಾನ್ಯ",
+  "itemName": "ವಸ್ತುವಿನ ತುಳು/ಕನ್ನಡ ಹೆಸರು (ಉದಾ: ಬೀಡುದ ಹುಲ್ಲಿನ ಬುಟ್ಟಿ)",
+  "quantity": 1,
+  "pricePerUnitINR": 0,
+  "totalValueINR": 0,
+  "material": "ಕರಾವಳಿ ನೈಸರ್ಗಿಕ ವಸ್ತು ಸಾಮಗ್ರಿ",
+  "leadTimeDays": 7,
+  "confidence": 0.98
+}`
                           : `You are an expert Kannada speech-to-text transcriber and craft assistant for KalaSamanvaya (ಕಲಾ ಸಮನ್ವಯ), a Karnataka craft platform.
 Listen to this voice recording spoken by an artisan.
 
@@ -157,6 +176,26 @@ Extract into pure JSON without code fences:
   "rawTranscript": "${transcript}",
   "confidence": 0.98
 }`
+                          : language === "tcy"
+                          ? `You are an expert Tulu language (ತುಳು ಬಾಸೆ) assistant for KalaSamanvaya. Parse this coastal Udupi/Mangaluru artisan transcript: "${transcript}"
+
+CRITICAL RULES FOR TULU (ತುಳು):
+1. Keep "rawTranscript" in native Kannada script (e.g., "ಯೆಂಕುಲೆಡ ೫೦ ಬೀಡುದ ಬುಟ್ಟಿ ಉಂಡು, ಒಂಜೆಕ್ ೪೫೦ ರುಪಾಯಿ, ೧೦ ದಿನೊಟು ಕೊರ್ಪ").
+2. Extract the coastal craft (Beedu, Udupi Sarees, Yakshagana Regalia, Pottery), quantity, and price.
+
+Extract into pure JSON without code fences:
+{
+  "craft": "Beedu" | "Udupi Sarees" | "Yakshagana Regalia" | "Pottery" | "Kasuti",
+  "craftKannada": "ಬೀಡು ಬುಟ್ಟಿ (ಉಡುಪಿ)" | "ಉಡುಪಿ ಕೈಮಗ್ಗ ಸೀರೆ" | "ಯಕ್ಷಗಾನ ಕಿರೀಟ / ಮುಟ್ಟಾಲೆ" | "ಜೇಡಿಮಣ್ಣಿನ ಮಡಿಕೆ" | "ಕಸೂತಿ ಕಲೆ",
+  "itemName": "ವಸ್ತುವಿನ ತುಳು/ಕನ್ನಡ ಹೆಸರು (ಉದಾ: ಬೀಡುದ ಹುಲ್ಲಿನ ಬುಟ್ಟಿಲು)",
+  "quantity": number,
+  "pricePerUnitINR": number,
+  "totalValueINR": number,
+  "material": "ಕರಾವಳಿ ವಸ್ತು ಸಾಮಗ್ರಿ",
+  "leadTimeDays": number,
+  "rawTranscript": "${transcript}",
+  "confidence": 0.98
+}`
                           : `You are an expert Kannada assistant for KalaSamanvaya. Parse this rural artisan transcript: "${transcript}"
 
 CRITICAL SCRIPT MANDATE:
@@ -198,7 +237,7 @@ Extract into pure JSON without code fences:
             }
             if (parsed && (parsed.rawTranscript || parsed.itemName || parsed.craft)) {
               let finalScript = parsed.rawTranscript || transcript;
-              if (language === "kn") {
+              if (language === "kn" || language === "tcy") {
                 finalScript = transliterateKanglishToKannada(finalScript);
               }
               return NextResponse.json({
@@ -225,7 +264,7 @@ Extract into pure JSON without code fences:
       );
     }
 
-    const extracted = parseKannadaTranscript(transcript, language as "kn" | "en");
+    const extracted = parseKannadaTranscript(transcript, language as "kn" | "en" | "tcy");
 
     return NextResponse.json({
       success: true,

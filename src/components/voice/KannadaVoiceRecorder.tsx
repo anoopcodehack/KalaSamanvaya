@@ -7,10 +7,10 @@ import { playSpeech, stopSpeech } from "@/lib/voice/playSpeech";
 
 interface KannadaVoiceRecorderProps {
   onListingExtracted: (listing: ExtractedCraftListing) => void;
-  language: "kn" | "en";
+  language: "kn" | "en" | "tcy";
 }
 
-// Authentic bilingual presets matching the top language toggle
+// Authentic bilingual & coastal Tulu presets matching the top language toggle
 const DEMO_PRESETS = {
   kn: [
     {
@@ -37,6 +37,28 @@ const DEMO_PRESETS = {
       label: "೧೫ ಉಡುಪಿ ಹತ್ತಿ ಸೀರೆಗಳು",
       transcript: "ನಮ್ಮ ಬಳಿ 15 ಉಡುಪಿ ಕೈಮಗ್ಗದ ನೈಸರ್ಗಿಕ ಹತ್ತಿ ಸೀರೆಗಳಿವೆ, ಒಂದಕ್ಕೆ 2350 ರೂಪಾಯಿ, 8 ದಿನಗಳಲ್ಲಿ ಕೊಡುತ್ತೇವೆ",
       craft: "Udupi Sarees"
+    }
+  ],
+  tcy: [
+    {
+      label: "೫೦ ಬೀಡುದ ಬುಟ್ಟಿಲು (ಉಡುಪಿ)",
+      transcript: "ಯೆಂಕುಲೆಡ ೫೦ ಬೀಡುದ ಬುಟ್ಟಿ ಉಂಡು, ಒಂಜೆಕ್ ೪೫೦ ರುಪಾಯಿ, ೧೦ ದಿನೊಟು ಕೊರ್ಪ",
+      craft: "Beedu"
+    },
+    {
+      label: "೧೫ ಉಡುಪಿ ಸೀರೆಲು (ಕೈಮಗ್ಗ)",
+      transcript: "ನಮ್ಮ ಸಂಘೊಡು ೧೫ ಉಡುಪಿ ಕೈಮಗ್ಗದ ನೈಸರ್ಗಿಕ ಹತ್ತಿ ಸೀರೆ ಉಂಡು, ಒಂಜೆಕ್ ೨೩೫೦ ರುಪಾಯಿ, ೮ ದಿನೊಟು ಕೊರ್ಪ",
+      craft: "Udupi Sarees"
+    },
+    {
+      label: "೧೦ ಯಕ್ಷಗಾನ ಮುಟ್ಟಾಲೆ / ಕಿರೀಟ",
+      transcript: "ಎನ್ನ ಕೈಟ್ ೧೦ ಯಕ್ಷಗಾನದ ಮರದ ಕಿರೀಟ ಉಂಡು, ಒಂಜೆಕ್ ೩೪೫೦ ರುಪಾಯಿ, ೧೪ ದಿನೊಟು ಕೊರ್ಪ",
+      craft: "Yakshagana"
+    },
+    {
+      label: "೪೦ ಜೇಡಿಮಣ್ಣ್ದ ಮಡಿಕೆಲು",
+      transcript: "ಯೆಂಕುಲೆಡ ೪೦ ಜೇಡಿಮಣ್ಣ್ದ ಮಡಿಕೆ ಉಂಡು, ಒಂಜೆಕ್ ೩೫೦ ರುಪಾಯಿ, ೭ ದಿನೊಟು ಕೊರ್ಪ",
+      craft: "Pottery"
     }
   ],
   en: [
@@ -80,7 +102,7 @@ export default function KannadaVoiceRecorder({
   const [audioLevel, setAudioLevel] = useState(0);
   const [manualInput, setManualInput] = useState("");
 
-  const speechLang = language === "kn" ? "kn-IN" : "en-IN";
+  const speechLang = (language === "kn" || language === "tcy") ? "kn-IN" : "en-IN";
 
   const recognitionRef = useRef<any>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -365,7 +387,7 @@ export default function KannadaVoiceRecorder({
     setErrorMessage("");
     setInterimText("");
 
-    playSpeech(sample.transcript, language);
+    playSpeech(sample.transcript, language === "tcy" ? "kn" : language);
 
     // Typewriter animation
     let charIdx = 0;
@@ -387,13 +409,13 @@ export default function KannadaVoiceRecorder({
   const handleManualSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!manualInput.trim()) return;
-    const formatted = language === "kn" ? transliterateKanglishToKannada(manualInput) : manualInput;
+    const formatted = (language === "kn" || language === "tcy") ? transliterateKanglishToKannada(manualInput) : manualInput;
     setTranscript(formatted);
     sendForParsing(formatted);
     setManualInput("");
   };
 
-  const currentPresets = language === "kn" ? DEMO_PRESETS.kn : DEMO_PRESETS.en;
+  const currentPresets = language === "kn" ? DEMO_PRESETS.kn : language === "tcy" ? DEMO_PRESETS.tcy : DEMO_PRESETS.en;
 
   return (
     <div className="bg-[#2A1810] text-[#FAF6F0] p-6 sm:p-8 rounded-3xl border border-amber-800/40 shadow-2xl space-y-6">
@@ -401,17 +423,27 @@ export default function KannadaVoiceRecorder({
       <div className="text-center space-y-2.5">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E67E22]/20 border border-[#E67E22]/40 text-[#E67E22] text-xs font-bold uppercase tracking-wider">
           <Radio className="w-3.5 h-3.5" />
-          <span>{language === "kn" ? "ಧ್ವನಿ ಮೂಲಕ ನೇರ ನೊಂದಣಿ" : "Voice-Assisted Craft Listing"}</span>
+          <span>
+            {language === "kn"
+              ? "ಧ್ವನಿ ಮೂಲಕ ನೇರ ನೊಂದಣಿ"
+              : language === "tcy"
+              ? "ತುಳು ಧ್ವನಿ ಮೂಲಕ ನೇರ ನೊಂದಣಿ (Tulu)"
+              : "Voice-Assisted Craft Listing"}
+          </span>
         </div>
 
         <h3 className="text-xl sm:text-2xl font-bold text-white">
           {language === "kn"
             ? "ಕನ್ನಡದಲ್ಲಿ ಮಾತನಾಡಿ ನಿಮ್ಮ ಸರಕನ್ನು ನೊಂದಾಯಿಸಿ"
+            : language === "tcy"
+            ? "ತುಳು ಬಾಸೆಡ್ ಪಾತೆರ್ದ್ ಇರೆನ ಸರಕು ನೊಂದಾಯಿಸಲೆ"
             : "Speak to List Your Craft Inventory"}
         </h3>
         <p className="text-xs text-amber-200/80 max-w-md mx-auto leading-relaxed">
           {language === "kn"
             ? "ಕರಕುಶಲ ಪ್ರಕಾರ, ಪ್ರಮಾಣ (ಸಂಖ್ಯೆ) ಮತ್ತು ಪ್ರತಿ ಯೂನಿಟ್ ಬೆಲೆಯನ್ನು ಸರಳವಾಗಿ ಹೇಳಿ."
+            : language === "tcy"
+            ? "ಕರಾವಳಿ ಕರಕುಶಲ ಪ್ರಕಾರ, ಸಂಖ್ಯೆ (ಉದಾ: ೫೦ ಬೀಡುದ ಬುಟ್ಟಿ) ಬೊಕ್ಕ ಒಂಜೆಕ್ ಬೆಲೆನ್ ಪನ್ಲೆ."
             : "Simply mention your craft type, quantity (e.g., 40 water jugs), and price in INR."}
         </p>
       </div>
@@ -440,14 +472,14 @@ export default function KannadaVoiceRecorder({
               <>
                 <MicOff className="w-10 h-10 mb-1" />
                 <span className="text-[11px] font-bold tracking-wide">
-                  {language === "kn" ? "ನಿಲ್ಲಿಸಿ" : "Stop"}
+                  {language === "kn" ? "ನಿಲ್ಲಿಸಿ" : language === "tcy" ? "ಉಂತಾಲೆ" : "Stop"}
                 </span>
               </>
             ) : (
               <>
                 <Mic className="w-10 h-10 mb-1" />
                 <span className="text-[11px] font-bold tracking-wide">
-                  {language === "kn" ? "ಮಾತನಾಡಿ" : "Tap to Speak"}
+                  {language === "kn" ? "ಮಾತನಾಡಿ" : language === "tcy" ? "ಪಾತೆರ್ಲೆ" : "Tap to Speak"}
                 </span>
               </>
             )}
@@ -465,7 +497,7 @@ export default function KannadaVoiceRecorder({
               />
             </div>
             <span className="text-[10px] text-emerald-400 font-mono font-bold">
-              {audioLevel > 15 ? (language === "kn" ? "ಧ್ವನಿ ಗ್ರಹಿಸಲಾಗಿದೆ" : "Voice detected") : (language === "kn" ? "ಮೈಕ್ ಸಕ್ರಿಯ" : "Mic listening")}
+              {audioLevel > 15 ? (language === "kn" ? "ಧ್ವನಿ ಗ್ರಹಿಸಲಾಗಿದೆ" : language === "tcy" ? "ಧ್ವನಿ ಕೇಂಡಿಂಡ್" : "Voice detected") : (language === "kn" ? "ಮೈಕ್ ಸಕ್ರಿಯ" : language === "tcy" ? "ಮೈಕ್ ಕೇನೊಂದುಂಡು" : "Mic listening")}
             </span>
           </div>
         )}
@@ -481,13 +513,19 @@ export default function KannadaVoiceRecorder({
             {isRecording
               ? language === "kn"
                 ? "ಆಲಿಸಲಾಗುತ್ತಿದೆ... ಮಾತನಾಡಿ 'ನಿಲ್ಲಿಸಿ' ಒತ್ತಿ"
+                : language === "tcy"
+                ? "ಕೇನೊಂದುಂಡು... ಪಾತೆರ್ದ್ 'ಉಂತಾಲೆ' ಒತ್ತ್‌ಲೆ"
                 : "Listening to your voice... Speak now, then click Stop"
               : isParsing
               ? language === "kn"
                 ? "ಕರಕುಶಲ ವಿವರ ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ..."
+                : language === "tcy"
+                ? "ಕರಕುಶಲ ವಿವರ ತೂವೊಂದುಂಡು..."
                 : "Processing craft details..."
               : language === "kn"
               ? "ಮೈಕ್ ಬಟನ್ ಒತ್ತಿ ಮಾತನಾಡಿ"
+              : language === "tcy"
+              ? "ಮೈಕ್ ಬಟನ್ ಒತ್ತ್‌ದ್ ಪಾತೆರ್ಲೆ"
               : "Ready • Tap button above to speak"}
           </span>
         </div>
@@ -498,12 +536,12 @@ export default function KannadaVoiceRecorder({
         <div className="text-[11px] text-[#E67E22] font-semibold mb-1 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <Volume2 className="w-3.5 h-3.5" />
-            <span>{language === "kn" ? "ಧ್ವನಿ ವಿವರ:" : "Spoken Voice Transcript:"}</span>
+            <span>{language === "kn" ? "ಧ್ವನಿ ವಿವರ:" : language === "tcy" ? "ತುಳು ಧ್ವನಿ ವಿವರ:" : "Spoken Voice Transcript:"}</span>
           </div>
           {isParsing && (
             <span className="text-[10px] text-amber-400 flex items-center gap-1 animate-pulse">
               <RefreshCw className="w-2.5 h-2.5 animate-spin" />
-              {language === "kn" ? "ವಿಶ್ಲೇಷಣೆ..." : "Extracting..."}
+              {language === "kn" ? "ವಿಶ್ಲೇಷಣೆ..." : language === "tcy" ? "ಪರಿಶೀಲನೆ..." : "Extracting..."}
             </span>
           )}
         </div>
@@ -516,6 +554,8 @@ export default function KannadaVoiceRecorder({
           <p className="text-xs text-stone-500 italic">
             {language === "kn"
               ? "ಉದಾಹರಣೆಗೆ: 'ನನ್ನ ಬಳಿ 40 ಮಡಿಕೆ ಜಗ್ಗುಗಳಿವೆ, ಒಂದಕ್ಕೆ 350 ರೂಪಾಯಿ, 7 ದಿನಗಳಲ್ಲಿ ನೀಡುತ್ತೇನೆ...'"
+              : language === "tcy"
+              ? "ಉದಾಹರಣೆ: 'ಯೆಂಕುಲೆಡ ೫೦ ಬೀಡುದ ಬುಟ್ಟಿ ಉಂಡು, ಒಂಜೆಕ್ ೪೫೦ ರುಪಾಯಿ, ೧೦ ದಿನೊಟು ಕೊರ್ಪ...'"
               : "Example: 'I have 40 terracotta water jugs, 350 rupees each, delivery in 7 days...'"}
           </p>
         )}
@@ -530,6 +570,8 @@ export default function KannadaVoiceRecorder({
             <p className="text-[11px] text-stone-400">
               {language === "kn"
                 ? "ಸಲಹೆ: ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಮೈಕ್ ಅನುಮತಿಸಲು ವಿಳಾಸ ಪಟ್ಟಿಯ ಲಾಕ್ ಐಕಾನ್ ಒತ್ತಿ ಅಥವಾ ಕೆಳಗಿನ ೧-ಕ್ಲಿಕ್ ಮಾದರಿ ಬಳಸಿ."
+                : language === "tcy"
+                ? "ಸಲಹೆ: ಬ್ರೌಸರ್‌ಡ್ ಮೈಕ್ ಅನುಮತಿ ಕೊರ್ಲೆ ಅತ್ತಂಡ ತಿರ್ತ ೧-ಕ್ಲಿಕ್ ಮಾದರಿ ಒತ್ತ್‌ಲೆ."
                 : "Tip: Make sure you allowed microphone access or click one of the 1-click presets below."}
             </p>
           </div>
@@ -540,11 +582,15 @@ export default function KannadaVoiceRecorder({
       <div className="pt-2 border-t border-amber-900/40 space-y-2.5">
         <div className="flex items-center justify-between text-xs text-stone-400">
           <span className="font-semibold text-amber-300">
-            {language === "kn" ? "ತ್ವರಿತ ಮಾದರಿ ಧ್ವನಿಗಳು (೧-ಕ್ಲಿಕ್ ಪರೀಕ್ಷೆ):" : "Demo Speech Presets (1-Click Test & Audio):"}
+            {language === "kn"
+              ? "ತ್ವರಿತ ಮಾದರಿ ಧ್ವನಿಗಳು (೧-ಕ್ಲಿಕ್ ಪರೀಕ್ಷೆ):"
+              : language === "tcy"
+              ? "ಕರಾವಳಿ ತುಳುನಾಡ್ ಮಾದರಿ ಧ್ವನಿಗಳು (೧-ಕ್ಲಿಕ್ ಪರೀಕ್ಷೆ):"
+              : "Demo Speech Presets (1-Click Test & Audio):"}
           </span>
           <span className="text-[10px] text-amber-300/80 flex items-center gap-1 font-semibold">
             <Volume2 className="w-3.5 h-3.5 text-[#E67E22]" />
-            {language === "kn" ? "ಧ್ವನಿ ಮಾದರಿ" : "Spoken Audio Samples"}
+            {language === "kn" ? "ಧ್ವನಿ ಮಾದರಿ" : language === "tcy" ? "ತುಳು ಧ್ವನಿ ಮಾದರಿ" : "Spoken Audio Samples"}
           </span>
         </div>
 
