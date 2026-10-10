@@ -26,6 +26,7 @@ import {
   Eye
 } from "lucide-react";
 import Link from "next/link";
+import { numberToKannadaWords, toKannadaDigits } from "@/lib/voice/kannadaNumbers";
 
 const CRAFT_IMAGE_MAP: Record<string, string> = {
   Kasuti: "/assets/craft-kasuti.jpg",
@@ -333,17 +334,38 @@ export default function ArtisanOnboardPage() {
                   <span className="text-stone-500">{language === "kn" ? "ಕರಕುಶಲ ಪ್ರಕಾರ:" : "Craft Type:"}</span>
                   <span className="font-bold text-[#C85A32]">{listing.craft} ({listing.craftKannada})</span>
                 </div>
-                <div className="flex justify-between pb-2 border-b border-stone-200">
+                <div className="flex justify-between items-baseline pb-2 border-b border-stone-200">
                   <span className="text-stone-500">{language === "kn" ? "ಒಟ್ಟು ಯೂನಿಟ್‌ಗಳು:" : "Registered Quantity:"}</span>
-                  <span className="font-bold text-[#2A1810]">{listing.quantity} units</span>
+                  <div className="text-right">
+                    <span className="font-bold text-[#2A1810]">{listing.quantity} units</span>
+                    {language === "kn" && (
+                      <div className="text-[10px] font-semibold text-[#C85A32]">
+                        ({numberToKannadaWords(listing.quantity)} ಯೂನಿಟ್‌ಗಳು)
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="flex justify-between pb-2 border-b border-stone-200">
+                <div className="flex justify-between items-baseline pb-2 border-b border-stone-200">
                   <span className="text-stone-500">{language === "kn" ? "ಪ್ರತಿ ಯೂನಿಟ್ ಬೆಲೆ:" : "Unit Price:"}</span>
-                  <span className="font-bold text-[#2A1810]">₹{listing.pricePerUnitINR}</span>
+                  <div className="text-right">
+                    <span className="font-bold text-[#2A1810]">₹{listing.pricePerUnitINR}</span>
+                    {language === "kn" && (
+                      <div className="text-[10px] font-semibold text-emerald-800">
+                        ({numberToKannadaWords(listing.pricePerUnitINR)} ರೂ.)
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-baseline">
                   <span className="text-stone-500">{language === "kn" ? "ನಿರೀಕ್ಷಿತ ಒಟ್ಟು ಆದಾಯ:" : "Total Expected Inflow:"}</span>
-                  <span className="font-bold text-emerald-700 text-sm">₹{listing.totalValueINR.toLocaleString("en-IN")}</span>
+                  <div className="text-right">
+                    <span className="font-bold text-emerald-700 text-sm">₹{listing.totalValueINR.toLocaleString("en-IN")}</span>
+                    {language === "kn" && (
+                      <div className="text-[10px] font-semibold text-emerald-800">
+                        ({numberToKannadaWords(listing.totalValueINR)} ರೂಪಾಯಿಗಳು)
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -499,13 +521,20 @@ export default function ArtisanOnboardPage() {
                       <span className="text-[10px] text-stone-400">Auto-extracted</span>
                     </div>
 
-                    {/* Card 2: Quantity with Touch Plus/Minus */}
+                    {/* Card 2: Quantity with Touch Plus/Minus & Kannada Words */}
                     <div className="bg-[#FAF7F2] p-5 rounded-2xl border border-stone-200 flex flex-col justify-between space-y-2">
                       <span className="text-[11px] text-stone-500 font-semibold uppercase">
                         {language === "kn" ? "ಲಭ್ಯ ಪ್ರಮಾಣ (ಯೂನಿಟ್)" : "Quantity (Units)"}
                       </span>
-                      <div className="text-2xl font-black text-[#2A1810]">
-                        {listing.quantity} <span className="text-xs font-normal text-stone-500">units</span>
+                      <div>
+                        <div className="text-2xl font-black text-[#2A1810]">
+                          {listing.quantity} <span className="text-xs font-normal text-stone-500">units</span>
+                        </div>
+                        {language === "kn" && (
+                          <div className="text-[11px] font-bold text-[#C85A32] mt-0.5">
+                            ({numberToKannadaWords(listing.quantity)} ಯೂನಿಟ್‌ಗಳು)
+                          </div>
+                        )}
                       </div>
                       <div className="flex items-center gap-2 pt-1">
                         <button
@@ -525,13 +554,20 @@ export default function ArtisanOnboardPage() {
                       </div>
                     </div>
 
-                    {/* Card 3: Price in INR with Touch Controls */}
+                    {/* Card 3: Price in INR with Touch Controls & Kannada Words */}
                     <div className="bg-[#FAF7F2] p-5 rounded-2xl border border-stone-200 flex flex-col justify-between space-y-2">
                       <span className="text-[11px] text-stone-500 font-semibold uppercase">
                         {language === "kn" ? "ಪ್ರತಿ ಯೂನಿಟ್ ಬೆಲೆ (ರೂ.)" : "Unit Price (INR)"}
                       </span>
-                      <div className="text-2xl font-black text-emerald-700">
-                        ₹{listing.pricePerUnitINR}
+                      <div>
+                        <div className="text-2xl font-black text-emerald-700">
+                          ₹{listing.pricePerUnitINR}
+                        </div>
+                        {language === "kn" && (
+                          <div className="text-[11px] font-bold text-emerald-800 mt-0.5">
+                            ({numberToKannadaWords(listing.pricePerUnitINR)} ರೂ.)
+                          </div>
+                        )}
                       </div>
                       <div className="flex items-center gap-2 pt-1">
                         <button
@@ -556,9 +592,16 @@ export default function ArtisanOnboardPage() {
                       <span className="text-[11px] text-stone-500 font-semibold uppercase">
                         {language === "kn" ? "ಪೂರೈಕೆ ಸಮಯ (ದಿನಗಳು)" : "Lead Time"}
                       </span>
-                      <div className="text-xl font-bold text-[#2A1810] flex items-center gap-1.5">
-                        <Clock className="w-5 h-5 text-[#C85A32]" />
-                        <span>{listing.leadTimeDays} {language === "kn" ? "ದಿನಗಳು" : "Days"}</span>
+                      <div>
+                        <div className="text-xl font-bold text-[#2A1810] flex items-center gap-1.5">
+                          <Clock className="w-5 h-5 text-[#C85A32]" />
+                          <span>{listing.leadTimeDays} {language === "kn" ? "ದಿನಗಳು" : "Days"}</span>
+                        </div>
+                        {language === "kn" && (
+                          <div className="text-[11px] font-bold text-stone-600 mt-0.5">
+                            ({numberToKannadaWords(listing.leadTimeDays)} ದಿನಗಳು)
+                          </div>
+                        )}
                       </div>
                       <span className="text-[10px] text-stone-400">Based on craft type</span>
                     </div>

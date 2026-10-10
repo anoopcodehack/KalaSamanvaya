@@ -29,6 +29,7 @@ import {
   QrCode,
   Printer
 } from "lucide-react";
+import { numberToKannadaWords, toKannadaDigits } from "@/lib/voice/kannadaNumbers";
 
 export default function ArtisanInboxPage() {
   const [language, setLanguage] = useState<"kn" | "en">("kn");
@@ -238,6 +239,11 @@ export default function ArtisanInboxPage() {
                   {language === "kn" ? "ಶಾಲುಗಳು" : "Shawls"}
                 </span>
               </div>
+              {language === "kn" && (
+                <div className="text-[11px] font-bold text-[#C85A32] mt-0.5">
+                  ({numberToKannadaWords(b2bCommitment.allocatedUnits)} ಶಾಲುಗಳು)
+                </div>
+              )}
               <span className="text-[10px] text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md font-semibold mt-2 inline-block">
                 {language === "kn" ? "ಕಾರ್ಪೊರೇಟ್ ಬಿ2ಬಿ ಹಂಚಿಕೆ" : "Corporate B2B Quota"}
               </span>
@@ -251,6 +257,11 @@ export default function ArtisanInboxPage() {
               <div className="text-2xl sm:text-3xl font-extrabold text-emerald-700 mt-1">
                 ₹{b2bCommitment.totalPayoutINR.toLocaleString("en-IN")}
               </div>
+              {language === "kn" && (
+                <div className="text-[11px] font-bold text-emerald-800 mt-0.5">
+                  ({numberToKannadaWords(b2bCommitment.totalPayoutINR)} ರೂ.)
+                </div>
+              )}
               <span className="text-[10px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md font-semibold mt-2 inline-block">
                 ₹600 / {language === "kn" ? "ಶಾಲು ನೇರ ಕೂಲಿ" : "Unit Direct Pay"}
               </span>
@@ -267,6 +278,11 @@ export default function ArtisanInboxPage() {
                   {language === "kn" ? "ದಿನಗಳು ಬಾಕಿ" : "Days Left"}
                 </span>
               </div>
+              {language === "kn" && (
+                <div className="text-[11px] font-bold text-stone-600 mt-0.5">
+                  ({numberToKannadaWords(b2bCommitment.deadlineDays)} ದಿನಗಳು)
+                </div>
+              )}
               <span className="text-[10px] text-stone-600 bg-stone-100 px-2 py-0.5 rounded-md font-semibold mt-2 inline-block">
                 {language === "kn" ? "ವೇಳಾಪಟ್ಟಿ ಪ್ರಕಾರ" : "On Schedule"}
               </span>
