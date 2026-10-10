@@ -585,6 +585,9 @@ export default function ArtisanOnboardPage() {
                           +₹50
                         </button>
                       </div>
+                      <span className="text-[10px] text-emerald-700 font-medium">
+                        {language === "kn" ? "✓ ಕ್ಲಸ್ಟರ್ ಕನಿಷ್ಠ ಬೆಂಬಲ ಬೆಲೆ ಅನ್ವಯಿಸಿದೆ" : "✓ Cluster fair-market floor applied"}
+                      </span>
                     </div>
 
                     {/* Card 4: Lead Time */}
