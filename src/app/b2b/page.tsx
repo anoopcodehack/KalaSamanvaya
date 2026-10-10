@@ -23,7 +23,6 @@ import {
   RefreshCw
 } from "lucide-react";
 import Link from "next/link";
-import FairTradeSimulatorCard from "@/components/impact/FairTradeSimulatorCard";
 
 interface ClusterAllocation {
   id: string;
@@ -462,31 +461,51 @@ export default function B2BFulfillmentPage() {
           </div>
         </ScrollReveal>
 
-        {/* ── FAIR-TRADE IMPACT & 8% SUSTAINABILITY SIMULATOR ── */}
+        {/* ── B2B FAIR-WAGE & QUOTE BREAKDOWN (Clean Heritage UI) ── */}
         <ScrollReveal direction="up" delayMs={50}>
-          <FairTradeSimulatorCard initialUnits={200} />
-        </ScrollReveal>
-
-        {/* ── ANTI-EXPLOITATION FAIR-WAGE SHIELD FOR B2B PROCUREMENT ── */}
-        <ScrollReveal direction="up" delayMs={75}>
-          <div className="p-6 bg-gradient-to-r from-[#2A1810] via-[#351C12] to-[#2A1810] text-[#FAF6F0] rounded-3xl shadow-xl border-2 border-amber-800/60 flex flex-col md:flex-row md:items-center justify-between gap-5">
-            <div className="space-y-1.5 max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-[11px] font-extrabold uppercase tracking-wider border border-amber-500/40">
-                <Scale className="w-3.5 h-3.5 text-amber-300" />
-                <span>Statutory Fair-Wage Shield • ಕನಿಷ್ಠ ನ್ಯಾಯಯುತ ಕೂಲಿ ರಕ್ಷಣೆ</span>
+          <div className="bg-white rounded-2xl border border-stone-200 p-6 shadow-xs space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-100">
+              <div className="space-y-1">
+                <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-semibold">
+                  <Scale className="w-3.5 h-3.5 text-emerald-700" />
+                  <span>Fair-Wage Standard Guarantee • ಕನಿಷ್ಠ ನ್ಯಾಯಯುತ ಕೂಲಿ ರಕ್ಷಣೆ</span>
+                </div>
+                <h3 className="text-base sm:text-lg font-bold text-[#2A1810]">
+                  Corporate Order Payout & Wage Protection
+                </h3>
+                <p className="text-xs text-stone-600 max-w-xl">
+                  Every B2B contract enforces Karnataka rural handcraft wage standards (75% direct maker payout + 12% upfront material advance), providing an official ESG Fair-Trade audit trail.
+                </p>
               </div>
-              <h3 className="text-lg font-black tracking-wide text-white">
-                Zero Squeezing: Karnataka Fair Handcraft Wage Standard
-              </h3>
-              <p className="text-xs text-amber-100/80 leading-relaxed">
-                Large corporations and event buyers cannot bully rural self-help groups into below-cost bids. Every B2B purchase order enforces a non-negotiable living wage floor (₹36–₹60/hr skilled craftsmanship + certified GI raw material cost), providing your enterprise with an official ESG Fair-Trade Audit Certificate.
-              </p>
+
+              <Link
+                href="/impact"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-stone-300 bg-[#FAF7F2] hover:bg-stone-100 text-stone-800 text-xs font-semibold shadow-xs transition-colors self-start sm:self-auto"
+              >
+                <span>Interactive Cost Simulator</span>
+                <ArrowRight className="w-3.5 h-3.5 text-[#C85A32]" />
+              </Link>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-xs text-center flex-shrink-0 space-y-1">
-              <span className="text-[10px] uppercase font-bold text-amber-300 block">Guaranteed Maker Share</span>
-              <span className="text-2xl font-black text-white block">74.6% DBT</span>
-              <span className="text-[10px] text-stone-300 block">Direct into rural women&apos;s bank accounts</span>
+            {/* 3 Summary Badges */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+              <div className="p-3.5 rounded-xl bg-[#FAF7F2] border border-stone-200">
+                <span className="text-[11px] font-medium text-stone-500 block">Direct Maker Payout</span>
+                <span className="text-lg font-bold text-emerald-700 block">75% (₹1,380+ / unit)</span>
+                <span className="text-[11px] text-stone-500">Transferred directly to artisan bank accounts</span>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-[#FAF7F2] border border-stone-200">
+                <span className="text-[11px] font-medium text-stone-500 block">Raw Material Pre-Funding</span>
+                <span className="text-lg font-bold text-amber-800 block">12% Advance</span>
+                <span className="text-[11px] text-stone-500">Silk and cotton pre-funded without loan debt</span>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-[#FAF7F2] border border-stone-200">
+                <span className="text-[11px] font-medium text-stone-500 block">Lean Coordination Fee</span>
+                <span className="text-lg font-bold text-[#C85A32] block">8% Platform Fee</span>
+                <span className="text-[11px] text-stone-500">Includes packaging, GI tags & batch dispatch</span>
+              </div>
             </div>
           </div>
         </ScrollReveal>
