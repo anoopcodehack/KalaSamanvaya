@@ -455,10 +455,7 @@ Voice Onboarding ──▶ Direct Catalogue Sales ──▶ Coordinated Bulk Cap
 * **Hackathon:** DEVHACK 2026 — Problem Statement 4.2: Digital Market Access for Local Artisans
 * **Institution:** Sahyadri College of Engineering & Management, Mangaluru
 * **Team Members & Responsibilities:**
-  * **Anoop A.** — Full-Stack & Fulfilment Architecture
-  * **Ashith C.** — Vernacular Voice UI & Speech Integration
-  * **Dhanush Bapat** — Backend & Algorithmic Allocation Engine
-  * **Srajan Naik** — Product Design & Storefront Workflows 
+ 
 
 ---
 
