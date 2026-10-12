@@ -233,6 +233,7 @@ All technical claims within this repository are categorized into verified tiers 
 | **Fair-Trade Impact Simulator** | `Implemented prototype` | Dynamic 8% platform fee vs 30–50% middleman calculator showing direct 75% artisan wages (92% total cluster retention) on `/impact` and `/b2b`. |
 | **"Why This Price?" Craft Card** | `Implemented prototype` | Transparent breakdown of labor hours, materials, and regional heritage to communicate handmade value. |
 | **Artisan Order Inbox** | `Implemented prototype` | Visual Kannada interface for rural artisans to review and accept cluster production commitments. |
+| **Help & Policy Center (`/help`)** | `Implemented prototype` | Unified tabbed hub for cluster shipping guarantees, vernacular data privacy, fair-trade terms, and bulk enterprise enquiries. |
 | **200-unit scenario** | `Demonstrated benchmark scenario` | Benchmark test data used to prove algorithmic correctness for a 200-unit Kasuti fulfilment order. |
 | **Artisan verification** | `Pilot target` | Identity and craft verification planned during onboarding for field pilot. |
 | **50+ maker expansion** | `Pilot target` | Planned 90-day onboarding milestone across Karnataka artisan clusters (Kasuti & Beedu crafts). |
@@ -257,6 +258,7 @@ d:/KalaSamanvaya/
 │   │   ├── layout.tsx             # Root layout with shared navigation & brand footer
 │   │   ├── page.tsx               # Landing page highlighting problem, solution & entry points
 │   │   ├── b2b/page.tsx           # B2B Bulk Order Allocation & Capacity Recovery Console
+│   │   ├── help/page.tsx          # Customer Care & Cluster Policies (Shipping, Privacy, Terms, Bulk)
 │   │   ├── impact/page.tsx        # Fair-Trade Monetization & Supply Chain Simulator (8% fee)
 │   │   ├── login/page.tsx         # Multi-Persona Role Switcher (Artisan, Buyer, Admin)
 │   │   ├── marketplace/page.tsx   # B2C Retail Discovery & GI Craft Passport Showcase
