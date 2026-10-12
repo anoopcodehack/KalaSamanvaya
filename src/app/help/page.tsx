@@ -21,7 +21,6 @@ import {
   Send,
   CheckCircle2,
   Clock,
-  Sparkles,
   ExternalLink,
   ChevronRight,
   PhoneCall,
@@ -413,7 +412,7 @@ function HelpPageContent() {
                       href="/b2b"
                       className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#2A1810] hover:bg-[#3A1F0D] text-white text-xs font-semibold shadow-sm transition-all"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                      <Building2 className="w-4 h-4 text-amber-400" />
                       <span>Launch Live B2B Allocation Console</span>
                       <ChevronRight className="w-4 h-4" />
                     </Link>
