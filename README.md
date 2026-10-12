@@ -454,11 +454,11 @@ Voice Onboarding ──▶ Direct Catalogue Sales ──▶ Coordinated Bulk Cap
 
 * **Hackathon:** DEVHACK 2026 — Problem Statement 4.2: Digital Market Access for Local Artisans
 * **Institution:** Sahyadri College of Engineering & Management, Mangaluru
-* **Team Members **
+* **Team Members**
 * **ANOOP - A** 
 * **MUHAMMAD ASHATH** 
 * **PRAJNA K V** 
-* **PRATHEEKSHA K*** 
+* **PRATHEEKSHA K** 
  
 
 ---
