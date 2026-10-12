@@ -66,22 +66,22 @@ export default function Footer() {
               </h4>
               <ul className="space-y-1.5 text-stone-300 text-xs font-light">
                 <li>
-                  <Link href="/marketplace" className="hover:text-amber-200 transition-colors">
+                  <Link href="/help?tab=shipping" className="hover:text-amber-200 transition-colors">
                     Shipping &amp; Returns
                   </Link>
                 </li>
                 <li>
-                  <Link href="/impact" className="hover:text-amber-200 transition-colors">
+                  <Link href="/help?tab=privacy" className="hover:text-amber-200 transition-colors">
                     Privacy Policy
                   </Link>
                 </li>
                 <li>
-                  <Link href="/impact" className="hover:text-amber-200 transition-colors">
+                  <Link href="/help?tab=terms" className="hover:text-amber-200 transition-colors">
                     Terms &amp; Conditions
                   </Link>
                 </li>
                 <li>
-                  <Link href="/b2b" className="hover:text-amber-200 transition-colors">
+                  <Link href="/help?tab=bulk" className="hover:text-amber-200 transition-colors">
                     Bulk Enquiry
                   </Link>
                 </li>
@@ -99,7 +99,7 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/b2b" className="hover:text-amber-200 transition-colors">
+                  <Link href="/help?tab=bulk" className="hover:text-amber-200 transition-colors">
                     Contact Us
                   </Link>
                 </li>
