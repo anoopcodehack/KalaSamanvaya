@@ -63,17 +63,23 @@ const INITIAL_MESSAGES: Record<"kn" | "en", ChatMessage[]> = {
 const SUGGESTED_QUESTIONS = {
   kn: [
     { label: "ಕಸೂತಿ ಬೆಲೆ ಏಕೆ ₹1,850?", query: "ಧಾರವಾಡ ಕಸೂತಿ ಶಾಲಿನ ಬೆಲೆ ಏಕೆ ₹1,850 ಮತ್ತು ಕುಶಲಕರ್ಮಿಗೆ ಎಷ್ಟು ಸಿಗುತ್ತದೆ?" },
-    { label: "ಕುಶಲಕರ್ಮಿಗಳಿಗೆ ನೇರ ಪಾವತಿ ಹೇಗೆ?", query: "ಕುಶಲಕರ್ಮಿಗಳಿಗೆ ನೇರ ಬ್ಯಾಂಕ್ ಜಮಾ (DBT) ಹೇಗೆ ತಲುಪುತ್ತದೆ?" },
+    { label: "ಕುಶಲಕರ್ಮಿಗಳಿಗೆ ನೇರ ಪಾವತಿ ಹೇಗೆ?", query: "ಕುಶಲಕರ್ಮಿಗಳಿಗೆ 75% ನೇರ ಬ್ಯಾಂಕ್ ಜಮಾ (DBT) ಹೇಗೆ ತಲುಪುತ್ತದೆ?" },
     { label: "200 ಬೃಹತ್ ಉಡುಗೊರೆಗಳು", query: "200 ಬೃಹತ್ ಕಾರ್ಪೊರೇಟ್ ಉಡುಗೊರೆಗಳನ್ನು ಆರ್ಡರ್ ಮಾಡುವುದು ಹೇಗೆ?" },
+    { label: "MSI ಫಾರ್ಮುಲಾ ಏನು?", query: "ಮಲ್ಟಿ-ಆರ್ಟಿಸನ್ ಹಂಚಿಕೆಯ MSI ಫಾರ್ಮುಲಾ ಮತ್ತು ಅಲ್ಗಾರಿದಮ್ ಏನು?" },
+    { label: "ಧಾರವಾಡ ಘಟನೆ ಏನು?", query: "ಧಾರವಾಡ ಕಸೂತಿ ಕಾರ್ಪೊರೇಟ್ ಆರ್ಡರ್‌ನಲ್ಲಿ ಆದ ಸಮಸ್ಯೆ ಏನು?" },
+    { label: "ತಂಡ ಯಾರು?", query: "ಕಲಾ ಸಮನ್ವಯ ನಿರ್ಮಿಸಿದ ತಂಡ ಮಿಡಲ್‌ವೇರ್ ಮಾಫಿಯಾ ಯಾರು?" },
     { label: "ಧ್ವನಿ ನೊಂದಣಿ ಎಲ್ಲಿದೆ?", query: "ಗ್ರಾಮೀಣ ಕುಶಲಕರ್ಮಿಗಳ ಧ್ವನಿ ನೊಂದಣಿ ಪೋರ್ಟಲ್ ಎಲ್ಲಿದೆ?" },
-    { label: "ಉಡುಪಿ ಬೀಡು ಬುಟ್ಟಿ ವಿವರ", query: "ಉಡುಪಿಯ ಸಾಂಪ್ರದಾಯಿಕ ಬೀಡು ಹುಲ್ಲಿನ ಬುಟ್ಟಿಗಳ ವಿಶೇಷತೆ ಏನು?" },
+    { label: "ವಿತರಣೆ & ವಾಪಸಾತಿ ನೀತಿ", query: "ಇಂಡಿಯಾ ಪೋಸ್ಟ್ ವಿತರಣೆ ಮತ್ತು 7 ದಿನಗಳ ವಾಪಸಾತಿ ನೀತಿ ಏನು?" },
   ],
   en: [
     { label: "Why does Kasuti cost ₹1,850?", query: "Why does the Dharwad Kasuti silk shawl cost ₹1,850 and how much goes to the artisan?" },
-    { label: "How do artisans get paid?", query: "How does the direct 74.6% DBT bank payout work for artisans?" },
+    { label: "How do artisans get paid?", query: "How does the direct 75% DBT bank payout work for artisans?" },
     { label: "Need 200 bulk corporate gifts", query: "How does the multi-cluster 200 bulk allocation work for corporate gifting?" },
+    { label: "What is MSI formula?", query: "What is the Match Scoring Index (MSI) algorithmic formula?" },
+    { label: "What happened in Dharwad?", query: "What was the real field problem incident in Dharwad with 200 Kasuti shawls?" },
+    { label: "Who built KalaSamanvaya?", query: "Who is Team Middleware Mafia from Sahyadri College?" },
     { label: "Where is Artisan Voice Portal?", query: "Where is the voice listing portal for rural makers?" },
-    { label: "What is Beedu wildgrass craft?", query: "Tell me about Udupi Beedu wildgrass basketry." },
+    { label: "Shipping & Return policy", query: "What is the India Post DNK shipping timeline and 7-day handcrafted return policy?" },
   ],
 };
 
