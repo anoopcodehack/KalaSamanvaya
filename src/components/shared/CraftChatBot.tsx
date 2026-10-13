@@ -367,7 +367,9 @@ export default function CraftChatBot() {
     if (!messageText) return;
 
     // Detect language of question
+    let queryLang = language;
     if (/[\u0C80-\u0CFF]/.test(messageText)) {
+      queryLang = "kn";
       setLanguage("kn");
     }
 
@@ -386,7 +388,7 @@ export default function CraftChatBot() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: messageText }),
+        body: JSON.stringify({ message: messageText, language: queryLang }),
       });
 
       if (res.ok) {
@@ -405,9 +407,9 @@ export default function CraftChatBot() {
     } catch (err) {
       // Local fallback
       const fallbackText =
-        language === "kn"
-          ? "ಕಲಾ ಸಮನ್ವಯವು ಕರ್ನಾಟಕದ ನೈಜ ಕರಕುಶಲಕರ್ಮಿಗಳನ್ನು (ಧಾರವಾಡ ಕಸೂತಿ, ಉಡುಪಿ ಬೀಡು, ಖಾನಾಪುರ ಮಡಿಕೆ) ನೇರವಾಗಿ ಗ್ರಾಹಕರಿಗೆ ಸಂಪರ್ಕಿಸುತ್ತದೆ. ಶೇಕಡಾ 75 ಕ್ಕೂ ಹೆಚ್ಚು ನೇರ ಕೂಲಿ ಹಣ ಕುಶಲಕರ್ಮಿಗಳ ಬ್ಯಾಂಕ್ ಖಾತೆಗೆ ಜಮಾ ಆಗುತ್ತದೆ."
-          : "KalaSamanvaya directly connects Karnataka master craftswomen (Dharwad Kasuti, Udupi Beedu, Khanapur Terracotta) with conscious patrons, ensuring 74.6% direct artisan payouts and GI provenance.";
+        queryLang === "kn"
+          ? "ಕಲಾ ಸಮನ್ವಯವು ಕರ್ನಾಟಕದ ನೈಜ ಕರಕುಶಲಕರ್ಮಿಗಳನ್ನು (ಧಾರವಾಡ ಕಸೂತಿ, ಉಡುಪಿ ಬೀಡು, ಖಾನಾಪುರ ಮಡಿಕೆ) ನೇರವಾಗಿ ಗ್ರಾಹಕರಿಗೆ ಸಂಪರ್ಕಿಸುತ್ತದೆ. ಶೇಕಡಾ 75% ರಷ್ಟು ನೇರ ಕೂಲಿ ಹಣ ಕುಶಲಕರ್ಮಿಗಳ ಬ್ಯಾಂಕ್ ಖಾತೆಗೆ ಜಮಾ ಆಗುತ್ತದೆ."
+          : "KalaSamanvaya directly connects Karnataka master craftswomen (Dharwad Kasuti, Udupi Beedu, Khanapur Terracotta) with conscious patrons, ensuring 75% direct artisan payouts and GI provenance.";
 
       const botMsg: ChatMessage = {
         id: `bot-${Date.now()}`,
@@ -415,7 +417,7 @@ export default function CraftChatBot() {
         text: fallbackText,
         timestamp: "Just now",
         actionLink: {
-          label: language === "kn" ? "ಮಳಿಗೆ ನೋಡಿ" : "Browse Store",
+          label: queryLang === "kn" ? "ಕರಕುಶಲ ಮಳಿಗೆ ವೀಕ್ಷಿಸಿ" : "Browse Store",
           href: "/marketplace",
           icon: "shop",
         },

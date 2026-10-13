@@ -95,10 +95,14 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const userMessage = (body.message || "").trim();
+    const clientLanguage = body.language as string | undefined;
 
     if (!userMessage) {
       return NextResponse.json({ error: "Message is required" }, { status: 400 });
     }
+
+    const hasKannadaUnicode = /[\u0C80-\u0CFF]/.test(userMessage);
+    const isKannada = hasKannadaUnicode || clientLanguage === "kn";
 
     const apiKey = process.env.GEMINI_API_KEY;
     const isGeminiAvailable = apiKey && apiKey !== "your_gemini_api_key_here" && apiKey.trim().length > 10;
@@ -106,6 +110,10 @@ export async function POST(req: Request) {
     let botResponse = "";
 
     if (isGeminiAvailable) {
+      const languageInstruction = isKannada
+        ? "CRITICAL MANDATORY INSTRUCTION: The user is asking in KANNADA (ಕನ್ನಡ). You MUST reply STRICTLY and ENTIRELY in natural, fluent KANNADA script (ಕನ್ನಡ). Do NOT reply in English. Do NOT output English sentences."
+        : "The user is asking in English. Reply in clear, articulate, warm English.";
+
       // Prioritize fast, working Gemini 3.5 & flash models
       const modelsToTry = [
         "gemini-3.5-flash",
@@ -126,7 +134,7 @@ export async function POST(req: Request) {
                   {
                     role: "user",
                     parts: [
-                      { text: `${SYSTEM_PROMPT}\n\nUser Question: "${userMessage}"\nHelpful, concise answer:` }
+                      { text: `${SYSTEM_PROMPT}\n\n${languageInstruction}\n\nUser Question: "${userMessage}"\nHelpful, concise answer:` }
                     ]
                   }
                 ],
@@ -143,8 +151,14 @@ export async function POST(req: Request) {
             const candidate = data.candidates?.[0];
             const textPart = candidate?.content?.parts?.find((p: any) => p.text);
             if (textPart && textPart.text) {
-              botResponse = textPart.text.trim();
-              break;
+              const candidateText = textPart.text.trim();
+              // If user queried in Kannada, ensure output is in Kannada
+              if (isKannada && !/[\u0C80-\u0CFF]/.test(candidateText)) {
+                console.warn("Gemini replied in English for a Kannada query, falling back to Kannada heuristics");
+              } else {
+                botResponse = candidateText;
+                break;
+              }
             }
           }
         } catch (geminiErr) {
@@ -155,11 +169,13 @@ export async function POST(req: Request) {
 
     // Heuristic Fallback if Gemini unavailable or failed
     if (!botResponse) {
-      botResponse = getHeuristicResponse(userMessage);
+      botResponse = isKannada
+        ? getKannadaHeuristicResponse(userMessage)
+        : getEnglishHeuristicResponse(userMessage);
     }
 
     // Determine relevant action link
-    const actionLink = getActionLink(userMessage, botResponse);
+    const actionLink = getActionLink(userMessage, botResponse, isKannada);
 
     return NextResponse.json({
       success: true,
@@ -174,110 +190,206 @@ export async function POST(req: Request) {
   }
 }
 
-function getHeuristicResponse(q: string): string {
+function getKannadaHeuristicResponse(q: string): string {
   const lower = q.toLowerCase();
 
   // 1. TEAM & IDENTITY
-  if (lower.includes("team") || lower.includes("who built") || lower.includes("who created") || lower.includes("middleware mafia") || lower.includes("sahyadri") || lower.includes("ತಂಡ") || lower.includes("ಯಾರು ಮಾಡಿದ್ದು")) {
+  if (lower.includes("ತಂಡ") || lower.includes("ಯಾರು ಮಾಡಿದ್ದು") || lower.includes("ಯಾರು ನಿರ್ಮಿಸಿದ್ದು") || lower.includes("ಮಿಡಲ್‌ವೇರ್") || lower.includes("ಸಹ್ಯಾದ್ರಿ") || lower.includes("team") || lower.includes("middleware")) {
+    return "ಕಲಾ ಸಮನ್ವಯ ವೇದಿಕೆಯನ್ನು ಮಂಗಳೂರಿನ ಸಹ್ಯಾದ್ರಿ ಕಾಲೇಜ್ ಆಫ್ ಇಂಜಿನಿಯರಿಂಗ್ & ಮ್ಯಾನೇಜ್‌ಮೆಂಟ್‌ನ **ಮಿಡಲ್‌ವೇರ್ ಮಾಫಿಯಾ (MIDDLEWARE MAFIA)** ತಂಡವು DevHack 2026 ಗಾಗಿ ನಿರ್ಮಿಸಿದೆ. ತಂಡದ ಸದಸ್ಯರು: ಅನೂಪ್ ಎ. (ಫುಲ್-ಸ್ಟ್ಯಾಕ್ ಆರ್ಕಿಟೆಕ್ಚರ್ & ಆರ್ಡರ್ ಪೂರೈಕೆ ಎಂಜಿನ್), ಆಶಿತ್ ಸಿ. (ಸ್ಥಳೀಯ ಧ್ವನಿ ಯುಐ & ಸ್ಪೀಚ್ ಇಂಟಿಗ್ರೇಷನ್), ಧನುಷ್ ಬಾಪಟ್ (ಬ್ಯಾಕೆಂಡ್ ಇನ್‌ಫ್ರಾಸ್ಟ್ರಕ್ಚರ್ & ಅಲ್ಗಾರಿದಮಿಕ್ ಹಂಚಿಕೆ), ಮತ್ತು ಸೃಜನ್ ನಾಯ್ಕ್ (ಸ್ಟೋರ್‌ಫ್ರಂಟ್ ವಿನ್ಯಾಸ & ಉತ್ಪನ್ನ ರೂಪರೇಷೆ).";
+  }
+
+  // 2. DHARWAD INCIDENT / PROBLEM STATEMENT
+  if (lower.includes("ಧಾರವಾಡ") || lower.includes("ಸಮಸ್ಯೆ") || lower.includes("ಘಟನೆ") || lower.includes("ಹಿನ್ನೆಲೆ") || lower.includes("dharwad") || lower.includes("incident")) {
+    return "ಧಾರವಾಡದಲ್ಲಿ ಕಾರ್ಪೊರೇಟ್ ಸಂಸ್ಥೆಯೊಂದು 20 ದಿನಗಳಲ್ಲಿ 200 ಕೈಹೆಣಿಗೆಯ ಕಸೂತಿ ಶಾಲುಗಳನ್ನು ಕೇಳಿತ್ತು. ಒಬ್ಬ ಮಾಸ್ಟರ್ ಕುಶಲಕರ್ಮಿ ತಿಂಗಳಿಗೆ ಕೇವಲ 30–50 ಶಾಲುಗಳನ್ನು ಮಾತ್ರ ತಯಾರಿಸಲು ಸಾಧ್ಯವಿದ್ದು, ಸಮನ್ವಯದ ಕೊರತೆಯಿಂದ ಈ ಬೃಹತ್ ಆರ್ಡರ್ ಕೈತಪ್ಪಿ ಸೂರತ್ ಪವರ್‌ಲೂಮ್ ಮಿಲ್ಲುಗಳ ಪಾಲಾಯಿತು. ಇದರಿಂದ ಸ್ಥಳೀಯ ಕಸೂತಿ ಕ್ಲಸ್ಟರ್‌ಗೆ ₹1,20,000 ನೇರ ಆದಾಯ ನಷ್ಟವಾಯಿತು. ಇಂತಹ ಯಾವುದೇ ಬೃಹತ್ ಆರ್ಡರ್ ಕೈತಪ್ಪದಂತೆ ಗ್ರಾಮೀಣ ಕುಶಲಕರ್ಮಿಗಳ ಸಾಮರ್ಥ್ಯವನ್ನು ತಾಂತ್ರಿಕವಾಗಿ ಒಂದುಗೂಡಿಸಲು ಕಲಾ ಸಮನ್ವಯವನ್ನು ನಿರ್ಮಿಸಲಾಗಿದೆ!";
+  }
+
+  // 3. FAIR TRADE ECONOMICS / 75% WAGE / 8% FEE / DBT
+  if (lower.includes("75%") || lower.includes("ಕೂಲಿ") || lower.includes("ಡಿಬಿಟಿ") || lower.includes("dbt") || lower.includes("ಬ್ಯಾಂಕ್") || lower.includes("ಖಾತೆಗೆ") || lower.includes("ಬೆಲೆ") || lower.includes("ಹಣ") || lower.includes("ಶೇಕಡಾ") || lower.includes("ಲಾಭ") || lower.includes("8%") || lower.includes("wage") || lower.includes("price")) {
+    return "ಕಲಾ ಸಮನ್ವಯದಲ್ಲಿ ಪ್ರತಿಯೊಂದು ರೂಪಾಯಿಯ **ಶೇಕಡಾ 75% ರಷ್ಟು ಹಣ ನೇರವಾಗಿ ಕುಶಲಕರ್ಮಿಗಳ ಆಧಾರ್ ಲಿಂಕ್ಡ್ ಬ್ಯಾಂಕ್ ಖಾತೆಗೆ (DBT / UPI)** ತಲುಪುತ್ತದೆ (ಉದಾಹರಣೆಗೆ ₹1,20,000 ಮೌಲ್ಯದ ಬೃಹತ್ B2B ಆರ್ಡರ್‌ನಲ್ಲಿ ₹90,000 ಅಥವಾ ₹1,850 ಕಸೂತಿ ಶಾಲಿನಲ್ಲಿ ₹1,380 ನೇರ ಕೂಲಿ ಹಣ). 12% ಹಣ ಕಚ್ಚಾ ಸಾಮಗ್ರಿಗಳ ಮುಂಗಡವಾಗಿ ಲಭ್ಯವಾಗುತ್ತದೆ, 5% ಸ್ಥಳೀಯ ಸ್ವಸಹಾಯ ಸಂಘದ (SHG) ಮುಖಂಡರಿಗೆ, ಮತ್ತು ಕೇವಲ 8% ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಕಾರ್ಯಾಚರಣಾ ಶುಲ್ಕ. ಒಟ್ಟಾರೆ **92% ರಷ್ಟು ಹಣ ಗ್ರಾಮೀಣ ಕುಶಲಕರ್ಮಿಗಳ ಕ್ಲಸ್ಟರ್‌ನಲ್ಲೇ ಉಳಿಯುತ್ತದೆ**! ಲೈವ್ ಲೆಕ್ಕಾಚಾರಕ್ಕಾಗಿ /impact ಪುಟವನ್ನು ನೋಡಿ.";
+  }
+
+  // 4. MSI / MATCH SCORING INDEX / FORMULA
+  if (lower.includes("msi") || lower.includes("ಸೂತ್ರ") || lower.includes("ಫಾರ್ಮುಲಾ") || lower.includes("ಅಲ್ಗಾರಿದಮ್") || lower.includes("ಲೆಕ್ಕಾಚಾರ") || lower.includes("ಸ್ಕೋರಿಂಗ್")) {
+    return "ನಮ್ಮ ಮ್ಯಾಚ್ ಸ್ಕೋರಿಂಗ್ ಇಂಡೆಕ್ಸ್ (MSI) ಸೂತ್ರ: **MSI_i = 0.45·A_i + 0.35·T_i + 0.20·L_i** (ತೂಕಗಳ ಒಟ್ಟು ಮೊತ್ತ 1.00). ಇಲ್ಲಿ **A_i** ಲಭ್ಯವಿರುವ ಮುಕ್ತ ಸಾಮರ್ಥ್ಯದ ಅನುಪಾತ (c_i / C_max), **T_i** ವಿತರಣಾ ಸಮಯದ ಹೊಂದಾಣಿಕೆ, ಮತ್ತು **L_i** ಸ್ಥಳೀಯ ಲಾಜಿಸ್ಟಿಕ್ಸ್ ಹಬ್‌ಗೆ ಇರುವ ಸಾಮೀಪ್ಯ. ನಮ್ಮ ಬೆಂಚ್‌ಮಾರ್ಕ್‌ನಲ್ಲಿ ಕುಶಲಕರ್ಮಿಗಳ ಶ್ರೇಣಿ: ಕುಶಲಕರ್ಮಿ A (0.94) > B (0.88) > C (0.81) > D (0.72).";
+  }
+
+  // 5. BULK ALLOCATION / 200 UNITS / B2B CONSOLE
+  if (lower.includes("200") || lower.includes("ಬೃಹತ್") || lower.includes("ಕಾರ್ಪೊರೇಟ್") || lower.includes("ಹಂಚಿಕೆ") || lower.includes("ಆರ್ಡರ್") || lower.includes("bulk") || lower.includes("b2b")) {
+    return "ನಮ್ಮ 200 ಕಸೂತಿ ಶಾಲುಗಳ ಬೆಂಚ್‌ಮಾರ್ಕ್‌ನಲ್ಲಿ (20 ದಿನಗಳ ಗಡುವು), ಸೀಕ್ವೆನ್ಷಿಯಲ್ ಗ್ರೀಡಿ ಅಲ್ಗಾರಿದಮ್ ಹೀಗೆ ಹಂಚುತ್ತದೆ: **ಕುಶಲಕರ್ಮಿ A (80) + ಕುಶಲಕರ್ಮಿ B (70) + ಕುಶಲಕರ್ಮಿ C (50) = 200 / 200 ಯುನಿಟ್‌ಗಳು (100% ಪೂರ್ಣ)**. ಜೊತೆಗೆ 50 ಯುನಿಟ್‌ಗಳು ಸ್ಟ್ಯಾಂಡ್‌ಬೈ ಬಫರ್‌ನಲ್ಲಿರುತ್ತವೆ (C ಯಲ್ಲಿ 10, D ಯಲ್ಲಿ 40). ಲೈವ್ ಪರೀಕ್ಷೆಗಾಗಿ /b2b ಕನ್ಸೋಲ್ ನೋಡಿ!";
+  }
+
+  // 6. CAPACITY SHOCK / REBALANCING / STANDBY
+  if (lower.includes("ಅಡಚಣೆ") || lower.includes("ಮರುಹಂಚಿಕೆ") || lower.includes("ಸ್ಟ್ಯಾಂಡ್‌ಬೈ") || lower.includes("ಕುಸಿತ") || lower.includes("shock") || lower.includes("rebalance") || lower.includes("standby")) {
+    return "ಯಾವುದಾದರೂ ಕುಶಲಕರ್ಮಿಯ ಸಾಮರ್ಥ್ಯ ದಿಢೀರ್ ಕುಸಿದಾಗ (ಉದಾ: ಕುಶಲಕರ್ಮಿ A ಅನಾರೋಗ್ಯದಿಂದ 80 ರಿಂದ 40 ಕ್ಕೆ ಇಳಿದಾಗ), ನಮ್ಮ ಡೈನಾಮಿಕ್ ಸ್ಟ್ಯಾಂಡ್‌ಬೈ ಎಂಜಿನ್ 40 ಯುನಿಟ್‌ಗಳ ಕೊರತೆಯನ್ನು ತಕ್ಷಣ ಸರಿದೂಗಿಸುತ್ತದೆ: ಕುಶಲಕರ್ಮಿ C +10 ತೆಗೆದುಕೊಳ್ಳುತ್ತಾರೆ (ಗರಿಷ್ಠ 60 ರ ಮಿತಿ), ಮತ್ತು ಸ್ಟ್ಯಾಂಡ್‌ಬೈ ಕುಶಲಕರ್ಮಿ D +30 ಯುನಿಟ್‌ಗಳನ್ನು ಭರ್ತಿ ಮಾಡುತ್ತಾರೆ. ಇದರಿಂದ 200 ಯುನಿಟ್‌ಗಳ ಕಾರ್ಪೊರೇಟ್ ಆರ್ಡರ್ ಯಾವುದೇ ವಿಳಂಬವಿಲ್ಲದೆ 100% ಪೂರೈಕೆಯಾಗುತ್ತದೆ!";
+  }
+
+  // 7. SHORTFALL DETECTION / EDGE CASE
+  if (lower.includes("ಕೊರತೆ") || lower.includes("ಎಡ್ಜ್ ಕೇಸ್") || lower.includes("160") || lower.includes("shortfall")) {
+    return "ಒಟ್ಟು ಕ್ಲಸ್ಟರ್ ಸಾಮರ್ಥ್ಯವು ಬೇಡಿಕೆಗಿಂತ ಕಡಿಮೆಯಾದರೆ (ಉದಾ: ಕೇವಲ 160 ಲಭ್ಯವಿದ್ದಾಗ), ಎಂಜಿನ್ ತಕ್ಷಣ **40-ಯುನಿಟ್ ಕೊರತೆ ಎಚ್ಚರಿಕೆ (Shortfall Alert)** ನೀಡುತ್ತದೆ (`Shortfall = max(0, D - Σa_i)`). ಖರೀದಿದಾರರ ಕನ್ಸೋಲ್‌ನಲ್ಲಿ 2 ಸ್ಪಷ್ಟ ಆಯ್ಕೆಗಳು ಲಭ್ಯವಾಗುತ್ತವೆ: (1) 160 ಯುನಿಟ್‌ಗಳ ಭಾಗಶಃ ಆರ್ಡರ್ ಸ್ವೀಕರಿಸುವುದು, ಅಥವಾ (2) ಪಕ್ಕದ ಕ್ಲಸ್ಟರ್‌ಗೆ ರೂಟ್ ಮಾಡಲು 6 ದಿನಗಳ ಹೆಚ್ಚುವರಿ ಕಾಲಾವಕಾಶ ನೀಡುವುದು. ಯಾವುದೇ ಸೈಲೆಂಟ್ ಡಿಫಾಲ್ಟ್ ಇರುವುದಿಲ್ಲ!";
+  }
+
+  // 8. VERNACULAR VOICE & SPEECH ONBOARDING
+  if (lower.includes("ಧ್ವನಿ") || lower.includes("ಮಾತನಾಡಿ") || lower.includes("ಕನ್ನಡ") || lower.includes("ತುಳು") || lower.includes("voice") || lower.includes("speech")) {
+    return "ಗ್ರಾಮೀಣ ಕುಶಲಕರ್ಮಿಗಳು /artisan/onboard ನಲ್ಲಿ ತಮ್ಮ ಮಾತೃಭಾಷೆಯಾದ ಕನ್ನಡ (`kn-IN`) ಅಥವಾ ಕರಾವಳಿಯ ತುಳು (`tcy`) ಭಾಷೆಯಲ್ಲಿ ಮಾತನಾಡಬಹುದು (ಉದಾ: *\"ನನ್ನ ಬಳಿ 80 ಕಸೂತಿ ಶಾಲುಗಳಿವೆ, ಬೆಲೆ 600 ರೂಪಾಯಿ\"*). ಎಐ ತಂತ್ರಜ್ಞಾನವು ಕರಕುಶಲ ಪ್ರಕಾರ, ಸಂಖ್ಯೆ ಮತ್ತು ಬೆಲೆಯನ್ನು ತಾನಾಗಿಯೇ ಗುರುತಿಸಿ ಪಟ್ಟಿ ಮಾಡುತ್ತದೆ. ಯಾವುದೇ ಇಂಗ್ಲಿಷ್ ಅಥವಾ ಜಿಎಸ್‌ಟಿ ಅರ್ಜಿಗಳ ಅಗತ್ಯವಿಲ್ಲ! ಜೊತೆಗೆ '80 (ಎಂಬತ್ತು)' ನಂತಹ ದ್ವಿಭಾಷಾ ಸಂಖ್ಯೆಗಳ ಪ್ರದರ್ಶನವೂ ಲಭ್ಯವಿದೆ.";
+  }
+
+  // 9. AI PHOTO SCANNER
+  if (lower.includes("ಫೋಟೋ") || lower.includes("ಕ್ಯಾಮರಾ") || lower.includes("ಸ್ಕ್ಯಾನ್") || lower.includes("ಚಿತ್ರ") || lower.includes("photo") || lower.includes("camera")) {
+    return "/artisan/onboard ನಲ್ಲಿರುವ ನಮ್ಮ ಮಲ್ಟಿಮೋಡಲ್ ಎಐ ಸ್ಕ್ಯಾನರ್ ಮೂಲಕ ಕುಶಲಕರ್ಮಿಗಳು ತಮ್ಮ ಕಲಾಕೃತಿಯ ಚಿತ್ರವನ್ನು ತೆಗೆಯಬಹುದು. ಕಂಪ್ಯೂಟರ್ ವಿಷನ್ ಮಾಡೆಲ್ ಕಲಾ ಪ್ರಕಾರ (ಕಸೂತಿ, ಬೀಡು, ಪಾಟರಿ, ಬಿದರಿ, ಯಕ್ಷಗಾನ), ಬಳಸಿದ ನೈಸರ್ಗಿಕ ವಸ್ತುಗಳು, ನೇಯ್ಗೆ ಶೈಲಿ ಮತ್ತು ಸೂಕ್ತ ನ್ಯಾಯಯುತ ಮೂಲ ಬೆಲೆಯನ್ನು ತಾನಾಗಿಯೇ ಗುರುತಿಸುತ್ತದೆ!";
+  }
+
+  // 10. GI CRAFT PASSPORT & HANGTAG
+  if (lower.includes("ಜಿಐ") || lower.includes("ಪಾಸ್‌ಪೋರ್ಟ್") || lower.includes("ಕ್ಯೂಆರ್") || lower.includes("ಹ್ಯಾಂಗ್‌ಟ್ಯಾಗ್") || lower.includes("gi") || lower.includes("passport") || lower.includes("qr")) {
+    return "ಪ್ರತಿಯೊಂದು ಅಧಿಕೃತ ಉತ್ಪನ್ನವು ಸ್ಕ್ಯಾನ್ ಮಾಡಬಹುದಾದ **GI ಕ್ರಾಫ್ಟ್ ಪಾಸ್‌ಪೋರ್ಟ್** ಮತ್ತು QR ಹ್ಯಾಂಗ್‌ಟ್ಯಾಗ್‌ನೊಂದಿಗೆ ಬರುತ್ತದೆ. ಇದರಲ್ಲಿ ಕಲೆಗಾರರ ಹೆಸರು, ಕ್ಲಸ್ಟರ್ ವಿವರ, ಶ್ರಮದ ಗಂಟೆಗಳು ಮತ್ತು ನೈಜ ಕೂಲಿ ವಿವರಗಳಿರುತ್ತವೆ. ಜೊತೆಗೆ ಕನ್ನಡ ಧ್ವನಿ ವಿವರಣೆಯೂ ಲಭ್ಯವಿದ್ದು, ನಕಲಿ ಪವರ್‌ಲೂಮ್ ವಂಚನೆಯನ್ನು ತಡೆಯುತ್ತದೆ.";
+  }
+
+  // 11. SUPPORTED CRAFTS
+  if (lower.includes("ಕಲಾಕೃತಿ") || lower.includes("ವಸ್ತುಗಳು") || lower.includes("ಉತ್ಪನ್ನ") || lower.includes("ಕಸೂತಿ") || lower.includes("ಬೀಡು") || lower.includes("ಪಾಟರಿ") || lower.includes("ಬಿದರಿ") || lower.includes("ಯಕ್ಷಗಾನ") || lower.includes("craft") || lower.includes("product")) {
+    return "ಕಲಾ ಸಮನ್ವಯದಲ್ಲಿ ಕರ್ನಾಟಕದ 7 ಪ್ರಮುಖ ಸಾಂಪ್ರದಾಯಿಕ ಕಲೆಗಳಿವೆ: (1) ಧಾರವಾಡ ಕಸೂತಿ ರೇಷ್ಮೆ ಶಾಲು, (2) ಉಡುಪಿ ಬೀಡು ಹುಲ್ಲಿನ ಬುಟ್ಟಿಗಳು, (3) ಖಾನಾಪುರ ಟೆರಾಕೋಟ ಮಡಕೆಗಳು, (4) ನವಲಗುಂದ ನವಿಲು ಜಮಖಾನ/ಶಾಲು, (5) ಬೀದರ್ ಬೆಳ್ಳಿ ಬಿದರಿ ಕಲೆ, (6) ಉಡುಪಿ ಜಿಐ ಕೈಮಗ್ಗ ಸೀರೆ, ಮತ್ತು (7) ಕರಾವಳಿ ತುಳುನಾಡಿನ ಯಕ್ಷಗಾನ ಕಿರೀಟ & ವೇಷಭೂಷಣ. /marketplace ನಲ್ಲಿ ವೀಕ್ಷಿಸಿ!";
+  }
+
+  // 12. SHIPPING, RETURNS & LOGISTICS
+  if (lower.includes("ವಿತರಣೆ") || lower.includes("ವಾಪಸಾತಿ") || lower.includes("ರವಾನೆ") || lower.includes("ಶಿಪ್ಪಿಂಗ್") || lower.includes("shipping") || lower.includes("delivery") || lower.includes("return")) {
+    return "ಆರ್ಡರ್‌ಗಳನ್ನು ಸ್ಥಳೀಯ ಕ್ಲಸ್ಟರ್ ಹಬ್‌ಗಳಲ್ಲಿ ಕ್ರೋಢೀಕರಿಸಿ ಇಂಡಿಯಾ ಪೋಸ್ಟ್ ಸ್ಪೀಡ್ ಪೋಸ್ಟ್ ಮತ್ತು ಡಾಕ್ ಘರ್ ನಿರ್ಯಾತ್ ಕೇಂದ್ರ (DNK) ಮೂಲಕ ರವಾನಿಸಲಾಗುತ್ತದೆ. ಕರ್ನಾಟಕದಲ್ಲಿ 2-4 ದಿನಗಳು ಮತ್ತು ಭಾರತದಾದ್ಯಂತ 3-5 ದಿನಗಳಲ್ಲಿ ವಿತರಣೆಯಾಗುತ್ತದೆ. ಸಾಗಾಣಿಕೆ ಹಾನಿಗೆ ನಮ್ಮ **7 ದಿನಗಳ ಕರಕುಶಲ ಗ್ಯಾರಂಟಿ** ಮೂಲಕ 100% ಉಚಿತ ಮರು-ಉತ್ಪಾದನೆ ಅಥವಾ ಹಣ ಮರುಪಾವತಿ ನೀಡಲಾಗುತ್ತದೆ. ವಿವರಗಳಿಗೆ /help?tab=shipping ನೋಡಿ!";
+  }
+
+  // 13. PRIVACY & DATA SECURITY
+  if (lower.includes("ಗೌಪ್ಯತೆ") || lower.includes("ಭದ್ರತೆ") || lower.includes("privacy") || lower.includes("security")) {
+    return "ಕಲಾ ಸಮನ್ವಯವು 100% ಜಾಹೀರಾತು ರಹಿತವಾಗಿದೆ. ಧ್ವನಿ ರೆಕಾರ್ಡಿಂಗ್‌ಗಳನ್ನು ಕೇವಲ ಕರಕುಶಲ ಕಾರ್ಡ್ ರಚನೆಗೆ ಅಲ್ಪಾವಧಿಗೆ ಬಳಸಲಾಗುತ್ತದೆ. ಕುಶಲಕರ್ಮಿಗಳ ಆಧಾರ್ ಡಿಬಿಟಿ ಬ್ಯಾಂಕ್ ಖಾತೆ ಮತ್ತು ಯುಪಿಐ ವಿವರಗಳು ಅತ್ಯುನ್ನತ ಭದ್ರತೆಯೊಂದಿಗೆ ಎನ್‌ಕ್ರಿಪ್ಟ್ ಆಗಿದ್ದು ನೇರ ಪಾವತಿಗೆ ಮಾತ್ರ ಬಳಕೆಯಾಗುತ್ತವೆ. ವಿವರಗಳಿಗೆ /help?tab=privacy ನೋಡಿ!";
+  }
+
+  // 14. CONTACT & CUSTOMER CARE
+  if (lower.includes("ಸಂಪರ್ಕ") || lower.includes("ಫೋನ್") || lower.includes("ಇಮೇಲ್") || lower.includes("ವಿಳಾಸ") || lower.includes("contact") || lower.includes("phone")) {
+    return "ಕಲಾ ಸಮನ್ವಯ ಕ್ಲಸ್ಟರ್ ಸಮನ್ವಯ ಡೆಸ್ಕ್: ದೂರವಾಣಿ: **+91 91138 09951**, ಇಮೇಲ್: **info@kalasamanvaya.in**, ವಿಳಾಸ: ಹೆರಿಟೇಜ್ ಕ್ರಾಫ್ಟ್ಸ್ ಸೆಂಟರ್, ಧಾರವಾಡ ಮತ್ತು ಉಡುಪಿ ಕ್ಲಸ್ಟರ್‌ಗಳು, ಕರ್ನಾಟಕ - 580001. ಸೋಮ-ಶನಿ: 10:00 AM - 7:30 PM.";
+  }
+
+  // 15. KANNADA GENERAL FALLBACK
+  return "ಕಲಾ ಸಮನ್ವಯವು (KalaSamanvaya) ಕರ್ನಾಟಕದ ಗ್ರಾಮೀಣ ಕುಶಲಕರ್ಮಿಗಳನ್ನು ಮತ್ತು ಸಾಂಸ್ಥಿಕ ಬೃಹತ್ ಬೇಡಿಕೆಯನ್ನು (B2B & B2C) ಸಮನ್ವಯಗೊಳಿಸುವ ವೇದಿಕೆಯಾಗಿದೆ. ನಮ್ಮ ಮುಖ್ಯ ಧ್ಯೇಯ: *\"ಸಣ್ಣ ಕುಶಲಕರ್ಮಿಗಳಿಗೆ ಸಣ್ಣ ಸಾಮರ್ಥ್ಯ, ದೊಡ್ಡ ಖರೀದಿದಾರರಿಗೆ ಬೃಹತ್ ಬೇಡಿಕೆ. ನಾವು ಇವೆರಡನ್ನೂ ತಾಂತ್ರಿಕವಾಗಿ ಸಮನ್ವಯಗೊಳಿಸುತ್ತೇವೆ.\"* 75% ನೇರ ಕೂಲಿ ಹಣ (DBT), ಧಾರವಾಡ ಕಸೂತಿ ಶಾಲುಗಳು, 200 ಯುನಿಟ್ ಅಲ್ಗಾರಿದಮ್ ಅಥವಾ ಧ್ವನಿ ನೊಂದಣಿಯ ಬಗ್ಗೆ ಯಾವುದೇ ಪ್ರಶ್ನೆಗಳನ್ನು ಕೇಳಿ!";
+}
+
+function getEnglishHeuristicResponse(q: string): string {
+  const lower = q.toLowerCase();
+
+  // 1. TEAM & IDENTITY
+  if (lower.includes("team") || lower.includes("who built") || lower.includes("who created") || lower.includes("middleware mafia") || lower.includes("sahyadri")) {
     return "KalaSamanvaya is built by team **MIDDLEWARE MAFIA** from Sahyadri College of Engineering & Management, Mangaluru for DevHack 2026 (Problem Statement 4.2). The team members are Anoop A. (Full-Stack Architecture & Fulfilment Engine), Ashith C. (Vernacular Voice UI & Speech Integration), Dhanush Bapat (Backend Infrastructure & Algorithmic Allocation), and Srajan Naik (Product Design & Storefront Workflows).";
   }
 
   // 2. CORE MISSION / WHAT IS KALASAMANVAYA
-  if (lower.includes("what is kalasamanvaya") || lower.includes("about kalasamanvaya") || lower.includes("ಕಲಾ ಸಮನ್ವಯ ಎಂದರೇನು") || lower.includes("ಏನಿದು ಕಲಾ ಸಮನ್ವಯ") || lower.includes("ಕಲಾ ಸಮನ್ವಯ ಬಗ್ಗೆ")) {
-    return "ಕಲಾ ಸಮನ್ವಯ (KalaSamanvaya) is a capacity-aware, vernacular B2B & B2C coordination platform connecting Karnataka’s rural craft clusters with enterprise demand. Our core insight is: *\"Small artisans have small capacities. Larger buyers have larger requirements. We coordinate the gap.\"* It features Kannada/Tulu voice onboarding, deterministic multi-artisan quota allocation, and transparent fair-trade wage defense.";
+  if (lower.includes("what is kalasamanvaya") || lower.includes("about kalasamanvaya")) {
+    return "KalaSamanvaya (ಕಲಾ ಸಮನ್ವಯ) is a capacity-aware, vernacular B2B & B2C coordination platform connecting Karnataka’s rural craft clusters with enterprise demand. Our core insight is: *\"Small artisans have small capacities. Larger buyers have larger requirements. We coordinate the gap.\"* It features Kannada/Tulu voice onboarding, deterministic multi-artisan quota allocation, and transparent fair-trade wage defense.";
   }
 
   // 3. DHARWAD INCIDENT / PROBLEM STATEMENT
-  if (lower.includes("dharwad") || lower.includes("problem") || lower.includes("incident") || lower.includes("ಸಮಸ್ಯೆ") || lower.includes("ಘಟನೆ") || lower.includes("ಹಿನ್ನೆಲೆ")) {
+  if (lower.includes("dharwad") || lower.includes("problem") || lower.includes("incident")) {
     return "In Dharwad, a corporate gifting agency needed 200 hand-embroidered Kasuti shawls in 20 days. A single master artisan only makes 30–50/month and couldn't coordinate alone, so the order was lost to a Surat powerloom mill for polyester replicas. The cluster lost ₹1,20,000 in income. KalaSamanvaya was built so no bulk order is ever lost again by algorithmically aggregating artisan cluster capacity!";
   }
 
   // 4. MSI / MATCH SCORING INDEX / FORMULA
-  if (lower.includes("msi") || lower.includes("formula") || lower.includes("scoring") || lower.includes("algorithm") || lower.includes("ಫಾರ್ಮುಲಾ") || lower.includes("ಲೆಕ್ಕಾಚಾರ")) {
+  if (lower.includes("msi") || lower.includes("formula") || lower.includes("scoring") || lower.includes("algorithm")) {
     return "Our Match Scoring Index formula is: **MSI_i = 0.45·A_i + 0.35·T_i + 0.20·L_i** (weights sum to 1.00). Here, **A_i** is uncommitted capacity availability (c_i / C_max), **T_i** is turnaround deadline fit, and **L_i** is geographic proximity to regional logistics hubs. In our benchmark, artisans rank: Artisan A (0.94) > Artisan B (0.88) > Artisan C (0.81) > Artisan D (0.72).";
   }
 
   // 5. BULK ALLOCATION / 200 UNITS / B2B CONSOLE
-  if (lower.includes("200") || lower.includes("bulk") || lower.includes("corporate") || lower.includes("allocation") || lower.includes("b2b") || lower.includes("ಬೃಹತ್") || lower.includes("ಕಾರ್ಪೊರೇಟ್") || lower.includes("ಹಂಚಿಕೆ")) {
+  if (lower.includes("200") || lower.includes("bulk") || lower.includes("corporate") || lower.includes("allocation") || lower.includes("b2b")) {
     return "In our 200-unit Kasuti benchmark (20-day deadline), our sequential greedy engine allocates: **Artisan A (80) + Artisan B (70) + Artisan C (50) = 200 / 200 units (100% fulfilled)**, while reserving 50 units in standby buffers (10 in C, 40 in D). Test it live at /b2b!";
   }
 
   // 6. CAPACITY SHOCK / REBALANCING / STANDBY
-  if (lower.includes("shock") || lower.includes("rebalance") || lower.includes("dropout") || lower.includes("standby") || lower.includes("ಅಡಚಣೆ") || lower.includes("ಮರುಹಂಚಿಕೆ") || lower.includes("ಸ್ಟ್ಯಾಂಡ್‌ಬೈ")) {
+  if (lower.includes("shock") || lower.includes("rebalance") || lower.includes("dropout") || lower.includes("standby")) {
     return "When an artisan suffers a capacity drop (e.g. Artisan A drops from 80 to 40 due to illness), our Dynamic Standby Engine instantly rebalances the -40 deficit: Artisan C absorbs +10 (hitting 60 max cap), and Standby Artisan D absorbs +30. The 200-unit corporate order remains 100% fulfilled without delay!";
   }
 
   // 7. SHORTFALL DETECTION / EDGE CASE
-  if (lower.includes("shortfall") || lower.includes("edge case") || lower.includes("160") || lower.includes("ಕೊರತೆ") || lower.includes("ಎಡ್ಜ್ ಕೇಸ್")) {
+  if (lower.includes("shortfall") || lower.includes("edge case") || lower.includes("160")) {
     return "If total cluster capacity drops below demand (e.g., total capacity = 160 units), our engine flags an immediate **40-unit Shortfall Alert** (`Shortfall = max(0, D - Σa_i)`). The buyer console instantly surfaces two proactive options: (a) Accept 160 units partial batch, or (b) Extend delivery timeline by 6 days to route an adjacent cluster. Zero silent defaults!";
   }
 
   // 8. FAIR TRADE ECONOMICS / 75% WAGE / 8% FEE
-  if (lower.includes("price") || lower.includes("fee") || lower.includes("percentage") || lower.includes("wage") || lower.includes("8%") || lower.includes("75%") || lower.includes("ಬೆಲೆ") || lower.includes("ಕೂಲಿ") || lower.includes("ಶೇಕಡಾ") || lower.includes("ಲಾಭ")) {
+  if (lower.includes("price") || lower.includes("fee") || lower.includes("percentage") || lower.includes("wage") || lower.includes("8%") || lower.includes("75%") || lower.includes("dbt") || lower.includes("payout")) {
     return "On KalaSamanvaya, **75% of every rupee goes directly to the artisan's bank account** (e.g., ₹90,000 on a ₹1,20,000 B2B order, or ₹1,380 on a ₹1,850 Kasuti shawl). 12% is disbursed upfront as a raw material advance to prevent high-interest moneylender debt, 5% supports the local SHG cluster lead, and our lean platform fee is only 8%. Overall, **92% stays directly within the rural cluster**! Explore /impact for the live simulator.";
   }
 
   // 9. VERNACULAR VOICE & SPEECH ONBOARDING
-  if (lower.includes("voice") || lower.includes("speech") || lower.includes("kannada") || lower.includes("tulu") || lower.includes("kn-in") || lower.includes("ಧ್ವನಿ") || lower.includes("ಮಾತನಾಡಿ") || lower.includes("ಕನ್ನಡ") || lower.includes("ತುಳು")) {
+  if (lower.includes("voice") || lower.includes("speech") || lower.includes("kn-in")) {
     return "Rural crafters onboard at /artisan/onboard using spoken Kannada (`kn-IN`) or Coastal Tulu (`tcy`). They simply speak into their phone (e.g. *\"ನನ್ನ ಬಳಿ 80 ಕಸೂತಿ ಶಾಲುಗಳಿವೆ, ಬೆಲೆ 600 ರೂಪಾಯಿ\"*), and our AI extracts the craft type, units, and price without requiring English typing or GST forms. It also features bilingual number display like *'80 (ಎಂಬತ್ತು)'* for financial defense.";
   }
 
   // 10. AI PHOTO SCANNER
-  if (lower.includes("photo") || lower.includes("camera") || lower.includes("scan") || lower.includes("image") || lower.includes("ಫೋಟೋ") || lower.includes("ಕ್ಯಾಮರಾ") || lower.includes("ಚಿತ್ರ")) {
+  if (lower.includes("photo") || lower.includes("camera") || lower.includes("scan") || lower.includes("image")) {
     return "Our Multimodal AI Craft Scanner at /artisan/onboard allows artisans to snap a picture of their handcrafted item. The vision model automatically detects the craft category (Kasuti, Beedu, Pottery, Bidriware, Yakshagana), materials, weaving technique, and fair base price!";
   }
 
   // 11. GI CRAFT PASSPORT & HANGTAG
-  if (lower.includes("gi") || lower.includes("passport") || lower.includes("qr") || lower.includes("hangtag") || lower.includes("ಪಾಸ್‌ಪೋರ್ಟ್") || lower.includes("ಜಿಐ") || lower.includes("ಕ್ಯೂಆರ್")) {
+  if (lower.includes("gi") || lower.includes("passport") || lower.includes("qr") || lower.includes("hangtag")) {
     return "Every authentic item comes with a verifiable **GI Craft Passport** featuring a scannable QR hangtag and spoken Kannada provenance audio narration. It displays the maker's name, cluster coordinates, labor hours, and a transparent wage breakdown, ensuring buyers receive genuine heritage instead of machine polyester fakes.";
   }
 
-  // 12. SUPPORTED CRAFTS (KASUTI, BEEDU, POTTERY, BIDRIWARE, ETC.)
-  if (lower.includes("craft") || lower.includes("product") || lower.includes("kasuti") || lower.includes("beedu") || lower.includes("pottery") || lower.includes("bidri") || lower.includes("yakshagana") || lower.includes("ಕಲಾಕೃತಿ") || lower.includes("ಉಡುಪು") || lower.includes("ವಸ್ತುಗಳು")) {
+  // 12. SUPPORTED CRAFTS
+  if (lower.includes("craft") || lower.includes("product") || lower.includes("kasuti") || lower.includes("beedu") || lower.includes("pottery") || lower.includes("bidri") || lower.includes("yakshagana")) {
     return "KalaSamanvaya currently features 7 authentic Karnataka craft traditions: (1) Dharwad Kasuti Silk Shawls, (2) Udupi Beedu Wildgrass Baskets, (3) Khanapur Belagavi Terracotta Pottery, (4) Navalgund Peacock Stoles, (5) Bidar Silver Inlay Bidriware, (6) Udupi GI Handloom Cotton Sarees, and (7) Coastal Tulunadu Yakshagana Regalia & Kireeta. Browse them at /marketplace!";
   }
 
   // 13. SHIPPING, RETURNS & LOGISTICS
-  if (lower.includes("shipping") || lower.includes("delivery") || lower.includes("return") || lower.includes("india post") || lower.includes("dnk") || lower.includes("ವಿತರಣೆ") || lower.includes("ವಾಪಸಾತಿ") || lower.includes("ರವಾನೆ")) {
+  if (lower.includes("shipping") || lower.includes("delivery") || lower.includes("return") || lower.includes("india post") || lower.includes("dnk")) {
     return "Orders are consolidated at local cluster hubs (Dharwad, Udupi, Belagavi) and dispatched via India Post Speed Post and Dak Ghar Niryat Kendra (DNK). Delivery takes 2–4 days in Karnataka and 3–5 days across India. We offer a **7-Day Handcrafted Transit Safe Guarantee** with 100% free cluster remake or refund for any transit damage. Learn more at /help?tab=shipping!";
   }
 
   // 14. PRIVACY & DATA SECURITY
-  if (lower.includes("privacy") || lower.includes("data") || lower.includes("security") || lower.includes("dbt") || lower.includes("ಗೌಪ್ಯತೆ") || lower.includes("ಭದ್ರತೆ")) {
+  if (lower.includes("privacy") || lower.includes("data") || lower.includes("security")) {
     return "KalaSamanvaya is 100% ad-free with zero commercial tracking. Spoken Kannada/Tulu voice recordings are processed transiently to extract craft catalogue cards and are never sold to ad brokers. Artisan Aadhaar DBT bank accounts and UPI details are encrypted and used solely for direct wage disbursements. Details at /help?tab=privacy!";
   }
 
   // 15. CONTACT & CUSTOMER CARE
-  if (lower.includes("contact") || lower.includes("phone") || lower.includes("email") || lower.includes("address") || lower.includes("ಸಂಪರ್ಕ") || lower.includes("ಫೋನ್") || lower.includes("ವಿಳಾಸ")) {
+  if (lower.includes("contact") || lower.includes("phone") || lower.includes("email") || lower.includes("address")) {
     return "You can reach the KalaSamanvaya Cluster Coordination Desk at Phone: **+91 91138 09951**, Email: **info@kalasamanvaya.in**, located at Heritage Crafts Center, Dharwad & Udupi Clusters, Karnataka - 580001. Mon-Sat: 10:00 AM - 7:30 PM.";
   }
 
-  // 16. KANNADA DEFAULT FALLBACK
-  if (lower.includes("ನಮಸ್ಕಾರ") || lower.includes("ಹೇಗೆ") || lower.includes("ಮಾಹಿತಿ") || lower.includes("ಸಹಾಯ") || lower.includes("ಯಾವಾಗ")) {
-    return "ನಮಸ್ಕಾರ! ಕಲಾ ಸಮನ್ವಯವು ಕರ್ನಾಟಕದ ಗ್ರಾಮೀಣ ಕುಶಲಕರ್ಮಿಗಳನ್ನು ಮತ್ತು ಸಾಂಸ್ಥಿಕ ಬೃಹತ್ ಬೇಡಿಕೆಯನ್ನು (B2B & B2C) ಸಮನ್ವಯಗೊಳಿಸುವ ವೇದಿಕೆಯಾಗಿದೆ. ಕಸೂತಿ ಶಾಲುಗಳು, ಬೀಡು ಬುಟ್ಟಿಗಳು, 75% ನೇರ ಕೂಲಿ ಹಣ, ಅಥವಾ ಧ್ವನಿ ನೊಂದಣಿಯ ಬಗ್ಗೆ ನೀವು ಯಾವುದೇ ಪ್ರಶ್ನೆಗಳನ್ನು ಕೇಳಬಹುದು!";
-  }
-
-  // 17. ENGLISH DEFAULT FALLBACK
+  // 16. ENGLISH DEFAULT FALLBACK
   return "Welcome to KalaSamanvaya (ಕಲಾ ಸಮನ್ವಯ)! We connect Karnataka's master craft clusters to corporate buyers and retail patrons with guaranteed multi-artisan fulfillment, native voice onboarding (kn-IN & tcy), and 75% direct maker wages. You can ask me about our allocation algorithm, the 200-unit stress test, artisan payouts, shipping policies, or specific crafts!";
 }
 
-function getActionLink(query: string, response: string): { label: string; href: string; icon: string } | undefined {
+function getActionLink(query: string, response: string, isKannada: boolean): { label: string; href: string; icon: string } | undefined {
   const text = (query + " " + response).toLowerCase();
 
   if (text.includes("b2b") || text.includes("corporate") || text.includes("bulk") || text.includes("200") || text.includes("msi") || text.includes("allocation") || text.includes("rebalance") || text.includes("ಬೃಹತ್") || text.includes("ಹಂಚಿಕೆ")) {
-    return { label: "Open B2B Bulk Console", href: "/b2b", icon: "b2b" };
+    return {
+      label: isKannada ? "B2B ಬೃಹತ್ ಕನ್ಸೋಲ್ ತೆರೆಯಿರಿ" : "Open B2B Bulk Console",
+      href: "/b2b",
+      icon: "b2b",
+    };
   }
   if (text.includes("voice") || text.includes("onboard") || text.includes("photo") || text.includes("scanner") || text.includes("camera") || text.includes("ಧ್ವನಿ") || text.includes("ನೊಂದಣಿ") || text.includes("ಕ್ಯಾಮರಾ")) {
-    return { label: "Open Artisan Voice Portal", href: "/artisan/onboard", icon: "voice" };
+    return {
+      label: isKannada ? "ಕುಶಲಕರ್ಮಿಗಳ ಧ್ವನಿ ನೊಂದಣಿ" : "Open Artisan Voice Portal",
+      href: "/artisan/onboard",
+      icon: "voice",
+    };
   }
   if (text.includes("impact") || text.includes("wage") || text.includes("fee") || text.includes("8%") || text.includes("75%") || text.includes("economic") || text.includes("ಕೂಲಿ") || text.includes("ಲಾಭ")) {
-    return { label: "View Fair-Wage Model", href: "/impact", icon: "info" };
+    return {
+      label: isKannada ? "75% ನೇರ ಕೂಲಿ ಮಾದರಿ ವೀಕ್ಷಿಸಿ" : "View Fair-Wage Model",
+      href: "/impact",
+      icon: "info",
+    };
   }
   if (text.includes("shipping") || text.includes("return") || text.includes("privacy") || text.includes("terms") || text.includes("policy") || text.includes("help") || text.includes("ವಿತರಣೆ") || text.includes("ಗೌಪ್ಯತೆ")) {
-    return { label: "View Customer Care & Policies", href: "/help", icon: "info" };
+    return {
+      label: isKannada ? "ಸಹಾಯ & ನೀತಿಗಳನ್ನು ವೀಕ್ಷಿಸಿ" : "View Customer Care & Policies",
+      href: "/help",
+      icon: "info",
+    };
   }
   if (text.includes("inbox") || text.includes("order accept") || text.includes("work order") || text.includes("ಇನ್‌ಬಾಕ್ಸ್")) {
-    return { label: "Open Artisan Inbox", href: "/artisan/inbox", icon: "shop" };
+    return {
+      label: isKannada ? "ಕುಶಲಕರ್ಮಿ ಇನ್‌ಬಾಕ್ಸ್ ತೆರೆಯಿರಿ" : "Open Artisan Inbox",
+      href: "/artisan/inbox",
+      icon: "shop",
+    };
   }
-  return { label: "Explore Handcrafted Store", href: "/marketplace", icon: "shop" };
+  return {
+    label: isKannada ? "ಕರಕುಶಲ ಮಳಿಗೆ ವೀಕ್ಷಿಸಿ" : "Explore Handcrafted Store",
+    href: "/marketplace",
+    icon: "shop",
+  };
 }
