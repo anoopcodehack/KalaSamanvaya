@@ -12,10 +12,10 @@ You know EVERYTHING about KalaSamanvaya inside and out. Answer ANY question aske
 - Team Name: MIDDLEWARE MAFIA
 - Institution: Sahyadri College of Engineering & Management, Mangaluru
 - Team Members & Responsibilities:
-  1. Anoop A. — Full-Stack Architecture & Fulfilment Engine
-  2. Ashith C. — Vernacular Voice UI & Speech Integration
-  3. Dhanush Bapat — Backend Infrastructure & Algorithmic Allocation
-  4. Srajan Naik — Storefront Workflows & Product Design
+  1. Anoop A. (Team Leader) — Full-Stack Architecture & Fulfilment Engine
+  2. Muhammad Ashath — Vernacular Voice UI & Speech Integration
+  3. Prajna K V — Backend Infrastructure & Algorithmic Allocation
+  4. Pratheeksha K — Storefront Workflows & Product Design
 
 === THE REAL PROBLEM (DHARWAD FIELD CASE) ===
 - In Dharwad, a corporate gifting agency approached a master Kasuti artisan for 200 hand-embroidered shawls with a 20-day delivery deadline.
@@ -195,7 +195,7 @@ function getKannadaHeuristicResponse(q: string): string {
 
   // 1. TEAM & IDENTITY
   if (lower.includes("ತಂಡ") || lower.includes("ಯಾರು ಮಾಡಿದ್ದು") || lower.includes("ಯಾರು ನಿರ್ಮಿಸಿದ್ದು") || lower.includes("ಮಿಡಲ್‌ವೇರ್") || lower.includes("ಸಹ್ಯಾದ್ರಿ") || lower.includes("team") || lower.includes("middleware")) {
-    return "ಕಲಾ ಸಮನ್ವಯ ವೇದಿಕೆಯನ್ನು ಮಂಗಳೂರಿನ ಸಹ್ಯಾದ್ರಿ ಕಾಲೇಜ್ ಆಫ್ ಇಂಜಿನಿಯರಿಂಗ್ & ಮ್ಯಾನೇಜ್‌ಮೆಂಟ್‌ನ **ಮಿಡಲ್‌ವೇರ್ ಮಾಫಿಯಾ (MIDDLEWARE MAFIA)** ತಂಡವು DevHack 2026 ಗಾಗಿ ನಿರ್ಮಿಸಿದೆ. ತಂಡದ ಸದಸ್ಯರು: ಅನೂಪ್ ಎ. (ಫುಲ್-ಸ್ಟ್ಯಾಕ್ ಆರ್ಕಿಟೆಕ್ಚರ್ & ಆರ್ಡರ್ ಪೂರೈಕೆ ಎಂಜಿನ್), ಆಶಿತ್ ಸಿ. (ಸ್ಥಳೀಯ ಧ್ವನಿ ಯುಐ & ಸ್ಪೀಚ್ ಇಂಟಿಗ್ರೇಷನ್), ಧನುಷ್ ಬಾಪಟ್ (ಬ್ಯಾಕೆಂಡ್ ಇನ್‌ಫ್ರಾಸ್ಟ್ರಕ್ಚರ್ & ಅಲ್ಗಾರಿದಮಿಕ್ ಹಂಚಿಕೆ), ಮತ್ತು ಸೃಜನ್ ನಾಯ್ಕ್ (ಸ್ಟೋರ್‌ಫ್ರಂಟ್ ವಿನ್ಯಾಸ & ಉತ್ಪನ್ನ ರೂಪರೇಷೆ).";
+    return "ಕಲಾ ಸಮನ್ವಯ ವೇದಿಕೆಯನ್ನು ಮಂಗಳೂರಿನ ಸಹ್ಯಾದ್ರಿ ಕಾಲೇಜ್ ಆಫ್ ಇಂಜಿನಿಯರಿಂಗ್ & ಮ್ಯಾನೇಜ್‌ಮೆಂಟ್‌ನ **ಮಿಡಲ್‌ವೇರ್ ಮಾಫಿಯಾ (MIDDLEWARE MAFIA)** ತಂಡವು DevHack / SYNERGIA 2026 ಗಾಗಿ ನಿರ್ಮಿಸಿದೆ. ತಂಡದ ಸದಸ್ಯರು: ಅನೂಪ್ ಎ. (ತಂಡದ ನಾಯಕ, ಫುಲ್-ಸ್ಟ್ಯಾಕ್ ಆರ್ಕಿಟೆಕ್ಚರ್ & ಆರ್ಡರ್ ಪೂರೈಕೆ ಎಂಜಿನ್), ಮುಹಮ್ಮದ್ ಆಶಿತ್ (ಸ್ಥಳೀಯ ಧ್ವನಿ ಯುಐ & ಸ್ಪೀಚ್ ಇಂಟಿಗ್ರೇಷನ್), ಪ್ರಾಜ್ಞಾ ಕೆ. ವಿ. (ಬ್ಯಾಕೆಂಡ್ ಇನ್‌ಫ್ರಾಸ್ಟ್ರಕ್ಚರ್ & ಅಲ್ಗಾರಿದಮಿಕ್ ಹಂಚಿಕೆ), ಮತ್ತು ಪ್ರತೀಕ್ಷಾ ಕೆ. (ಸ್ಟೋರ್‌ಫ್ರಂಟ್ ವಿನ್ಯಾಸ & ಉತ್ಪನ್ನ ರೂಪರೇಷೆ).";
   }
 
   // 2. DHARWAD INCIDENT / PROBLEM STATEMENT
@@ -272,7 +272,7 @@ function getEnglishHeuristicResponse(q: string): string {
 
   // 1. TEAM & IDENTITY
   if (lower.includes("team") || lower.includes("who built") || lower.includes("who created") || lower.includes("middleware mafia") || lower.includes("sahyadri")) {
-    return "KalaSamanvaya is built by team **MIDDLEWARE MAFIA** from Sahyadri College of Engineering & Management, Mangaluru for DevHack 2026 (Problem Statement 4.2). The team members are Anoop A. (Full-Stack Architecture & Fulfilment Engine), Ashith C. (Vernacular Voice UI & Speech Integration), Dhanush Bapat (Backend Infrastructure & Algorithmic Allocation), and Srajan Naik (Product Design & Storefront Workflows).";
+    return "KalaSamanvaya is built by team **MIDDLEWARE MAFIA** from Sahyadri College of Engineering & Management, Mangaluru for DevHack / SYNERGIA 2026 (Problem Statement 4.2). The team members are Anoop A. (Team Leader — Full-Stack Architecture & Fulfilment Engine), Muhammad Ashath (Vernacular Voice UI & Speech Integration), Prajna K V (Backend Infrastructure & Algorithmic Allocation), and Pratheeksha K (Product Design & Storefront Workflows).";
   }
 
   // 2. CORE MISSION / WHAT IS KALASAMANVAYA
