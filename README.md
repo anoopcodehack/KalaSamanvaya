@@ -18,11 +18,15 @@
 **Sahyadri College of Engineering & Management, Mangaluru**
 
 ```text
-Core Platform Pipeline:
-Kannada/Tulu Voice Listing ──▶ Product Catalogue & Craft Story ──▶ Retail Order / Mock Checkout ──▶ Coordinated Bulk Fulfilment
+End-to-End User Journey & Differentiator:
+[1. Voice/Camera Listing] ──▶ [2. Curated Storefront] ──▶ [3. "Why This Price?"] ──▶ [4. Mock Checkout] ──▶ [5. Artisan Audio Inbox]
+                                                                                               │
+                                                                 ┌─────────────────────────────┴────────────────────────────┐
+                                                                 ▼                                                          ▼
+                                                    [ Retail 1-to-1 Payout ]                 [ 200+ Unit Bulk Allocation Engine (MSI) ]
 ```
 
-[Live Demo](https://kalasamanvaya.vercel.app) • [PS 4.2 Alignment](#alignment-with-ps-42-requirements) • [Architecture](#system-architecture) • [Allocation Engine](#deterministic-allocation-engine) • [Benchmark Scenario](#benchmark-recovery-scenario) • [API Specification](#api-specification) • [Getting Started](#local-development-setup) • [Team](#team) • [License](#license)
+[Live Demo](https://kala-samanvaya.vercel.app) • [PS 4.2 Alignment](#alignment-with-ps-42-requirements) • [Architecture](#system-architecture) • [Allocation Engine](#deterministic-allocation-engine) • [Benchmark Scenario](#benchmark-recovery-scenario) • [API Specification](#api-specification) • [Getting Started](#local-development-setup) • [Team](#team) • [License](#license)
 
 ---
 
@@ -428,7 +432,7 @@ Voice Onboarding ──▶ Direct Catalogue Sales ──▶ Coordinated Bulk Cap
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/KalaSamanvaya.git
+   git clone https://github.com/anoopcodehack/KalaSamanvaya.git
    cd KalaSamanvaya
    ```
 
