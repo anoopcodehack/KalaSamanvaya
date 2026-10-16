@@ -11,6 +11,7 @@ import WhyThisPriceModal from "@/components/marketplace/WhyThisPriceModal";
 import MockCheckoutModal from "@/components/marketplace/MockCheckoutModal";
 import CraftPassportModal from "@/components/marketplace/CraftPassportModal";
 import FairWageShieldModal from "@/components/marketplace/FairWageShieldModal";
+import SpinningAssemblyShowcase from "@/components/home/SpinningAssemblyShowcase";
 import {
   ArrowRight,
   Info,
@@ -728,22 +729,16 @@ export default function HomePage() {
               </div>
             </ScrollReveal>
 
-            {/* Showcase Visual with Scroll Reveal */}
-            <ScrollReveal direction="right" delayMs={100} className="rounded-2xl overflow-hidden border-2 border-amber-900/50 shadow-2xl bg-[#24130A] p-2.5 group">
-              <div className="aspect-[4/3] rounded-xl overflow-hidden relative">
-                <img
-                  src="/hero-crafts.jpg"
-                  alt="Traditional Handcrafted Karnataka Treasures"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4 text-white text-xs">
-                  <span className="font-bold text-amber-300 text-sm block">Generations of Craftsmanship</span>
-                  <p className="text-[11px] text-stone-300 mt-0.5">
-                    Mysore inlay craft, sandalwood jali carving, and hand-beaten temple brassware.
-                  </p>
-                </div>
-              </div>
+            {/* Showcase Visual with 4-Piece Spinning Assembly Animation */}
+            <ScrollReveal direction="right" delayMs={100}>
+              <SpinningAssemblyShowcase
+                imageSrc="/hero-crafts.jpg"
+                altText="Traditional Handcrafted Karnataka Treasures"
+                title="Generations of Craftsmanship"
+                subtitle="Mysore inlay craft, sandalwood jali carving, and hand-beaten temple brassware."
+                kannadaTitle="ಪೀಳಿಗೆಯಿಂದ ಬಂದ ಕರಕುಶಲ ಪರಂಪರೆ"
+                kannadaSubtitle="ಮೈಸೂರು ಕೆತ್ತನೆ, ಗಂಧದ ಮರದ ಕೆತ್ತನೆ ಹಾಗೂ ಕಂಚಿನ ಪಾರಂಪರಿಕ ಕಲಾಕೃತಿಗಳು."
+              />
             </ScrollReveal>
           </div>
         </div>
