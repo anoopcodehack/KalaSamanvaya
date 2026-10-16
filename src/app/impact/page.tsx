@@ -60,14 +60,14 @@ export default function ImpactAndMonetizationPage() {
             </p>
 
             {/* Core Metrics Row */}
-            <div className="pt-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-xs flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0 font-bold text-sm">
                   75%
                 </div>
                 <div>
                   <div className="text-xs font-bold text-stone-900">Direct Maker Payout</div>
-                  <div className="text-[11px] text-stone-500">Transferred directly via bank/UPI</div>
+                  <div className="text-[11px] text-stone-500">Direct bank/UPI transfer (₹1,380/shawl)</div>
                 </div>
               </div>
 
@@ -78,6 +78,16 @@ export default function ImpactAndMonetizationPage() {
                 <div>
                   <div className="text-xs font-bold text-stone-900">Upfront Material Advance</div>
                   <div className="text-[11px] text-stone-500">Zero moneylender debt cycle</div>
+                </div>
+              </div>
+
+              <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-xs flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center flex-shrink-0 font-bold text-sm">
+                  5%
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-stone-900">SHG Lead Coordination</div>
+                  <div className="text-[11px] text-stone-500">Quality check &amp; cluster logistics</div>
                 </div>
               </div>
 
