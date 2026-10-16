@@ -730,16 +730,14 @@ export default function HomePage() {
             </ScrollReveal>
 
             {/* Showcase Visual with 4-Piece Spinning Assembly Animation */}
-            <ScrollReveal direction="right" delayMs={100}>
+            <div className="w-full">
               <SpinningAssemblyShowcase
                 imageSrc="/hero-crafts.jpg"
                 altText="Traditional Handcrafted Karnataka Treasures"
                 title="Generations of Craftsmanship"
                 subtitle="Mysore inlay craft, sandalwood jali carving, and hand-beaten temple brassware."
-                kannadaTitle="ಪೀಳಿಗೆಯಿಂದ ಬಂದ ಕರಕುಶಲ ಪರಂಪರೆ"
-                kannadaSubtitle="ಮೈಸೂರು ಕೆತ್ತನೆ, ಗಂಧದ ಮರದ ಕೆತ್ತನೆ ಹಾಗೂ ಕಂಚಿನ ಪಾರಂಪರಿಕ ಕಲಾಕೃತಿಗಳು."
               />
-            </ScrollReveal>
+            </div>
           </div>
         </div>
       </section>
