@@ -20,7 +20,7 @@ export async function POST(req: Request) {
 
     // SCENARIO 1: Direct Audio Recording passed with Gemini API Key
     if (audioBase64 && isGeminiAvailable) {
-      const modelsToTry = ["gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gemini-flash-latest"];
+      const modelsToTry = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro", "gemini-flash-latest"];
       const cleanBase64 = audioBase64.includes(",")
         ? audioBase64.split(",")[1].trim()
         : audioBase64.replace(/^data:audio\/[^;]+;base64,/, "").trim();
@@ -148,7 +148,7 @@ Return ONLY a valid JSON object matching this schema without markdown code block
 
     // SCENARIO 2: Transcript text passed with Gemini API Key
     if (transcript && isGeminiAvailable) {
-      const modelsToTry = ["gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gemini-flash-latest"];
+      const modelsToTry = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro", "gemini-flash-latest"];
       for (const model of modelsToTry) {
         try {
           const geminiRes = await fetch(

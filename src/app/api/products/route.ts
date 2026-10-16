@@ -53,8 +53,9 @@ export async function POST(req: Request) {
 
     const price = Number(body.priceINR);
     const artisanPayout = Math.round(price * 0.75);
-    const rawMaterials = Math.round(price * 0.18);
-    const packagingLogistics = Math.round(price * 0.07);
+    const rawMaterials = Math.round(price * 0.12);
+    const packagingLogistics = Math.round(price * 0.05);
+    const platformCoordinationFee = Math.round(price * 0.08);
 
     const newProduct: ArtisanProduct = {
       id: `prod-${Date.now().toString().slice(-6)}`,
@@ -87,7 +88,7 @@ export async function POST(req: Request) {
         artisanDirectPayoutINR: artisanPayout,
         rawMaterialsINR: rawMaterials,
         clusterPackagingLogisticsINR: packagingLogistics,
-        platformCoordinationFeeINR: 0,
+        platformCoordinationFeeINR: platformCoordinationFee,
         powerloomMachinePrintCompareINR: Math.round(price * 0.4),
         powerloomMachineMinutes: 5,
         artisanSharePercent: 75,
