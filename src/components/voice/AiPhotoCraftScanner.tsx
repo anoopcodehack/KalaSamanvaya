@@ -33,6 +33,7 @@ export interface CraftPresetPhoto {
   units: number;
   pricePerUnitINR: number;
   handcraftHours: number;
+  leadTimeDays?: number;
   technique?: string;
   material: string;
   motifs: string;
@@ -53,6 +54,7 @@ const PRESET_CRAFT_PHOTOS: CraftPresetPhoto[] = [
     units: 10,
     pricePerUnitINR: 4800,
     handcraftHours: 48,
+    leadTimeDays: 20,
     technique: "Lightwood hand-carving, brass foil repoussé & mirror inlay",
     material: "Lightweight wood, embossed brass foil, mirror work, papier-mâché & zari",
     motifs: "Kirtimukha (glory face), temple halo, peacock and royal theatre regalia",
@@ -71,6 +73,7 @@ const PRESET_CRAFT_PHOTOS: CraftPresetPhoto[] = [
     units: 25,
     pricePerUnitINR: 2400,
     handcraftHours: 28,
+    leadTimeDays: 12,
     technique: "150-year-old Malabar frame-loom handloom weave",
     material: "80s Combed Natural Cotton, Malabar Frame-loom & Natural Dye",
     motifs: "Traditional coastal buttas, ribbed border, and humidity-resistant weave",
@@ -89,6 +92,7 @@ const PRESET_CRAFT_PHOTOS: CraftPresetPhoto[] = [
     units: 50,
     pricePerUnitINR: 1850,
     handcraftHours: 38,
+    leadTimeDays: 15,
     technique: "Counted needle handwork (Gavanti & Murgi stitches)",
     material: "100% Pure Mulberry Silk & Khadi Cotton",
     motifs: "Gopura (Temple Tower), Chariot & Peacock motifs",
@@ -107,6 +111,7 @@ const PRESET_CRAFT_PHOTOS: CraftPresetPhoto[] = [
     units: 40,
     pricePerUnitINR: 650,
     handcraftHours: 14,
+    leadTimeDays: 7,
     technique: "Zero-plastic coastal rivergrass braiding",
     material: "Natural Sun-Cured Coastal Rivergrass",
     motifs: "Tight herringbone circular weave",
@@ -125,6 +130,7 @@ const PRESET_CRAFT_PHOTOS: CraftPresetPhoto[] = [
     units: 30,
     pricePerUnitINR: 850,
     handcraftHours: 18,
+    leadTimeDays: 10,
     technique: "Traditional manual potter's wheel throwing & pit-firing",
     material: "Malaprabha Riverbed Clay & Natural Wood Glaze",
     motifs: "Hand-turned ridged pottery rim",
@@ -143,6 +149,7 @@ const PRESET_CRAFT_PHOTOS: CraftPresetPhoto[] = [
     units: 20,
     pricePerUnitINR: 3200,
     handcraftHours: 48,
+    leadTimeDays: 21,
     technique: "Soil-patina oxidation & pure silver wire engraving",
     material: "Zinc-Copper Alloy with 99.9% Pure Silver Wire Inlay",
     motifs: "Traditional Persian vine inlay & floral borders",
@@ -161,6 +168,7 @@ const PRESET_CRAFT_PHOTOS: CraftPresetPhoto[] = [
     units: 35,
     pricePerUnitINR: 1150,
     handcraftHours: 16,
+    leadTimeDays: 8,
     technique: "High-speed manual lathe turning & lac-polishing",
     material: "Ivory Wood (Aale Mara) & Vegetable Lacquer Dyes",
     motifs: "Traditional lathe-turned rocking horse & nesting dolls",
@@ -214,7 +222,7 @@ export default function AiPhotoCraftScanner({
               pricePerUnitINR: craftPreset.pricePerUnitINR,
               totalValueINR: craftPreset.units * craftPreset.pricePerUnitINR,
               material: craftPreset.material,
-              leadTimeDays: 14,
+              leadTimeDays: craftPreset.leadTimeDays || 14,
               rawTranscript: `[Photo Vision Detected: ${craftPreset.name}]`,
               confidence: craftPreset.confidence,
             },
@@ -260,6 +268,13 @@ export default function AiPhotoCraftScanner({
         const craftData = data.craftData;
 
         if (craftData && craftData.name) {
+          const calculatedLeadDays =
+            typeof craftData.leadTimeDays === "number" && craftData.leadTimeDays > 0
+              ? craftData.leadTimeDays
+              : typeof craftData.handcraftHours === "number" && craftData.handcraftHours > 0
+              ? Math.max(5, Math.ceil(craftData.handcraftHours / 3))
+              : 14;
+
           const resultPreset: CraftPresetPhoto = {
             id: `custom-${Date.now()}`,
             name: craftData.name,
@@ -271,6 +286,7 @@ export default function AiPhotoCraftScanner({
             units: typeof craftData.units === "number" ? craftData.units : 10,
             pricePerUnitINR: typeof craftData.pricePerUnitINR === "number" ? craftData.pricePerUnitINR : 2500,
             handcraftHours: typeof craftData.handcraftHours === "number" ? craftData.handcraftHours : 32,
+            leadTimeDays: calculatedLeadDays,
             technique: craftData.technique || "Traditional handcraft technique",
             material: craftData.material || "Natural artisanal materials",
             motifs: craftData.motifs || "Traditional Karnataka motifs",
@@ -291,7 +307,7 @@ export default function AiPhotoCraftScanner({
               pricePerUnitINR: resultPreset.pricePerUnitINR,
               totalValueINR: resultPreset.units * resultPreset.pricePerUnitINR,
               material: resultPreset.material,
-              leadTimeDays: 14,
+              leadTimeDays: calculatedLeadDays,
               rawTranscript: `[Photo Vision Detected: ${resultPreset.name}]`,
               confidence: resultPreset.confidence,
             },

@@ -38,24 +38,162 @@ const CRAFT_IMAGE_MAP: Record<string, string> = {
   Yakshagana: "/assets/craft-yakshagana.jpg",
   "Udupi Sarees": "/assets/craft-udupi-saree.jpg",
   "Udupi Saree": "/assets/craft-udupi-saree.jpg",
+  Handloom: "/assets/craft-udupi-saree.jpg",
+  Woodcraft: "/assets/craft-channapatna.jpg",
 };
 
-const CRAFT_CLUSTER_MAP: Record<string, { kn: string; en: string }> = {
-  Kasuti: { kn: "ಧಾರವಾಡ ಕಸೂತಿ ಸಂಘ (Dharwad Cluster)", en: "Dharwad Kasuti Craft Guild" },
-  Pottery: { kn: "ಖಾನಾಪುರ / ಬೆಳಗಾವಿ ಕುಂಬಾರಿಕೆ ಕ್ಲಸ್ಟರ್ (Khanapur Terracotta)", en: "Khanapur Belagavi Terracotta Guild" },
-  Beedu: { kn: "ಉಡುಪಿ ಬೀಡು ಕರಕುಶಲ ಸಂಘ (Udupi Beedu)", en: "Udupi Beedu Craft Society" },
-  Bidriware: { kn: "ಬೀದರ್ ಬಿದ್ರಿ ಕಲೆ ಒಕ್ಕೂಟ (Bidar Cluster)", en: "Bidar Bidriware Guild" },
-  "Channapatna Toys": { kn: "ರಾಮನಗರ ಚನ್ನಪಟ್ಟಣ ಆಟಿಕೆ ಸಂಘ", en: "Channapatna Toy Artisans" },
-  "Yakshagana Regalia": { kn: "ಉಡುಪಿ & ಹೊನ್ನಾವರ ಯಕ್ಷಗಾನ ಕಲಾ ಮಂಡಳಿ (Udupi & Honnavar)", en: "Udupi & Honnavar Yakshagana Artisan Guild" },
-  Yakshagana: { kn: "ಉಡುಪಿ & ಹೊನ್ನಾವರ ಯಕ್ಷಗಾನ ಕಲಾ ಮಂಡಳಿ (Udupi & Honnavar)", en: "Udupi & Honnavar Yakshagana Artisan Guild" },
-  "Udupi Sarees": { kn: "ಉಡುಪಿ ಪ್ರಾಥಮಿಕ ನೇಕಾರರ ಸಹಕಾರ ಸಂಘ (Udupi Handloom)", en: "Udupi Handloom Weavers Co-operative Society" },
-  "Udupi Saree": { kn: "ಉಡುಪಿ ಪ್ರಾಥಮಿಕ ನೇಕಾರರ ಸಹಕಾರ ಸಂಘ (Udupi Handloom)", en: "Udupi Handloom Weavers Co-operative Society" },
+interface CraftClusterInfo {
+  clusterKn: string;
+  clusterEn: string;
+  artisanKn: string;
+  artisanEn: string;
+  artisanTcy?: string;
+  giBadgeKn: string;
+  giBadgeEn: string;
+  verifiedCategory: string;
+  avatarLetter: string;
+}
+
+const CRAFT_METADATA: Record<string, CraftClusterInfo> = {
+  channapatna: {
+    clusterKn: "ರಾಮನಗರ ಚನ್ನಪಟ್ಟಣ ಆಟಿಕೆ ಸಂಘ",
+    clusterEn: "Ramanagara Channapatna Toy Artisans Guild",
+    artisanKn: "ಸುಬ್ಬಣ್ಣ ಆಚಾರ್ (ರಾಮನಗರ)",
+    artisanEn: "Subbanna Achar (Ramanagara)",
+    giBadgeKn: "ಜಿ.ಐ. ಚನ್ನಪಟ್ಟಣ ನೋಂದಣಿ #23",
+    giBadgeEn: "GI Channapatna Application #23",
+    verifiedCategory: "GI Woodcraft",
+    avatarLetter: "ಸು",
+  },
+  woodcraft: {
+    clusterKn: "ರಾಮನಗರ ಚನ್ನಪಟ್ಟಣ ಆಟಿಕೆ ಸಂಘ",
+    clusterEn: "Ramanagara Channapatna Toy Artisans Guild",
+    artisanKn: "ಸುಬ್ಬಣ್ಣ ಆಚಾರ್ (ರಾಮನಗರ)",
+    artisanEn: "Subbanna Achar (Ramanagara)",
+    giBadgeKn: "ಜಿ.ಐ. ಚನ್ನಪಟ್ಟಣ ನೋಂದಣಿ #23",
+    giBadgeEn: "GI Channapatna Application #23",
+    verifiedCategory: "GI Woodcraft",
+    avatarLetter: "ಸು",
+  },
+  kasuti: {
+    clusterKn: "ಧಾರವಾಡ ಕಸೂತಿ ಸಂಘ (Dharwad Cluster)",
+    clusterEn: "Dharwad Kasuti Craft Guild",
+    artisanKn: "ಸವಿತಾ ನಾಯ್ಕ್ (ಧಾರವಾಡ)",
+    artisanEn: "Savita Naik (Dharwad)",
+    giBadgeKn: "ಜಿ.ಐ. ಧಾರವಾಡ ಕಸೂತಿ ನೋಂದಣಿ #85",
+    giBadgeEn: "GI Dharwad Application #85",
+    verifiedCategory: "GI Embroidery",
+    avatarLetter: "ಸ",
+  },
+  beedu: {
+    clusterKn: "ಉಡುಪಿ ಬೀಡು ಕರಕುಶಲ ಸಂಘ (Udupi Beedu)",
+    clusterEn: "Udupi Beedu Craft Society",
+    artisanKn: "ಜಾನಕಿ ಪೂಜಾರಿ (ಪಡುಬಿದ್ರಿ - ಉಡುಪಿ)",
+    artisanEn: "Janaki Poojary (Padubidri - Udupi)",
+    artisanTcy: "ಜಾನಕಿ ಪೂಜಾರಿ (ಪಡುಬಿದ್ರಿ - ಕರಾವಳಿ)",
+    giBadgeKn: "ಜಿ.ಐ. ಉಡುಪಿ ಕರಾವಳಿ ಕರಕುಶಲ #142",
+    giBadgeEn: "GI Coastal Craft #142",
+    verifiedCategory: "Eco-Basketry",
+    avatarLetter: "ಜ",
+  },
+  udupi: {
+    clusterKn: "ಉಡುಪಿ ಪ್ರಾಥಮಿಕ ನೇಕಾರರ ಸಹಕಾರ ಸಂಘ (Udupi Handloom)",
+    clusterEn: "Udupi Handloom Weavers Co-operative Society",
+    artisanKn: "ಶೇಖರ್ ದೇವಾಡಿಗ (ಉಡುಪಿ)",
+    artisanEn: "Shekhar Devadiga (Udupi)",
+    artisanTcy: "ಶೇಖರ್ ದೇವಾಡಿಗ (ಉಡುಪಿ - ಕರಾವಳಿ)",
+    giBadgeKn: "ಜಿ.ಐ. ಉಡುಪಿ ಸೀರೆ ನೋಂದಣಿ #2016",
+    giBadgeEn: "GI Udupi Saree Application #2016",
+    verifiedCategory: "GI Handloom",
+    avatarLetter: "ಶೇ",
+  },
+  handloom: {
+    clusterKn: "ಉಡುಪಿ ಪ್ರಾಥಮಿಕ ನೇಕಾರರ ಸಹಕಾರ ಸಂಘ (Udupi Handloom)",
+    clusterEn: "Udupi Handloom Weavers Co-operative Society",
+    artisanKn: "ಶೇಖರ್ ದೇವಾಡಿಗ (ಉಡುಪಿ)",
+    artisanEn: "Shekhar Devadiga (Udupi)",
+    artisanTcy: "ಶೇಖರ್ ದೇವಾಡಿಗ (ಉಡುಪಿ - ಕರಾವಳಿ)",
+    giBadgeKn: "ಜಿ.ಐ. ಉಡುಪಿ ಸೀರೆ ನೋಂದಣಿ #2016",
+    giBadgeEn: "GI Udupi Saree Application #2016",
+    verifiedCategory: "GI Handloom",
+    avatarLetter: "ಶೇ",
+  },
+  pottery: {
+    clusterKn: "ಖಾನಾಪುರ / ಬೆಳಗಾವಿ ಕುಂಬಾರಿಕೆ ಕ್ಲಸ್ಟರ್ (Khanapur Terracotta)",
+    clusterEn: "Khanapur Belagavi Terracotta Guild",
+    artisanKn: "ಬಸವರಾಜ್ ಕುಂಬಾರ್ (ಖಾನಾಪುರ)",
+    artisanEn: "Basavaraj Kumbar (Khanapur)",
+    giBadgeKn: "ಜಿ.ಐ. ಬೆಳಗಾವಿ ಮಡಿಕೆ ನೋಂದಣಿ #047",
+    giBadgeEn: "GI Belagavi Pottery Application #047",
+    verifiedCategory: "Terracotta",
+    avatarLetter: "ಬ",
+  },
+  bidri: {
+    clusterKn: "ಬೀದರ್ ಬಿದ್ರಿ ಕಲೆ ಒಕ್ಕೂಟ (Bidar Cluster)",
+    clusterEn: "Bidar Bidriware Guild",
+    artisanKn: "ಮೊಹಮ್ಮದ್ ರಫೀಕ್ (ಬೀದರ್ ಕೋಟೆ)",
+    artisanEn: "Mohammed Rafeeq (Bidar Fort)",
+    giBadgeKn: "ಜಿ.ಐ. ಬೀದರ್ ಬಿದ್ರಿ ನೋಂದಣಿ #012",
+    giBadgeEn: "GI Bidriware Application #012",
+    verifiedCategory: "GI Metalcraft",
+    avatarLetter: "ಮೊ",
+  },
+  bidriware: {
+    clusterKn: "ಬೀದರ್ ಬಿದ್ರಿ ಕಲೆ ಒಕ್ಕೂಟ (Bidar Cluster)",
+    clusterEn: "Bidar Bidriware Guild",
+    artisanKn: "ಮೊಹಮ್ಮದ್ ರಫೀಕ್ (ಬೀದರ್ ಕೋಟೆ)",
+    artisanEn: "Mohammed Rafeeq (Bidar Fort)",
+    giBadgeKn: "ಜಿ.ಐ. ಬೀದರ್ ಬಿದ್ರಿ ನೋಂದಣಿ #012",
+    giBadgeEn: "GI Bidriware Application #012",
+    verifiedCategory: "GI Metalcraft",
+    avatarLetter: "ಮೊ",
+  },
+  yakshagana: {
+    clusterKn: "ಉಡುಪಿ & ಹೊನ್ನಾವರ ಯಕ್ಷಗಾನ ಕಲಾ ಮಂಡಳಿ (Udupi & Honnavar)",
+    clusterEn: "Udupi & Honnavar Yakshagana Artisan Guild",
+    artisanKn: "ಗಣಪತಿ ಹೆಗಡೆ (ಹೊನ್ನಾವರ)",
+    artisanEn: "Ganapati Hegde (Honnavar)",
+    artisanTcy: "ಗಣಪತಿ ಹೆಗಡೆ (ಹೊನ್ನಾವರ - ಕರಾವಳಿ)",
+    giBadgeKn: "ಜಿ.ಐ. ಕರಾವಳಿ ಜಾನಪದ ರಂಗಭೂಮಿ #108",
+    giBadgeEn: "GI Coastal Theatre Regalia #108",
+    verifiedCategory: "Folk Theatre Regalia",
+    avatarLetter: "ಗ",
+  },
 };
+
+function findCraftMeta(craftStr: string, itemName: string = ""): CraftClusterInfo {
+  const query = `${craftStr} ${itemName}`.toLowerCase();
+  if (query.includes("channapatna") || query.includes("toy") || query.includes("wood") || query.includes("ಆಟಿಕೆ") || query.includes("ಕುದುರೆ")) {
+    return CRAFT_METADATA.channapatna;
+  }
+  if (query.includes("kasuti") || query.includes("embroidery") || query.includes("ಕಸೂತಿ") || query.includes("ಶಾಲು")) {
+    return CRAFT_METADATA.kasuti;
+  }
+  if (query.includes("beedu") || query.includes("basket") || query.includes("ಬೀಡು") || query.includes("ಬುಟ್ಟಿ")) {
+    return CRAFT_METADATA.beedu;
+  }
+  if (query.includes("udupi") || query.includes("saree") || query.includes("handloom") || query.includes("ಕೈಮಗ್ಗ") || query.includes("ಸೀರೆ")) {
+    return CRAFT_METADATA.udupi;
+  }
+  if (query.includes("pottery") || query.includes("terracotta") || query.includes("clay") || query.includes("ಕುಂಬಾರ") || query.includes("ಮಡಿಕೆ") || query.includes("ಖಾನಾಪುರ") || query.includes("ಬೆಳಗಾವಿ")) {
+    return CRAFT_METADATA.pottery;
+  }
+  if (query.includes("bidri") || query.includes("silver") || query.includes("ಬಿದ್ರಿ") || query.includes("ಬೆಳ್ಳಿ")) {
+    return CRAFT_METADATA.bidri;
+  }
+  if (query.includes("yaksha") || query.includes("kireeta") || query.includes("ಮುಟ್ಟಾಲೆ") || query.includes("ಕಿರೀಟ")) {
+    return CRAFT_METADATA.yakshagana;
+  }
+  return CRAFT_METADATA.kasuti;
+}
 
 export default function ArtisanOnboardPage() {
   const [language, setLanguage] = useState<"kn" | "en" | "tcy">("kn");
   const [artisanName, setArtisanName] = useState("ಸವಿತಾ ನಾಯ್ಕ್ (Savita Naik)");
   const [clusterRegion, setClusterRegion] = useState("ಧಾರವಾಡ ಕಸೂತಿ ಸಂಘ (Dharwad Cluster)");
+  const [avatarLetter, setAvatarLetter] = useState("ಸ");
+  const [giBadge, setGiBadge] = useState("GI Dharwad Application #85");
+  const [verifiedCategory, setVerifiedCategory] = useState("GI Embroidery");
 
   // Extracted craft listing state
   const [listing, setListing] = useState<ExtractedCraftListing>({
@@ -83,25 +221,27 @@ export default function ArtisanOnboardPage() {
     setListing(extracted);
     if (img) {
       setUploadedImageUrl(img);
-    } else if (CRAFT_IMAGE_MAP[extracted.craft]) {
-      setUploadedImageUrl(CRAFT_IMAGE_MAP[extracted.craft]);
-    }
-
-    const clusterKey = Object.keys(CRAFT_CLUSTER_MAP).find(
-      (k) => k.toLowerCase() === extracted.craft.toLowerCase() || extracted.craft.toLowerCase().includes(k.toLowerCase())
-    );
-    if (clusterKey && CRAFT_CLUSTER_MAP[clusterKey]) {
-      setClusterRegion(language === "en" ? CRAFT_CLUSTER_MAP[clusterKey].en : CRAFT_CLUSTER_MAP[clusterKey].kn);
-      if (clusterKey.includes("Yakshagana")) {
-        setArtisanName(language === "en" ? "Ganapati Hegde (Honnavar)" : language === "tcy" ? "ಗಣಪತಿ ಹೆಗಡೆ (ಹೊನ್ನಾವರ - ಕರಾವಳಿ)" : "ಗಣಪತಿ ಹೆಗಡೆ (ಹೊನ್ನಾವರ)");
-      } else if (clusterKey.includes("Udupi") || clusterKey.includes("Beedu")) {
-        setArtisanName(language === "en" ? "Shekhar Devadiga (Udupi)" : language === "tcy" ? "ಶೇಖರ್ ದೇವಾಡಿಗ (ಉಡುಪಿ - ಕರಾವಳಿ)" : "ಶೇಖರ್ ದೇವಾಡಿಗ (ಉಡುಪಿ)");
-      } else if (clusterKey.includes("Pottery")) {
-        setArtisanName(language === "en" ? "Basavaraj Kumbar (Khanapur)" : "ಬಸವರಾಜ್ ಕುಂಬಾರ್ (ಖಾನಾಪುರ)");
-      } else if (clusterKey.includes("Kasuti")) {
-        setArtisanName(language === "en" ? "Savita Naik (Dharwad)" : "ಸವಿತಾ ನಾಯ್ಕ್ (ಧಾರವಾಡ)");
+    } else {
+      const imgKey = Object.keys(CRAFT_IMAGE_MAP).find(
+        (k) => k.toLowerCase() === extracted.craft.toLowerCase() || extracted.craft.toLowerCase().includes(k.toLowerCase())
+      );
+      if (imgKey && CRAFT_IMAGE_MAP[imgKey]) {
+        setUploadedImageUrl(CRAFT_IMAGE_MAP[imgKey]);
       }
     }
+
+    const meta = findCraftMeta(extracted.craft, extracted.itemName);
+    setClusterRegion(language === "en" ? meta.clusterEn : meta.clusterKn);
+    setArtisanName(
+      language === "en"
+        ? meta.artisanEn
+        : language === "tcy" && meta.artisanTcy
+        ? meta.artisanTcy
+        : meta.artisanKn
+    );
+    setAvatarLetter(meta.avatarLetter);
+    setGiBadge(language === "en" ? meta.giBadgeEn : meta.giBadgeKn);
+    setVerifiedCategory(meta.verifiedCategory);
   };
 
   // Touch adjustment handlers (Zero typing needed!)
@@ -267,7 +407,7 @@ export default function ArtisanOnboardPage() {
           <div className="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-[#C85A32] text-white flex items-center justify-center font-bold text-lg shadow-sm">
-                ಸ
+                {avatarLetter}
               </div>
               <div>
                 <div className="flex items-center gap-1.5 font-bold text-[#2A1810] text-sm">
@@ -283,7 +423,7 @@ export default function ArtisanOnboardPage() {
                 {language === "kn" ? "ಪರಿಶೀಲಿತ ಸದಸ್ಯೆ" : "Verified Maker"}
               </span>
               <span className="text-[10px] font-bold text-amber-900 bg-amber-100 px-2.5 py-1 rounded-full border border-amber-300">
-                GI Dharwad Application #85
+                {giBadge}
               </span>
             </div>
           </div>
@@ -499,9 +639,9 @@ export default function ArtisanOnboardPage() {
                     </div>
 
                     <div className="flex items-center gap-2 self-start sm:self-auto">
-                      <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                      <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shadow-xs">
                         <ShieldCheck className="w-3.5 h-3.5" />
-                        <span>98.4% Handloom Verified</span>
+                        <span>{((listing.confidence || 0.984) * 100).toFixed(1)}% {verifiedCategory} Verified</span>
                       </span>
                     </div>
                   </div>
@@ -515,8 +655,8 @@ export default function ArtisanOnboardPage() {
                         {language === "kn" ? "ಕರಕುಶಲ ಪ್ರಕಾರ" : "Detected Craft"}
                       </span>
                       <div>
-                        <div className="text-xl font-bold text-[#2A1810]">{listing.craft}</div>
-                        <p className="text-xs text-[#C85A32] font-semibold">{listing.craftKannada}</p>
+                        <div className="text-lg sm:text-xl font-bold text-[#2A1810] leading-tight">{listing.craft}</div>
+                        <p className="text-xs text-[#C85A32] font-semibold mt-0.5">{listing.craftKannada}</p>
                       </div>
                       <span className="text-[10px] text-stone-400">Auto-extracted</span>
                     </div>
@@ -617,12 +757,12 @@ export default function ArtisanOnboardPage() {
                       <ShieldCheck className="w-6 h-6 text-emerald-600 flex-shrink-0" />
                       <div>
                         <div className="font-bold text-[#2A1810]">
-                          {language === "kn" ? "೯೫% ನೇರ ಕುಶಲಕರ್ಮಿ ಪಾವತಿ ಖಾತರಿ" : "95% Direct Artisan Payout Guarantee"}
+                          {language === "kn" ? "೭೫% ನೇರ ಕುಶಲಕರ್ಮಿ ಕೂಲಿ ಖಾತರಿ" : "75% Direct Artisan Payout Guarantee"}
                         </div>
                         <p className="text-stone-500 text-[11px]">
                           {language === "kn"
-                            ? "ಮಧ್ಯವರ್ತಿಗಳ ಕಮಿಷನ್ ಇಲ್ಲದೆ ನೇರವಾಗಿ ನಿಮ್ಮ ಖಾತೆಗೆ ಜಮಾ"
-                            : "Direct bank transfer upon batch dispatch with zero middlemen deductions."}
+                            ? "ಮಧ್ಯವರ್ತಿಗಳ ಕಮಿಷನ್ ಇಲ್ಲದೆ ನೇರವಾಗಿ ನಿಮ್ಮ ಖಾತೆಗೆ ಜಮಾ (೭೫% ಕೂಲಿ + ೧೨% ಕಚ್ಚಾವಸ್ತು ಮುಂಗಡ)"
+                            : "Direct bank transfer upon batch dispatch with zero middlemen deductions (75% wage + 12% material advance)."}
                         </p>
                       </div>
                     </div>
