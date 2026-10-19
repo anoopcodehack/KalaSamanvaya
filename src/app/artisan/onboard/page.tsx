@@ -23,7 +23,8 @@ import {
   PackageCheck,
   Store,
   ShoppingBag,
-  Eye
+  Eye,
+  Sun
 } from "lucide-react";
 import Link from "next/link";
 import { numberToKannadaWords, toKannadaDigits } from "@/lib/voice/kannadaNumbers";
@@ -215,10 +216,14 @@ export default function ArtisanOnboardPage() {
   );
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isStudioPolished, setIsStudioPolished] = useState(false);
 
   // Sync listing and update matching craft photo & cluster details
-  const handleListingExtracted = (extracted: ExtractedCraftListing, img?: string) => {
+  const handleListingExtracted = (extracted: ExtractedCraftListing, img?: string, polished?: boolean) => {
     setListing(extracted);
+    if (typeof polished === "boolean") {
+      setIsStudioPolished(polished);
+    }
     if (img) {
       setUploadedImageUrl(img);
     } else {
@@ -593,7 +598,7 @@ export default function ArtisanOnboardPage() {
               {onboardingMode === "photo" ? (
                 <AiPhotoCraftScanner
                   language={language === "tcy" ? "kn" : language}
-                  onListingExtracted={(extracted, img) => handleListingExtracted(extracted, img)}
+                  onListingExtracted={(extracted, img, polished) => handleListingExtracted(extracted, img, polished)}
                 />
               ) : (
                 <KannadaVoiceRecorder
@@ -624,7 +629,8 @@ export default function ArtisanOnboardPage() {
                         <img
                           src={uploadedImageUrl}
                           alt="Craft photo"
-                          className="w-full h-full object-cover"
+                          style={isStudioPolished ? { filter: "brightness(1.18) contrast(1.08) saturate(1.12)" } : undefined}
+                          className="w-full h-full object-cover transition-all duration-300"
                         />
                       </div>
                       <div>
@@ -638,7 +644,13 @@ export default function ArtisanOnboardPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 self-start sm:self-auto">
+                    <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
+                      {isStudioPolished && (
+                        <span className="px-3 py-1 rounded-full bg-amber-50 text-[#C85A32] border border-amber-300 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shadow-xs">
+                          <Sun className="w-3.5 h-3.5 text-[#C85A32]" />
+                          <span>{language === "kn" ? "ಸ್ಟುಡಿಯೋ ಬೆಳಕು ಸಕ್ರಿಯ" : "Studio Lighting Active"}</span>
+                        </span>
+                      )}
                       <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shadow-xs">
                         <ShieldCheck className="w-3.5 h-3.5" />
                         <span>{((listing.confidence || 0.984) * 100).toFixed(1)}% {verifiedCategory} Verified</span>

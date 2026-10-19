@@ -12,13 +12,14 @@ import {
   Award,
   Clock,
   Layers,
-  Sparkles
+  Sparkles,
+  Sun
 } from "lucide-react";
 import { ExtractedCraftListing } from "@/lib/voice/kannadaKeywords";
 import { playSpeech, stopSpeech } from "@/lib/voice/playSpeech";
 
 interface AiPhotoCraftScannerProps {
-  onListingExtracted: (listing: ExtractedCraftListing, imageUrl?: string) => void;
+  onListingExtracted: (listing: ExtractedCraftListing, imageUrl?: string, isPolished?: boolean) => void;
   language: "kn" | "en";
 }
 
@@ -40,6 +41,7 @@ export interface CraftPresetPhoto {
   kannadaStory: string;
   confidence: number;
   giCode: string;
+  isLowLighting?: boolean;
 }
 
 const PRESET_CRAFT_PHOTOS: CraftPresetPhoto[] = [
@@ -137,6 +139,7 @@ const PRESET_CRAFT_PHOTOS: CraftPresetPhoto[] = [
     kannadaStory: "ವಿಶ್ಲೇಷಣೆ ಪೂರ್ಣಗೊಂಡಿದೆ: ಖಾನಾಪುರದ ಕೆಂಪು ನದಿ ಮಣ್ಣಿನಿಂದ ಚಕ್ರದ ಮೇಲೆ ಕೈಯಿಂದ ತಯಾರಿಸಿದ ಕಲಾಕೃತಿ. ಶಿಫಾರಸು ಬೆಲೆ 850 ರೂಪಾಯಿ.",
     confidence: 0.94,
     giCode: "GI-BELAGAVI-POTTERY-2021-047",
+    isLowLighting: true,
   },
   {
     id: "bidriware",
@@ -178,6 +181,36 @@ const PRESET_CRAFT_PHOTOS: CraftPresetPhoto[] = [
   },
 ];
 
+// Client-side brightness detection helper for uploaded photos
+function detectImageBrightness(imageUri: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (typeof window === "undefined") return resolve(false);
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = 40;
+        canvas.height = 40;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return resolve(false);
+        ctx.drawImage(img, 0, 0, 40, 40);
+        const data = ctx.getImageData(0, 0, 40, 40).data;
+        let sum = 0;
+        for (let i = 0; i < data.length; i += 4) {
+          sum += (0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]);
+        }
+        const avg = sum / (data.length / 4);
+        resolve(avg < 112); // True if dim room lighting
+      } catch {
+        resolve(false);
+      }
+    };
+    img.onerror = () => resolve(false);
+    img.src = imageUri;
+  });
+}
+
 export default function AiPhotoCraftScanner({
   onListingExtracted,
   language,
@@ -187,6 +220,8 @@ export default function AiPhotoCraftScanner({
   const [scanStep, setScanStep] = useState(0);
   const [analyzedCraft, setAnalyzedCraft] = useState<CraftPresetPhoto | null>(PRESET_CRAFT_PHOTOS[0]);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isLowLighting, setIsLowLighting] = useState<boolean>(false);
+  const [isStudioPolished, setIsStudioPolished] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const customFileInfoRef = useRef<{ mimeType: string; name: string } | null>(null);
 
@@ -198,7 +233,7 @@ export default function AiPhotoCraftScanner({
   ];
 
   // Visual inspection animation for presets
-  const runVisualAnalysis = (craftPreset: CraftPresetPhoto, customImageUri?: string) => {
+  const runVisualAnalysis = (craftPreset: CraftPresetPhoto, customImageUri?: string, polished?: boolean) => {
     setIsScanning(true);
     setScanStep(0);
     setAnalyzedCraft(null);
@@ -226,7 +261,8 @@ export default function AiPhotoCraftScanner({
               rawTranscript: `[Photo Vision Detected: ${craftPreset.name}]`,
               confidence: craftPreset.confidence,
             },
-            customImageUri || craftPreset.imageUrl
+            customImageUri || craftPreset.imageUrl,
+            typeof polished === "boolean" ? polished : isStudioPolished
           );
           return prev;
         }
@@ -237,7 +273,31 @@ export default function AiPhotoCraftScanner({
   const handleSelectPreset = (preset: CraftPresetPhoto) => {
     setSelectedPhoto(preset.imageUrl);
     customFileInfoRef.current = null;
-    runVisualAnalysis(preset);
+    setIsLowLighting(Boolean(preset.isLowLighting));
+    setIsStudioPolished(false);
+    runVisualAnalysis(preset, undefined, false);
+  };
+
+  const handleToggleStudioPolish = (apply: boolean) => {
+    setIsStudioPolished(apply);
+    if (analyzedCraft) {
+      onListingExtracted(
+        {
+          craft: analyzedCraft.craft,
+          craftKannada: analyzedCraft.craftKannada || analyzedCraft.kannadaName,
+          itemName: analyzedCraft.name,
+          quantity: analyzedCraft.units,
+          pricePerUnitINR: analyzedCraft.pricePerUnitINR,
+          totalValueINR: analyzedCraft.units * analyzedCraft.pricePerUnitINR,
+          material: analyzedCraft.material,
+          leadTimeDays: analyzedCraft.leadTimeDays || 14,
+          rawTranscript: `[Photo Vision Detected: ${analyzedCraft.name}]`,
+          confidence: analyzedCraft.confidence,
+        },
+        selectedPhoto,
+        apply
+      );
+    }
   };
 
   // Analyze any uploaded custom craft photo with Vision API
@@ -333,6 +393,10 @@ export default function AiPhotoCraftScanner({
       reader.onload = async () => {
         const uri = reader.result as string;
         setSelectedPhoto(uri);
+        setIsStudioPolished(false);
+        detectImageBrightness(uri).then((isDim) => {
+          setIsLowLighting(isDim);
+        });
         await analyzeCustomPhoto(uri, file.type || "image/jpeg", file.name);
       };
       reader.readAsDataURL(file);
@@ -456,7 +520,8 @@ export default function AiPhotoCraftScanner({
           <img
             src={selectedPhoto}
             alt="Craft to inspect"
-            className={`w-full h-full object-cover transition-transform duration-700 ${
+            style={isStudioPolished ? { filter: "brightness(1.18) contrast(1.08) saturate(1.12)" } : undefined}
+            className={`w-full h-full object-cover transition-all duration-500 ${
               isScanning ? "scale-105 filter brightness-95" : ""
             }`}
           />
@@ -475,6 +540,31 @@ export default function AiPhotoCraftScanner({
               <span>{analyzedCraft?.giCode || "GI Registry Verified"}</span>
             </span>
           </div>
+
+          {/* Studio Polish Comparison Pill (Visible only when low lighting is detected) */}
+          {isLowLighting && !isScanning && analyzedCraft && (
+            <div className="absolute top-3 right-3 z-10 flex items-center rounded-xl bg-[#2A1810]/90 p-0.5 backdrop-blur-md border border-amber-500/50 text-[10px] font-bold text-white shadow-lg">
+              <button
+                type="button"
+                onClick={() => handleToggleStudioPolish(false)}
+                className={`px-2.5 py-0.5 rounded-lg transition-all ${
+                  !isStudioPolished ? "bg-white text-stone-900 shadow-xs" : "text-stone-300 hover:text-white"
+                }`}
+              >
+                {language === "kn" ? "ಮೂಲ" : "Raw"}
+              </button>
+              <button
+                type="button"
+                onClick={() => handleToggleStudioPolish(true)}
+                className={`px-2.5 py-0.5 rounded-lg transition-all flex items-center gap-1 ${
+                  isStudioPolished ? "bg-[#C85A32] text-white shadow-xs" : "text-stone-300 hover:text-white"
+                }`}
+              >
+                <Sun className="w-2.5 h-2.5 text-amber-200" />
+                <span>{language === "kn" ? "ಸ್ಟುಡಿಯೋ" : "Studio"}</span>
+              </button>
+            </div>
+          )}
 
           {/* Rescan Trigger */}
           <button
@@ -529,6 +619,65 @@ export default function AiPhotoCraftScanner({
                   <Volume2 className={`w-5 h-5 ${isSpeaking ? "animate-bounce text-red-600" : ""}`} />
                 </button>
               </div>
+
+              {/* Image Quality & Lighting Diagnosis */}
+              {isLowLighting ? (
+                !isStudioPolished ? (
+                  <div className="p-3.5 rounded-2xl bg-amber-50/90 border border-amber-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-amber-100 border border-amber-300/60 flex items-center justify-center flex-shrink-0 text-amber-900">
+                        <Sun className="w-4 h-4 text-[#C85A32]" />
+                      </div>
+                      <div>
+                        <span className="font-bold text-[#2A1810] block text-xs">
+                          {language === "kn" ? "ಕಡಿಮೆ ಕೋಣೆ ಬೆಳಕು ಕಂಡುಬಂದಿದೆ" : "Dim Room Lighting Detected"}
+                        </span>
+                        <span className="text-[11px] text-stone-600 block">
+                          {language === "kn"
+                            ? "ಇ-ಕಾಮರ್ಸ್ ಮಳಿಗೆಗಾಗಿ ನೆರಳು ಕಡಿಮೆ ಮಾಡಿ ನೈಸರ್ಗಿಕ ಕಲಾಕೃತಿಯ ವಿವರ ಹೆಚ್ಚಿಸಿ"
+                            : "Lift shadows & enhance texture clarity for premium e-commerce catalogue"}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleToggleStudioPolish(true)}
+                      className="px-3.5 py-2 rounded-xl bg-[#C85A32] hover:bg-[#a84420] text-white text-xs font-bold shadow-xs transition-all duration-200 hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5 flex-shrink-0"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-amber-200" />
+                      <span>{language === "kn" ? "ಸ್ಟುಡಿಯೋ ಬೆಳಕು" : "AI Studio Polish"}</span>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="p-3 rounded-2xl bg-emerald-50/90 border border-emerald-300 flex items-center justify-between gap-3 text-xs">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                      <div>
+                        <span className="font-bold text-emerald-950 block text-xs">
+                          {language === "kn" ? "ಸ್ಟುಡಿಯೋ ಬೆಳಕು ಸಕ್ರಿಯವಾಗಿದೆ" : "Studio Lighting Applied"}
+                        </span>
+                        <span className="text-[11px] text-emerald-800 block">
+                          {language === "kn"
+                            ? "ನೆರಳು ಕಡಿಮೆ ಮಾಡಿ ನೈಸರ್ಗಿಕ ಕಲಾಕೃತಿಯ ವಿವರ ಸ್ಪಷ್ಟವಾಗಿದೆ"
+                            : "Room shadows lifted & authentic handcraft texture clarified"}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleToggleStudioPolish(false)}
+                      className="px-2.5 py-1 rounded-lg border border-emerald-300 bg-white hover:bg-emerald-50 text-emerald-900 text-[10px] font-semibold transition-colors"
+                    >
+                      {language === "kn" ? "ಮೂಲ ಫೋಟೋ" : "Show Original"}
+                    </button>
+                  </div>
+                )
+              ) : (
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-bold uppercase tracking-wider">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>{language === "kn" ? "ಉತ್ತಮ ಗುಣಮಟ್ಟ & ಬೆಳಕು ದೃಢೀಕರಿಸಲಾಗಿದೆ" : "Crisp Lighting & Studio Quality Verified"}</span>
+                </div>
+              )}
 
               {/* Diagnostic Grid */}
               <div className="grid grid-cols-2 gap-3 text-xs">
