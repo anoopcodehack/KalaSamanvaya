@@ -12,8 +12,8 @@ import {
   Award,
   Clock,
   Layers,
-  Sparkles,
-  Sun
+  SlidersHorizontal,
+  SunMedium
 } from "lucide-react";
 import { ExtractedCraftListing } from "@/lib/voice/kannadaKeywords";
 import { playSpeech, stopSpeech } from "@/lib/voice/playSpeech";
@@ -403,6 +403,39 @@ export default function AiPhotoCraftScanner({
     }
   };
 
+  const handleLoadLowLightSample = () => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = "/assets/craft-yakshagana.jpg";
+    img.onload = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = 360;
+        canvas.height = 270;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, 360, 270);
+          const imgData = ctx.getImageData(0, 0, 360, 270);
+          const d = imgData.data;
+          for (let i = 0; i < d.length; i += 4) {
+            d[i] = Math.max(0, d[i] * 0.65);
+            d[i + 1] = Math.max(0, d[i + 1] * 0.65);
+            d[i + 2] = Math.max(0, d[i + 2] * 0.65);
+          }
+          ctx.putImageData(imgData, 0, 0);
+          const lowLightUri = canvas.toDataURL("image/jpeg", 0.22);
+          setSelectedPhoto(lowLightUri);
+          setIsStudioPolished(false);
+          setIsLowLighting(true);
+          customFileInfoRef.current = { mimeType: "image/jpeg", name: "yakshagana_low_light.jpg" };
+          runVisualAnalysis(PRESET_CRAFT_PHOTOS[0], lowLightUri, false);
+        }
+      } catch (err) {
+        console.warn("Low light generation fallback", err);
+      }
+    };
+  };
+
   const handleReScan = () => {
     if (selectedPhoto.startsWith("data:") && customFileInfoRef.current) {
       analyzeCustomPhoto(
@@ -436,29 +469,29 @@ export default function AiPhotoCraftScanner({
   };
 
   return (
-    <div className="bg-white rounded-3xl border-2 border-amber-300 shadow-xl p-6 sm:p-8 space-y-6">
+    <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-6 sm:p-8 space-y-6">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-200">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-[#C85A32] text-[11px] font-bold uppercase tracking-wider">
-            <Camera className="w-3.5 h-3.5" />
-            <span>{language === "kn" ? "ಕ್ಯಾಮೆರಾ & ಸ್ವಯಂ ತಪಾಸಣೆ • ಕ್ರಾಫ್ಟ್ ವಿಶನ್" : "Camera & Craft Vision Inspection"}</span>
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-stone-100 text-stone-700 border border-stone-200 text-[11px] font-medium uppercase tracking-wider">
+            <Camera className="w-3.5 h-3.5 text-stone-600" />
+            <span>{language === "kn" ? "ಕ್ಯಾಮೆರಾ & ಕ್ರಾಫ್ಟ್ ತಪಾಸಣೆ" : "Camera & Craft Vision Inspection"}</span>
           </div>
-          <h2 className="text-xl font-extrabold text-[#2A1810]">
+          <h2 className="text-xl font-bold text-[#2A1810]">
             {language === "kn"
               ? "ಕಲಾಕೃತಿಯ ಫೋಟೋ ತೆಗೆಯಿರಿ - ಸ್ವಯಂ ವಿಶ್ಲೇಷಣೆ"
               : "Snap or Upload Any Craft Photo — Intelligent Inspection"}
           </h2>
           <p className="text-xs text-stone-600">
             {language === "kn"
-              ? "ಯಾವುದೇ ಕಲಾಕೃತಿಯ (ಯಕ್ಷಗಾನ ಕಿರೀಟ, ಉಡುಪಿ ಸೀರೆ, ಬೀಡು ಬುಟ್ಟಿ, ಮಡಿಕೆ) ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ. ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಪ್ರಕಾರ, ಹೊಲಿಗೆ/ಕೆತ್ತನೆ ಗುಣಮಟ್ಟ ಮತ್ತು ಸೂಕ್ತ ಬೆಲೆ ಪತ್ತೆಯಾಗುತ್ತದೆ."
+              ? "ಯಾವುದೇ ಕಲಾಕೃತಿಯ (ಯಕ್ಷಗಾನ ಕಿರೀಟ, ಉಡುಪಿ ಸೀರೆ, ಬೀಡು ಬುಟ್ಟಿ, ಮಡಿಕೆ) ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ. ಪ್ರಕಾರ, ಹೊಲಿಗೆ/ಕೆತ್ತನೆ ಮತ್ತು ಸೂಕ್ತ ಬೆಲೆ ಪತ್ತೆಯಾಗುತ್ತದೆ."
               : "Upload any Karnataka handcraft photo (Yakshagana regalia, Udupi Saree, Beedu basket, Terracotta). It detects motifs, craftsmanship, and fair prices instantly."}
           </p>
         </div>
 
-        {/* Upload Button */}
-        <div>
+        {/* Action Buttons */}
+        <div className="flex items-center gap-2">
           <input
             type="file"
             ref={fileInputRef}
@@ -468,8 +501,17 @@ export default function AiPhotoCraftScanner({
           />
           <button
             type="button"
+            onClick={handleLoadLowLightSample}
+            className="px-3 py-2.5 rounded-lg border border-stone-300 bg-white hover:bg-stone-50 text-stone-700 text-xs font-medium transition-colors flex items-center gap-1.5 shadow-xs"
+            title="Simulate low exposure craft photo"
+          >
+            <SunMedium className="w-3.5 h-3.5 text-stone-500" />
+            <span>{language === "kn" ? "ಕಡಿಮೆ ಬೆಳಕಿನ ಡೆಮೊ" : "Dim Photo Demo"}</span>
+          </button>
+          <button
+            type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="px-4 py-2.5 rounded-xl bg-[#2A1810] hover:bg-[#3D2318] text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md hover:scale-105 active:scale-95"
+            className="px-4 py-2.5 rounded-lg bg-[#2A1810] hover:bg-[#3D2318] text-white text-xs font-semibold transition-colors flex items-center gap-2 shadow-xs"
           >
             <Upload className="w-3.5 h-3.5" />
             <span>{language === "kn" ? "ಕ್ಯಾಮೆರಾ / ಗ್ಯಾಲರಿ" : "Upload Craft Photo"}</span>
@@ -479,7 +521,7 @@ export default function AiPhotoCraftScanner({
 
       {/* Preset Demo Photo Selector Pills */}
       <div className="space-y-2">
-        <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider block">
+        <span className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider block">
           {language === "kn" ? "ಅಥವಾ ಡೆಮೊ ಕಲಾಕೃತಿಯನ್ನು ಆಯ್ಕೆಮಾಡಿ:" : "Or select an authentic craft sample to inspect:"}
         </span>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
@@ -490,8 +532,8 @@ export default function AiPhotoCraftScanner({
               onClick={() => handleSelectPreset(preset)}
               className={`p-2 rounded-xl border text-left transition-all flex items-center gap-2.5 ${
                 selectedPhoto === preset.imageUrl
-                  ? "bg-amber-50 border-[#C85A32] shadow-sm ring-2 ring-amber-300"
-                  : "bg-stone-50 border-stone-200 hover:border-amber-300"
+                  ? "bg-stone-100 border-[#2A1810] shadow-xs ring-1 ring-[#2A1810]"
+                  : "bg-white border-stone-200 hover:border-stone-300"
               }`}
             >
               <img
@@ -503,7 +545,7 @@ export default function AiPhotoCraftScanner({
                 <span className="text-[11px] font-bold text-stone-800 block truncate">
                   {language === "kn" ? preset.kannadaName : preset.name}
                 </span>
-                <span className="text-[10px] text-[#C85A32] font-semibold truncate block">
+                <span className="text-[10px] text-stone-600 font-medium truncate block">
                   {preset.craft}
                 </span>
               </div>
@@ -513,42 +555,42 @@ export default function AiPhotoCraftScanner({
       </div>
 
       {/* Interactive Visual Scanning Viewport */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center bg-[#FAF7F2] p-5 sm:p-6 rounded-2xl border border-stone-200">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center bg-[#FAF7F2] p-5 sm:p-6 rounded-xl border border-stone-200">
         
-        {/* Left: Craft Image with Laser Scan Effect */}
-        <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-stone-900 border-2 border-amber-300 shadow-md">
+        {/* Left: Craft Image with Subtle Progress Indicator */}
+        <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-stone-900 border border-stone-300 shadow-xs">
           <img
             src={selectedPhoto}
             alt="Craft to inspect"
             style={isStudioPolished ? { filter: "brightness(1.18) contrast(1.08) saturate(1.12)" } : undefined}
-            className={`w-full h-full object-cover transition-all duration-500 ${
-              isScanning ? "scale-105 filter brightness-95" : ""
+            className={`w-full h-full object-cover transition-all duration-300 ${
+              isScanning ? "scale-[1.02] filter brightness-95" : ""
             }`}
           />
 
-          {/* Animated Scanning Laser Beam */}
+          {/* Scanning Progress Line */}
           {isScanning && (
-            <div className="absolute inset-0 bg-gradient-to-b from-amber-500/20 via-transparent to-amber-500/20 animate-pulse pointer-events-none">
-              <div className="w-full h-1 bg-[#E67E22] shadow-[0_0_15px_#E67E22] animate-bounce" />
+            <div className="absolute inset-x-0 top-0 h-1 bg-stone-200/40 overflow-hidden">
+              <div className="w-full h-full bg-[#C85A32] animate-pulse" />
             </div>
           )}
 
           {/* Provenance Badge */}
           <div className="absolute top-3 left-3">
-            <span className="px-3 py-1 rounded-full bg-[#2A1810]/90 text-amber-300 border border-amber-500/50 text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#E67E22]" />
+            <span className="px-2.5 py-1 rounded-md bg-stone-900/90 text-stone-200 border border-stone-700 text-[10px] font-mono uppercase tracking-wider backdrop-blur-sm flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-stone-300" />
               <span>{analyzedCraft?.giCode || "GI Registry Verified"}</span>
             </span>
           </div>
 
-          {/* Studio Polish Comparison Pill (Visible only when low lighting is detected) */}
+          {/* Exposure Comparison Pill (Visible only when low lighting is detected) */}
           {isLowLighting && !isScanning && analyzedCraft && (
-            <div className="absolute top-3 right-3 z-10 flex items-center rounded-xl bg-[#2A1810]/90 p-0.5 backdrop-blur-md border border-amber-500/50 text-[10px] font-bold text-white shadow-lg">
+            <div className="absolute top-3 right-3 z-10 flex items-center rounded-md bg-stone-900/90 p-0.5 backdrop-blur-md border border-stone-700 text-[10px] font-medium text-white shadow-xs">
               <button
                 type="button"
                 onClick={() => handleToggleStudioPolish(false)}
-                className={`px-2.5 py-0.5 rounded-lg transition-all ${
-                  !isStudioPolished ? "bg-white text-stone-900 shadow-xs" : "text-stone-300 hover:text-white"
+                className={`px-2 py-0.5 rounded transition-colors ${
+                  !isStudioPolished ? "bg-white text-stone-900" : "text-stone-300 hover:text-white"
                 }`}
               >
                 {language === "kn" ? "ಮೂಲ" : "Raw"}
@@ -556,12 +598,12 @@ export default function AiPhotoCraftScanner({
               <button
                 type="button"
                 onClick={() => handleToggleStudioPolish(true)}
-                className={`px-2.5 py-0.5 rounded-lg transition-all flex items-center gap-1 ${
-                  isStudioPolished ? "bg-[#C85A32] text-white shadow-xs" : "text-stone-300 hover:text-white"
+                className={`px-2 py-0.5 rounded transition-colors flex items-center gap-1 ${
+                  isStudioPolished ? "bg-[#2A1810] text-white" : "text-stone-300 hover:text-white"
                 }`}
               >
-                <Sun className="w-2.5 h-2.5 text-amber-200" />
-                <span>{language === "kn" ? "ಸ್ಟುಡಿಯೋ" : "Studio"}</span>
+                <SunMedium className="w-3 h-3 text-stone-300" />
+                <span>{language === "kn" ? "ಹೊಂದಾಣಿಕೆ" : "Calibrated"}</span>
               </button>
             </div>
           )}
@@ -571,9 +613,9 @@ export default function AiPhotoCraftScanner({
             type="button"
             onClick={handleReScan}
             disabled={isScanning}
-            className="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-white/95 text-stone-900 text-[11px] font-bold shadow-md hover:bg-white flex items-center gap-1.5 transition-transform hover:scale-105 active:scale-95 backdrop-blur-sm disabled:opacity-50"
+            className="absolute bottom-3 right-3 px-3 py-1.5 rounded-lg bg-stone-900/90 hover:bg-stone-900 text-stone-100 text-[11px] font-medium shadow-xs border border-stone-700 flex items-center gap-1.5 backdrop-blur-sm transition-colors disabled:opacity-50"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-[#C85A32] ${isScanning ? "animate-spin" : ""}`} />
+            <RefreshCw className={`w-3.5 h-3.5 text-stone-300 ${isScanning ? "animate-spin" : ""}`} />
             <span>{language === "kn" ? "ಮತ್ತೆ ಪರಿಶೀಲಿಸಿ" : "Re-Scan Photo"}</span>
           </button>
         </div>
@@ -598,10 +640,10 @@ export default function AiPhotoCraftScanner({
               
               <div className="flex items-start justify-between gap-2 pb-3 border-b border-stone-200">
                 <div>
-                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 uppercase tracking-wider inline-block mb-1">
-                    ✓ {((analyzedCraft.confidence || 0.98) * 100).toFixed(1)}% Authentic Handcraft Match
+                  <span className="text-[10px] font-mono font-medium text-stone-700 bg-stone-100 px-2 py-0.5 rounded border border-stone-200 uppercase tracking-wider inline-block mb-1">
+                    Verified Specification • {((analyzedCraft.confidence || 0.98) * 100).toFixed(0)}% Match
                   </span>
-                  <h3 className="text-lg font-black text-[#2A1810]">
+                  <h3 className="text-lg font-bold text-[#2A1810]">
                     {language === "kn" ? analyzedCraft.kannadaName : analyzedCraft.name}
                   </h3>
                   <p className="text-xs text-stone-600 mt-0.5">
@@ -613,79 +655,79 @@ export default function AiPhotoCraftScanner({
                 <button
                   type="button"
                   onClick={() => playKannadaAudio(analyzedCraft.kannadaStory)}
-                  className="p-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-[#C85A32] border border-amber-300 transition-colors flex-shrink-0"
+                  className="p-2.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-200 transition-colors flex-shrink-0"
                   title="Listen in Kannada"
                 >
-                  <Volume2 className={`w-5 h-5 ${isSpeaking ? "animate-bounce text-red-600" : ""}`} />
+                  <Volume2 className={`w-4 h-4 ${isSpeaking ? "text-[#C85A32]" : ""}`} />
                 </button>
               </div>
 
-              {/* Image Quality & Lighting Diagnosis */}
+              {/* Exposure & Lighting Calibration */}
               {isLowLighting ? (
                 !isStudioPolished ? (
-                  <div className="p-3.5 rounded-2xl bg-amber-50/90 border border-amber-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                  <div className="p-3.5 rounded-xl bg-stone-50 border border-stone-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-xl bg-amber-100 border border-amber-300/60 flex items-center justify-center flex-shrink-0 text-amber-900">
-                        <Sun className="w-4 h-4 text-[#C85A32]" />
+                      <div className="w-8 h-8 rounded-lg bg-stone-200/80 border border-stone-300 flex items-center justify-center flex-shrink-0 text-stone-700">
+                        <SunMedium className="w-4 h-4 text-stone-700" />
                       </div>
                       <div>
-                        <span className="font-bold text-[#2A1810] block text-xs">
-                          {language === "kn" ? "ಕಡಿಮೆ ಕೋಣೆ ಬೆಳಕು ಕಂಡುಬಂದಿದೆ" : "Dim Room Lighting Detected"}
+                        <span className="font-semibold text-stone-900 block text-xs">
+                          {language === "kn" ? "ಕಡಿಮೆ ಕೋಣೆ ಬೆಳಕು ಕಂಡುಬಂದಿದೆ" : "Low Exposure Detected"}
                         </span>
-                        <span className="text-[11px] text-stone-600 block">
+                        <span className="text-[11px] text-stone-500 block">
                           {language === "kn"
-                            ? "ಇ-ಕಾಮರ್ಸ್ ಮಳಿಗೆಗಾಗಿ ನೆರಳು ಕಡಿಮೆ ಮಾಡಿ ನೈಸರ್ಗಿಕ ಕಲಾಕೃತಿಯ ವಿವರ ಹೆಚ್ಚಿಸಿ"
-                            : "Lift shadows & enhance texture clarity for premium e-commerce catalogue"}
+                            ? "ಮಳಿಗೆಗಾಗಿ ನೆರಳು ಸರಿದೂಗಿಸಿ ನೈಸರ್ಗಿಕ ಕಲಾಕೃತಿಯ ವಿವರ ಹೆಚ್ಚಿಸಿ"
+                            : "Calibrate shadows and surface clarity for catalogue display"}
                         </span>
                       </div>
                     </div>
                     <button
                       type="button"
                       onClick={() => handleToggleStudioPolish(true)}
-                      className="px-3.5 py-2 rounded-xl bg-[#C85A32] hover:bg-[#a84420] text-white text-xs font-bold shadow-xs transition-all duration-200 hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5 flex-shrink-0"
+                      className="px-3.5 py-2 rounded-lg bg-[#2A1810] hover:bg-stone-800 text-white text-xs font-medium shadow-xs transition-colors flex items-center justify-center gap-1.5 flex-shrink-0"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-amber-200" />
-                      <span>{language === "kn" ? "ಸ್ಟುಡಿಯೋ ಬೆಳಕು" : "AI Studio Polish"}</span>
+                      <SlidersHorizontal className="w-3.5 h-3.5 text-stone-300" />
+                      <span>{language === "kn" ? "ಬೆಳಕು ಹೊಂದಿಸಿ" : "Calibrate Lighting"}</span>
                     </button>
                   </div>
                 ) : (
-                  <div className="p-3 rounded-2xl bg-emerald-50/90 border border-emerald-300 flex items-center justify-between gap-3 text-xs">
+                  <div className="p-3 rounded-xl bg-stone-50 border border-stone-200 flex items-center justify-between gap-3 text-xs">
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                      <CheckCircle2 className="w-4 h-4 text-stone-700 flex-shrink-0" />
                       <div>
-                        <span className="font-bold text-emerald-950 block text-xs">
-                          {language === "kn" ? "ಸ್ಟುಡಿಯೋ ಬೆಳಕು ಸಕ್ರಿಯವಾಗಿದೆ" : "Studio Lighting Applied"}
+                        <span className="font-semibold text-stone-900 block text-xs">
+                          {language === "kn" ? "ಬೆಳಕು ಹೊಂದಿಸಲಾಗಿದೆ" : "Exposure Calibrated"}
                         </span>
-                        <span className="text-[11px] text-emerald-800 block">
+                        <span className="text-[11px] text-stone-500 block">
                           {language === "kn"
-                            ? "ನೆರಳು ಕಡಿಮೆ ಮಾಡಿ ನೈಸರ್ಗಿಕ ಕಲಾಕೃತಿಯ ವಿವರ ಸ್ಪಷ್ಟವಾಗಿದೆ"
-                            : "Room shadows lifted & authentic handcraft texture clarified"}
+                            ? "ನೆರಳು ಸರಿದೂಗಿಸಿ ಕಲಾಕೃತಿಯ ವಿನ್ಯಾಸ ಸ್ಪಷ್ಟವಾಗಿದೆ"
+                            : "Shadows compensated & handcraft texture clarity balanced"}
                         </span>
                       </div>
                     </div>
                     <button
                       type="button"
                       onClick={() => handleToggleStudioPolish(false)}
-                      className="px-2.5 py-1 rounded-lg border border-emerald-300 bg-white hover:bg-emerald-50 text-emerald-900 text-[10px] font-semibold transition-colors"
+                      className="px-2.5 py-1 rounded-md border border-stone-300 bg-white hover:bg-stone-100 text-stone-700 text-[11px] font-medium transition-colors"
                     >
-                      {language === "kn" ? "ಮೂಲ ಫೋಟೋ" : "Show Original"}
+                      {language === "kn" ? "ಮೂಲ ಫೋಟೋ" : "Reset to Original"}
                     </button>
                   </div>
                 )
               ) : (
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-bold uppercase tracking-wider">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>{language === "kn" ? "ಉತ್ತಮ ಗುಣಮಟ್ಟ & ಬೆಳಕು ದೃಢೀಕರಿಸಲಾಗಿದೆ" : "Crisp Lighting & Studio Quality Verified"}</span>
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-stone-100 text-stone-700 border border-stone-200 text-[11px] font-medium">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-stone-600" />
+                  <span>{language === "kn" ? "ಸೂಕ್ತ ಬೆಳಕು ದೃಢೀಕರಿಸಲಾಗಿದೆ" : "Standard Lighting Verified"}</span>
                 </div>
               )}
 
               {/* Diagnostic Grid */}
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div className="p-3 rounded-xl bg-white border border-stone-200 space-y-0.5">
-                  <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block">
+                  <span className="text-[10px] font-medium text-stone-500 uppercase tracking-wider block">
                     Estimated Labor
                   </span>
-                  <div className="text-base font-extrabold text-stone-900">
+                  <div className="text-base font-bold text-stone-900">
                     {analyzedCraft.handcraftHours} Hours
                   </div>
                   <span className="text-[10px] text-stone-500 block truncate" title={analyzedCraft.technique}>
@@ -694,25 +736,25 @@ export default function AiPhotoCraftScanner({
                 </div>
 
                 <div className="p-3 rounded-xl bg-white border border-stone-200 space-y-0.5">
-                  <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block">
+                  <span className="text-[10px] font-medium text-stone-500 uppercase tracking-wider block">
                     Recommended MSP
                   </span>
-                  <div className="text-base font-extrabold text-emerald-700">
+                  <div className="text-base font-bold text-emerald-800">
                     ₹{analyzedCraft.pricePerUnitINR.toLocaleString("en-IN")}
                   </div>
-                  <span className="text-[10px] text-emerald-800 font-semibold">
+                  <span className="text-[10px] text-emerald-700 font-medium">
                     75% Direct Maker Share
                   </span>
                 </div>
               </div>
 
               {/* Detected Material Note */}
-              <div className="p-3 rounded-xl bg-amber-50/60 border border-amber-200 text-xs text-stone-700 space-y-1">
-                <div className="flex items-center gap-1.5 font-bold text-[#C85A32] text-[11px]">
-                  <Award className="w-3.5 h-3.5" />
+              <div className="p-3 rounded-xl bg-stone-50 border border-stone-200 text-xs text-stone-700 space-y-1">
+                <div className="flex items-center gap-1.5 font-semibold text-stone-800 text-[11px]">
+                  <Layers className="w-3.5 h-3.5 text-stone-600" />
                   <span>Verified Raw Materials:</span>
                 </div>
-                <p className="text-[11px] leading-relaxed">
+                <p className="text-[11px] text-stone-600 leading-relaxed">
                   {analyzedCraft.material}
                 </p>
               </div>
