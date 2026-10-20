@@ -81,6 +81,39 @@ export default function ArtisanInboxPage() {
     },
   ]);
 
+  // Fetch live orders placed on /marketplace to seamlessly connect storefront to inbox
+  React.useEffect(() => {
+    fetch("/api/orders")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.orders)) {
+          const fetchedOrders = data.orders.map((o: any) => {
+            const firstItem = o.items?.[0] || {};
+            return {
+              id: o.orderId || o.id,
+              customerName: o.buyerName || "Patron",
+              destination: o.deliveryDistrict || o.deliveryAddress || "Bengaluru",
+              item: firstItem.productTitle || "Handcrafted Heritage Craft",
+              itemKn: firstItem.productTitle || "ಕರಕುಶಲ ಕಲಾಕೃತಿ",
+              quantity: firstItem.quantity || 1,
+              artisanPayoutINR: o.totalArtisanPayoutINR || Math.round((o.totalAmountINR || 1000) * 0.75),
+              retailPriceINR: o.totalAmountINR || 1000,
+              payoutPercent: "75%",
+              status: (o.status || "PENDING") as "PENDING" | "PACKED" | "DISPATCHED",
+              date: "Just now",
+            };
+          });
+
+          setRetailOrders((prev) => {
+            const existingIds = new Set(prev.map((o) => o.id));
+            const newOnes = fetchedOrders.filter((o: any) => !existingIds.has(o.id));
+            return [...newOnes, ...prev];
+          });
+        }
+      })
+      .catch((err) => console.warn("Failed to fetch live orders in inbox:", err));
+  }, []);
+
   // Audio speech synthesis in Kannada/English
   const [isSpeaking, setIsSpeaking] = useState(false);
   const speakText = (text: string) => {
@@ -625,6 +658,21 @@ export default function ArtisanInboxPage() {
                   </span>
 
                   <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const speech = language === "kn"
+                          ? `ಗ್ರಾಹಕರು: ${order.customerName}. ವಸ್ತು: ${order.itemKn}. ನಿಮ್ಮ ನೇರ ಗಳಿಕೆ: ${order.artisanPayoutINR} ರೂಪಾಯಿ.`
+                          : `Customer: ${order.customerName}. Item: ${order.item}. Your direct payout: ${order.artisanPayoutINR} rupees.`;
+                        speakText(speech);
+                      }}
+                      className="px-2.5 py-1.5 rounded-xl border border-amber-300 hover:bg-amber-100 text-[#C85A32] text-xs font-semibold flex items-center gap-1 transition-colors"
+                      title={language === "kn" ? "ವಿವರ ಆಲಿಸಿ" : "Listen to Order"}
+                    >
+                      <Volume2 className="w-3.5 h-3.5 text-[#C85A32]" />
+                      <span className="hidden sm:inline">{language === "kn" ? "ಆಲಿಸಿ" : "Listen"}</span>
+                    </button>
+
                     <button
                       type="button"
                       onClick={() => setActivePassportProduct(ARTISAN_PRODUCTS[0])}

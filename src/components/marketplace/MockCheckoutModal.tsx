@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { ArtisanProduct } from "@/lib/db/products";
 import { X, CheckCircle2, ShieldCheck, Truck, CreditCard, ShoppingBag, ArrowRight, MapPin, Smartphone } from "lucide-react";
 
@@ -140,12 +141,23 @@ export default function MockCheckoutModal({
               &quot;By buying direct, you ensure that ₹{product.breakdown.artisanDirectPayoutINR} reaches {product.artisanName}&apos;s household instead of disappearing into middleman commissions.&quot;
             </p>
 
-            <button
-              onClick={handleReset}
-              className="px-6 py-2.5 rounded-lg bg-[#C85A32] hover:bg-[#A34828] text-white font-semibold text-xs shadow-md transition-colors"
-            >
-              Continue Exploring Crafts
-            </button>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={handleReset}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-800 font-semibold text-xs border border-stone-300 transition-colors"
+              >
+                Continue Shopping
+              </button>
+              <Link
+                href="/artisan/inbox"
+                onClick={handleReset}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-[#C85A32] hover:bg-[#A34828] text-white font-semibold text-xs shadow-md transition-colors flex items-center justify-center gap-2"
+              >
+                <span>View in Artisan Audio Inbox (ಕನ್ನಡ)</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
           </div>
         ) : (
           /* Checkout Form */
