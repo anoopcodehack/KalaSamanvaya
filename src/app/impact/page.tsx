@@ -41,87 +41,78 @@ export default function ImpactAndMonetizationPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#2A1810]">
-      {/* ── 1. HEADER HERO BANNER ── */}
-      <section className="bg-[#F5EFEB] pt-10 pb-10 px-4 sm:px-6 lg:px-8 border-b border-stone-200">
-        <div className="max-w-6xl mx-auto space-y-4">
-          <ScrollReveal direction="up" className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-stone-300 text-[#C85A32] text-xs font-semibold uppercase shadow-xs">
-              <Scale className="w-3.5 h-3.5 text-[#C85A32]" />
-              <span>ನ್ಯಾಯಯುತ ವ್ಯಾಪಾರ & ಸುಸ್ಥಿರತೆ • Fair Trade & Business Model</span>
+      {/* ── 1. HEADER HERO BANNER (COMPACT & ACTION-FOCUSED) ── */}
+      <section className="bg-[#F5EFEB] pt-6 pb-6 px-4 sm:px-6 lg:px-8 border-b border-stone-200">
+        <div className="max-w-6xl mx-auto space-y-3">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-stone-300 text-[#C85A32] text-xs font-semibold uppercase shadow-xs">
+                <Scale className="w-3.5 h-3.5 text-[#C85A32]" />
+                <span>ನ್ಯಾಯಯುತ ವ್ಯಾಪಾರ & ಸುಸ್ಥಿರತೆ • Fair Trade & Business Model</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#2A1810] tracking-tight mt-1">
+                75% Direct Maker Wage. <span className="text-[#C85A32]">8% Platform Fee.</span>
+              </h1>
+            </div>
+            
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-amber-100/80 border border-amber-300 text-amber-900 text-xs font-bold">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Interactive Economic Simulator Live Below</span>
+            </div>
+          </div>
+
+          {/* Quick Metrics Bar */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 pt-1">
+            <div className="bg-white p-3 rounded-xl border border-stone-200 shadow-xs flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0 font-bold text-xs">
+                75%
+              </div>
+              <div>
+                <div className="text-xs font-bold text-stone-900 leading-tight">Direct Maker Payout</div>
+                <div className="text-[10px] text-stone-500">₹1,380 / Kasuti shawl</div>
+              </div>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-[#2A1810] tracking-tight">
-              75% Directly to Rural Makers.
-              <span className="block text-[#C85A32]">Zero Middleman Exploitation.</span>
-            </h1>
-
-            <p className="text-sm sm:text-base text-stone-600 max-w-2xl leading-relaxed">
-              In traditional craft markets, city middlemen take up to 65% while makers earn sub-living wages. KalaSamanvaya ensures artisans receive 75% direct earnings, supported by a transparent 8% platform sustainability fee.
-            </p>
-
-            {/* Core Metrics Row */}
-            <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-xs flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0 font-bold text-sm">
-                  75%
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-stone-900">Direct Maker Payout</div>
-                  <div className="text-[11px] text-stone-500">Direct bank/UPI transfer (₹1,380/shawl)</div>
-                </div>
+            <div className="bg-white p-3 rounded-xl border border-stone-200 shadow-xs flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-800 flex items-center justify-center flex-shrink-0 font-bold text-xs">
+                12%
               </div>
-
-              <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-xs flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-amber-50 text-amber-800 flex items-center justify-center flex-shrink-0 font-bold text-sm">
-                  12%
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-stone-900">Upfront Material Advance</div>
-                  <div className="text-[11px] text-stone-500">Zero moneylender debt cycle</div>
-                </div>
-              </div>
-
-              <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-xs flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center flex-shrink-0 font-bold text-sm">
-                  5%
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-stone-900">SHG Lead Coordination</div>
-                  <div className="text-[11px] text-stone-500">Quality check &amp; cluster logistics</div>
-                </div>
-              </div>
-
-              <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-xs flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-[#C85A32]/10 text-[#C85A32] flex items-center justify-center flex-shrink-0 font-bold text-sm">
-                  8%
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-stone-900">Platform Operating Fee</div>
-                  <div className="text-[11px] text-stone-500">Self-sustaining with no grant reliance</div>
-                </div>
+              <div>
+                <div className="text-xs font-bold text-stone-900 leading-tight">Upfront Material Advance</div>
+                <div className="text-[10px] text-stone-500">Zero moneylender debt</div>
               </div>
             </div>
-          </ScrollReveal>
+
+            <div className="bg-white p-3 rounded-xl border border-stone-200 shadow-xs flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center flex-shrink-0 font-bold text-xs">
+                5%
+              </div>
+              <div>
+                <div className="text-xs font-bold text-stone-900 leading-tight">SHG Lead Coordination</div>
+                <div className="text-[10px] text-stone-500">Local QC & aggregation</div>
+              </div>
+            </div>
+
+            <div className="bg-white p-3 rounded-xl border border-stone-200 shadow-xs flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-[#C85A32]/10 text-[#C85A32] flex items-center justify-center flex-shrink-0 font-bold text-xs">
+                8%
+              </div>
+              <div>
+                <div className="text-xs font-bold text-stone-900 leading-tight">Platform Sustainability</div>
+                <div className="text-[10px] text-stone-500">Self-sustaining operations</div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Decorative Traditional Border Strip */}
       <FolkArtBanner variant="elephant" />
 
-      {/* ── 2. INTERACTIVE SIMULATOR ── */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+      {/* ── 2. INTERACTIVE SIMULATOR (PROMINENT AT TOP) ── */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
         <ScrollReveal direction="up">
-          <div className="space-y-4">
-            <div className="border-b border-stone-200 pb-3">
-              <h2 className="text-xl sm:text-2xl font-bold text-[#2A1810]">
-                Interactive Fair-Trade Simulator
-              </h2>
-              <p className="text-xs text-stone-600 mt-1">
-                Choose a craft tradition and order size to see the transparent cost breakdown and maker earnings in real time.
-              </p>
-            </div>
-            <FairTradeSimulatorCard />
-          </div>
+          <FairTradeSimulatorCard />
         </ScrollReveal>
 
         {/* ── 3. REALITY CHECK: TRADITIONAL MIDDLEMAN VS KALASAMANVAYA ── */}
