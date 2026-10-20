@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAllProducts, addProduct } from "@/lib/db/store";
+import { getAllProducts, addProduct, deleteProduct } from "@/lib/db/store";
 import { ArtisanProduct } from "@/lib/db/products";
 
 export const dynamic = "force-dynamic";
@@ -109,6 +109,41 @@ export async function POST(req: Request) {
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to create product listing", details: String(error) },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    let id = searchParams.get("id");
+
+    if (!id) {
+      try {
+        const body = await req.json();
+        id = body?.id;
+      } catch {
+        // Not a JSON body
+      }
+    }
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "Missing required parameter: id" },
+        { status: 400 }
+      );
+    }
+
+    await deleteProduct(id);
+
+    return NextResponse.json({
+      success: true,
+      message: `Product ${id} deleted successfully from catalogue`,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to delete product", details: String(error) },
       { status: 500 }
     );
   }

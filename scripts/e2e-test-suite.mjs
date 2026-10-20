@@ -225,6 +225,16 @@ async function runAllTests() {
     assert.ok(orderData.order?.orderId || orderData.order?.id);
   });
 
+  await test("DELETE /api/products (Cleanup Automated Test Fixture & Zero Leakage)", async () => {
+    if (!testProductId) return;
+    const delRes = await request(`/api/products?id=${encodeURIComponent(testProductId)}`, {
+      method: "DELETE"
+    });
+    assert.equal(delRes.status, 200);
+    const delData = await delRes.json();
+    assert.ok(delData.success);
+  });
+
   // SECTION 4: Vernacular Speech & Keyword Parsing Engine
   console.log(`\n${colors.bold}4. Multilingual Speech & NLP Parsing Engine${colors.reset}`);
 

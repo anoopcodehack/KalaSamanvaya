@@ -112,18 +112,40 @@ export async function getAllProducts(): Promise<ArtisanProduct[]> {
         );
       }
 
-      // Purge any stale legacy test products from MongoDB
+      // Purge any stale legacy test products or fixtures from MongoDB
       const validIds = ARTISAN_PRODUCTS.map((p) => p.id);
       await collection.deleteMany({
         $or: [
           { imageUrl: { $regex: "images.unsplash.com" } },
-          { title: { $regex: "Mohammad Abdul Rauf|Container|Basavaraj Kumbhar" } },
+          { title: { $regex: "Test|Mohammad Abdul Rauf|Container|Basavaraj Kumbhar", $options: "i" } },
+          { id: { $regex: "^prod-test", $options: "i" } },
           { id: { $nin: validIds }, priceINR: { $in: [3400, 1200] } }
         ]
       });
 
-      const mongoProducts = await collection.find({}).toArray();
+      let mongoProducts = await collection.find({}).toArray();
       if (mongoProducts.length > 0) {
+        // Title deduplication: If any products share the exact same title, retain only 1 and purge duplicates
+        const seenTitles = new Set<string>();
+        const dedupedProducts: typeof mongoProducts = [];
+        const duplicateIdsToDelete: string[] = [];
+
+        for (const p of mongoProducts) {
+          const normTitle = (p.title || "").trim().toLowerCase();
+          if (!seenTitles.has(normTitle)) {
+            seenTitles.add(normTitle);
+            dedupedProducts.push(p);
+          } else {
+            duplicateIdsToDelete.push(p.id);
+          }
+        }
+
+        if (duplicateIdsToDelete.length > 0) {
+          await collection.deleteMany({ id: { $in: duplicateIdsToDelete } }).catch(() => {});
+        }
+
+        mongoProducts = dedupedProducts;
+
         // Canonical ordering: User uploaded listings first, followed by curated catalog in order
         const officialMap = new Map(ARTISAN_PRODUCTS.map((p, idx) => [p.id, idx + 10]));
         mongoProducts.sort((a, b) => {
@@ -139,7 +161,9 @@ export async function getAllProducts(): Promise<ArtisanProduct[]> {
   } catch (err) {
     console.warn("MongoDB read failed, using memory fallback:", err);
   }
-  return db.products;
+  return db.products.filter(
+    (p) => !p.title.toLowerCase().includes("test") && !p.id.toLowerCase().startsWith("prod-test")
+  );
 }
 
 export async function getProductById(id: string): Promise<ArtisanProduct | undefined> {
@@ -166,6 +190,20 @@ export async function addProduct(product: ArtisanProduct): Promise<ArtisanProduc
     console.warn("MongoDB write failed, preserved in memory:", err);
   }
   return product;
+}
+
+export async function deleteProduct(id: string): Promise<boolean> {
+  db.products = db.products.filter((p) => p.id !== id);
+  try {
+    const mongo = await getMongoDb();
+    if (mongo) {
+      await mongo.collection("products").deleteOne({ id });
+      return true;
+    }
+  } catch (err) {
+    console.warn("MongoDB delete failed:", err);
+  }
+  return true;
 }
 
 export async function getAllOrders(): Promise<CustomerOrder[]> {
