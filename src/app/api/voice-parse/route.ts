@@ -36,6 +36,7 @@ export async function POST(req: Request) {
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
+              signal: AbortSignal.timeout(3500),
               body: JSON.stringify({
                 contents: [
                   {
@@ -156,6 +157,7 @@ Return ONLY a valid JSON object matching this schema without markdown code block
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
+              signal: AbortSignal.timeout(3500),
               body: JSON.stringify({
                 contents: [
                   {
