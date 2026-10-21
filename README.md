@@ -175,10 +175,10 @@ If total cluster capacity is insufficient to satisfy the order quantity, the eng
 
 | Artisan | Location Cluster | Match Score | Registered Capacity | Initial Allocation | Standby Buffer | Recovery Allocation (A drops 80 → 40) |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Artisan A (Savita N.)** | Dharwad Central | **0.94** | 80 | **80 units** | 0 | **40 units** *(Capacity drop)* |
-| **Artisan B (Manjula P.)** | Kalghatgi Sangha | **0.88** | 70 | **70 units** | 0 | **70 units** *(Unchanged)* |
-| **Artisan C (Girija K.)** | Udupi demonstration cluster | **0.81** | 60 | **50 units** | 10 units | **60 units** *(Absorbs +10 buffer)* |
-| **Artisan D (Renuka B.)** | Navalgund Group | **0.72** | 40 | **0 units** | 40 units | **30 units** *(Activated from standby)* |
+| **Artisan A (Savita N.)** | Dharwad Central | **0.87** | 80 | **80 units** | 0 | **40 units** *(Capacity drop)* |
+| **Artisan B (Manjula P.)** | Kalghatgi Sangha | **0.85** | 70 | **70 units** | 0 | **70 units** *(Unchanged)* |
+| **Artisan C (Girija K.)** | Udupi demonstration cluster | **0.82** | 60 | **50 units** | 10 units | **60 units** *(Absorbs +10 buffer)* |
+| **Artisan D (Renuka B.)** | Navalgund Group | **0.69** | 40 | **0 units** | 40 units | **30 units** *(Activated from standby)* |
 | **Total** | — | — | **250** | **200 / 200 Allocated** | **50 units** | **200 / 200 Reallocated in benchmark** |
 
 ```

@@ -4,10 +4,10 @@ import { Artisan } from "../engine/types";
  * Verified Benchmark Dataset for Coastal Karnataka & Dharwad Artisan Clusters
  * Matches the exact demonstrated evaluation scenario:
  * 
- * - Artisan A (Savita Naik): Score 0.94 | Cap 80 | Initial 80 | Recovery 40
- * - Artisan B (Manjula Patil): Score 0.88 | Cap 70 | Initial 70 | Recovery 70
- * - Artisan C (Girija Kulkarni): Score 0.81 | Cap 60 | Initial 50 (10 buffer) | Recovery 60 (absorbs 10)
- * - Artisan D (Renuka Badiger): Score 0.72 | Cap 40 | Initial 0 (standby) | Recovery 30 (standby active)
+ * - Artisan A (Savita Naik): Calculated MSI 0.87 (Quality 0.94) | Cap 80 | Initial 80 | Recovery 40
+ * - Artisan B (Manjula Patil): Calculated MSI 0.85 (Quality 0.88) | Cap 70 | Initial 70 | Recovery 70
+ * - Artisan C (Girija Kulkarni): Calculated MSI 0.82 (Quality 0.81) | Cap 60 | Initial 50 (10 buffer) | Recovery 60 (absorbs 10)
+ * - Artisan D (Renuka Badiger): Calculated MSI 0.69 (Quality 0.72) | Cap 40 | Initial 0 (standby) | Recovery 30 (standby active)
  */
 export const MOCK_ARTISANS: Artisan[] = [
   // --- Kasuti Embroidery Cluster ---
